@@ -1,10 +1,17 @@
 import numpy as np
 import math 
-import pylab 
-n = np.array(range(1,1001))
+import pylab  
+from scipy.io.wavfile import write 
+from scipy.signal import get_window
+from scipy.signal import find_peaks
 
-frequencies_column    = [0.9273, 1.0247, 1.1328]
-frequencies_row = [0.5346, 0.5906, 0.6535, 0.7217]
+N = 1000
+n = np.array(range(1,1001))
+total_frequency = 8192 # Hz
+
+frequencies_row 	= [0.5346, 0.5906, 0.6535, 0.7217]
+frequencies_column  = [0.9273, 1.0247, 1.1328]
+
 
 # Let our signals be named d[n]
 d = []
@@ -17,6 +24,9 @@ for row in frequencies_row:
 d = np.array(d)
 
 # Caclulates the DFT of a signal x
+
+# We added the dft function from
+# https://pythonnumericalmethods.berkeley.edu/notebooks/chapter24.02-Discrete-Fourier-Transform.html
 def DFT(x):  
 
     N = len(x)
@@ -30,19 +40,84 @@ def DFT(x):
 
 X_2 = DFT(d[2])
 X_7 = DFT(d[7])
+# f/fs = k/N
+# Caclulate the frequency 
+array_n = np.arange(N)
+freq = array_n * total_frequency/ N
 
-# Caclulate the frequency
-N_2,N_7 = len(X_2), len(X_7)
-array_n_2,array_n_7 = np.arange(N_2), np.arange(N_7)
-T =  N_2 / 1000
-freq, freq7 = array_n_2 / T, array_n_7 / T 
-
-pylab.figure()
+pylab.figure(1)
 pylab.subplot(121)
 pylab.plot(freq, abs(X_2))
 pylab.subplot(122)
 pylab.plot(freq, abs(X_7))
 
-pylab.show()
+# pylab.show()
+# 06236122 = 03118040 + 03118082
+phone_number = [0,6,2,3,6,1,2,2]
+phone_number_array = []
+
+for index, number in enumerate(phone_number):
+	for d_i in d[number]:
+		phone_number_array.append(d_i)
+	if index != 7: 
+		for temp in range(100):
+			phone_number_array.append(0) 
+
+phone_number_array = np.array(phone_number_array)
+write("number.wav", total_frequency, phone_number_array)
+
+window = get_window('hamming',N)
+
+pylab.figure(2)
+pylab.plot(np.arange(N),window)
+
+pylab.figure(3)
+pylab.plot(np.arange(8700), phone_number_array)
 
 
+#############################################################
+hamming_result = []
+for index, number in enumerate(phone_number):
+	for index2, d_i in enumerate(d[number]):
+		hamming_result.append(d_i * window[index2]) 
+	if index != 7: 
+		for temp in range(100):
+			hamming_result.append(0)
+
+pylab.figure(4)
+pylab.plot(np.arange(8700), hamming_result)
+
+
+
+###################################################
+# FFT #
+
+fft_with_hamming = []
+
+for i in range(8):
+	start,last = i*1000 + 100*i, (i+1)*1000 + 100*(i+1)
+	tmp_arr = hamming_result[start:last]
+	fft_with_hamming.append(np.fft.fft(tmp_arr))
+
+pylab.figure(5)
+pylab.plot(np.arange(1100), fft_with_hamming[1])
+
+peaks_array = []
+
+for i in range(8): 
+	peaks, _ = find_peaks(fft_with_hamming[i], threshold=50)
+	peaks_array.append(peaks)
+
+
+print(peaks_array)
+
+
+
+
+
+
+
+
+
+
+# pylab.show()

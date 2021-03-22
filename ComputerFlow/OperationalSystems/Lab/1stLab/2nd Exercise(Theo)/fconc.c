@@ -30,8 +30,7 @@ int main(int argc, char **argv) {
     	exit(EXIT_FAILURE);
     }
     
-    /* Open the output file */ 
-
+    /* Open the output file */  
     if (argc == 3) {
         if ( !((strcmp(argv[1], defaultOutput) == 0) | (strcmp(argv[2], defaultOutput) == 0) )){
             outputFile = fopen(defaultOutput, "w+");

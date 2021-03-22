@@ -1,6 +1,7 @@
 import numpy as np
 import math 
 import pylab  
+from scipy.io.wavfile import read
 from scipy.io.wavfile import write 
 from scipy.signal import get_window
 from scipy.signal import find_peaks
@@ -76,6 +77,7 @@ pylab.plot(np.arange(8700), phone_number_array)
 
 
 #############################################################
+
 hamming_result = []
 for index, number in enumerate(phone_number):
 	for index2, d_i in enumerate(d[number]):
@@ -99,24 +101,74 @@ for i in range(8):
 	tmp_arr = hamming_result[start:last]
 	fft_with_hamming.append(np.fft.fft(tmp_arr))
 
-pylab.figure(5)
-pylab.plot(np.arange(1100), fft_with_hamming[1])
+# pylab.figure(5)
+# pylab.plot(np.arange(1100), abs(fft_with_hamming[1]))
 
 peaks_array = []
 
 for i in range(8): 
-	peaks, _ = find_peaks(fft_with_hamming[i], threshold=50)
+	peaks, _ = find_peaks(abs(fft_with_hamming[i]), threshold=max(fft_with_hamming[i])/4) 
 	peaks_array.append(peaks)
 
 
-print(peaks_array)
+# print(peaks_array)
+
+def ttdecode(filename, peaks): 
+	samplerate, data = read(filename)
+	# print(samplerate,data)
+
+	vector = [] 
+
+	N = 750
+	window = get_window('hamming',N)
+	value_around_zero_amplitude = 10
+	start = 0
+	last = 750
+	while True: 
+		if start >= len(data) - 750:
+			break
+		if last > len(data):
+			last = len(data)
+			start = len(data) - 750
 
 
+		array = data[start:last] 
+		array = array * window
+		array = np.fft.fft(array)
+
+		# array = np.square(array)
+		peaks_note, _ = find_peaks(array, threshold=max(array)/10)
+
+		if len(peaks_note) == 4:
+			vector.append(peaks_note)
+			start += 750
+			last  += 750
+		else: 
+			start += 250
+			last += 250
+
+	# pylab.figure(7)
+	# pylab.plot(np.arange(0,N), array)
+	# pylab.show()
+	
+
+	return vector
+
+ 
+print(ttdecode('number.wav', peaks_array))
 
 
+###########################################
+# 1.7 #
 
+# easySigArray = np.load("../easySig.npy")
+# hardSigArray = np.load("../hardSig.npy")
 
+# write("easySigInitial.wav", total_frequency, easySigArray)
+# write("hardSigInitial.wav", total_frequency, hardSigArray)
 
+# print(ttdecode(easySigArray, peaks_array))
+# print(ttdecode(hardSigArray, peaks_array))
 
 
 

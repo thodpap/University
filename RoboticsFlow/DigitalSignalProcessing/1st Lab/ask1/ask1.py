@@ -38,8 +38,7 @@ for row in frequencies_row:
 			continue
 		frequency_peaks.append( (
 			round(row * constant), round(column * constant)
-		) )
-print(frequency_peaks)
+		) ) 
 
 # Caclulates the DFT of a signal x
 
@@ -112,36 +111,20 @@ pylab.plot(np.arange(8700), hamming_result)
 ###################################################
 # FFT #
 
-fft_with_hamming = []
-
-for i in range(8):
-	start,last = i*1000 + 100*i, (i+1)*1000 + 100*(i+1)
-	tmp_arr = hamming_result[start:last]
-	# for _ in range(500):
-	# 	tmp_arr.append(0)
-	fft_with_hamming.append(np.fft.fft(tmp_arr)) 
+def findPeaksInInterval(array):
+	t = np.fft.fft(array)
+	peaks, _ = find_peaks(abs(t), threshold=max(abs(t)/10))
+	return peaks
 
 peaks_array = []
-
-for i in range(8): 
-	print(max(abs(fft_with_hamming[i]))/20)
-	peaks, _ = find_peaks(abs(fft_with_hamming[i]), threshold=max(abs(fft_with_hamming[i]))/10) 
-	peaks_array.append(list(peaks)) 
-
-# f = k/N * fs
-new_peaks_array = []
-for peak in peaks_array:
-	new_peaks_array.append(np.array(peak)* total_frequency / (N+100))
-
-
-##############################
-# Debug #
-
 for i in range(8):
-	print(new_peaks_array[i], phone_number[i], frequency_peaks[phone_number[i]])
+	start,last = i*1000 + 100*i, (i+1)*1000 + 100*(i+1)
+	
+	peaks_array.append(list(findPeaksInInterval(hamming_result[start:last]) * total_frequency / (N+100)) ) # * total_frequency / (N+100))
 
+  
 #pylab.show()
-def mapToValues(frequency_peaks):
+def mapToValues(frequency_peaks, new_peaks_array, samples):
 
 	def findClosestFrequency(frequency_peaks, frequency): 
 		frequency_peaks = np.asarray(frequency_peaks)
@@ -157,66 +140,50 @@ def mapToValues(frequency_peaks):
 
 	mapped_frequencies = []
 
-	for i in range(8):
+	for i in range(samples):
 		a = findClosestFrequency(first_pair_frequency, new_peaks_array[i][0])
 		b = findClosestFrequency(second_pair_frequency, new_peaks_array[i][1])
 		c = np.intersect1d(a,b)
-		mapped_frequencies.append(c[0])
-	print(mapped_frequencies)
+		mapped_frequencies.append(c[0]) 
 	return mapped_frequencies
 
-mapToValues(frequency_peaks)
-# print(mapped_frequencies)
+mapped_frequencies = mapToValues(frequency_peaks, peaks_array, 8 ) 
 
+def ttdecode(filename, peaks, N):  
+	samplerate, data = read(filename)
+	frequency_peaks = []  
+	samples = 0
+	start, last = 0, N
+	size = len(data) 
+	i = 0
+	while True:
+		if samples > 0:
+			i = start + 1000
+		while True:
+			if i + 1 > size:
+				i += 1
+				break
+			if abs(data[i]) <= 0.01 and abs(data[i+1]) <= 0.01:
+				i += 1
+			else:
+				break 
+		start = i+1
+		last = start + 1000
+		if start >= size:
+			break
+		if last >= size:
+			last = size
+ 
+		samples += 1 
+		temp_peaks = findPeaksInInterval(data[start:last]) * samplerate / N
+		# print('find peaks: ', temp_peaks* total_frequency / N)
+		frequency_peaks.append( (temp_peaks[0], temp_peaks[1])) 
+		# start += 1
+	# print(peaks)
+	return mapToValues(peaks, frequency_peaks, samples)
  
 
-# print(findClosestFrequency(frequency_peaks,peaks_array[0]))
-
-# # frequency will be a tuple
-# def fromFrequencyToNumber(frequency_peaks, frequency):
-# 	return frequency_peaks.index(frequency) 
-
-
-# pylab.show()
-# def ttdecode(filename, peaks ): 
-# 	samplerate, data = read(filename)
-# 	print(samplerate,data, data[664])
-
-# 	vector = [] 
-
-# 	N = 1000
-# 	window = get_window('hamming',N)
-# 	value_around_zero_amplitude = 10
-# 	start = 0
-# 	last = 1000
-# 	while True: 
-# 		if start >= len(data) - 1000:
-# 			break
-# 		if last > len(data):
-# 			last = len(data)
-# 			start = len(data) - 1000
-
-
-# 		array = data[start:last] 
-# 		array = array * window
-# 		array = np.fft.fft(array)
-
-# 		# array = np.square(array)
-# 		peaks_note, _ = find_peaks(array, threshold=25)
-
-# 		if len(peaks_note) == 4: # even if we add the smaller window its okay ?? 
-# 			vector.append(peaks_note)
-# 			start += 1050
-# 			last  += 1050
-# 		else: 
-# 			num = vector[-1] # Previous number -> remove the max of the previous freq
-# 			for peak in peaks_note:
-# 				pass
-
-
-# 	# pylab.figure(7)
-# 	# pylab.stem(np.arange(0,10850), data)
-# 	# pylab.show()
+ 
 	
 
 # 	return vector
@@ -224,21 +191,23 @@ mapToValues(frequency_peaks)
 
 # ###################################
 # # Caclulate the array of peaks # 
-
-# print(ttdecode('number.wav', frequency_peaks))
+# pylab.figure(2)
+# pylab.plot(np.arange(len(phone_number_array)),phone_number_array)
+# pylab.show()
+print(ttdecode("number.wav", frequency_peaks, N))
 
 
 ###########################################
 # 1.7 #
 
-# easySigArray = np.load("../easySig.npy")
-# hardSigArray = np.load("../hardSig.npy")
+easySigArray = np.load("../easySig.npy")
+hardSigArray = np.load("../hardSig.npy")
 
-# write("easySigInitial.wav", total_frequency, easySigArray)
-# write("hardSigInitial.wav", total_frequency, hardSigArray)
+write("easySigInitial.wav", total_frequency, easySigArray)
+write("hardSigInitial.wav", total_frequency, hardSigArray)
 
-# print(ttdecode("easySigInitial.wav", peaks_array))
-# print(ttdecode("hardSigInitial.wav", peaks_array))
+print(ttdecode("easySigInitial.wav", frequency_peaks, N))
+print(ttdecode("hardSigInitial.wav", frequency_peaks, N))
 
 
 

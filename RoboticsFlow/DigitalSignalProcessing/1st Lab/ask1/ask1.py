@@ -34,6 +34,8 @@ frequency_peaks.append( (round(0.7217 * constant),
 
 for row in frequencies_row: 
 	for column in frequencies_column:
+		if row == 0.7217:
+			continue
 		frequency_peaks.append( (
 			round(row * constant), round(column * constant)
 		) )
@@ -139,27 +141,31 @@ for i in range(8):
 	print(new_peaks_array[i], phone_number[i], frequency_peaks[phone_number[i]])
 
 #pylab.show()
+def mapToValues(frequency_peaks):
 
-def findClosestFrequency(frequency_peaks, frequency): 
-	frequency_peaks = np.asarray(frequency_peaks)
-	idx = (np.abs(frequency_peaks - frequency)).argmin()
-	return_list = []
-	for index,fre in enumerate(frequency_peaks):
-		if fre == frequency_peaks[idx] :
-			return_list.append(index)
-	return return_list
+	def findClosestFrequency(frequency_peaks, frequency): 
+		frequency_peaks = np.asarray(frequency_peaks)
+		idx = (np.abs(frequency_peaks - frequency)).argmin()
+		return_list = []
+		for index,fre in enumerate(frequency_peaks):
+			if fre == frequency_peaks[idx] :
+				return_list.append(index)
+		return return_list
 
-first_pair_frequency = [a for a,b in frequency_peaks]
-second_pair_frequency = [b for a,b in frequency_peaks]
-print(first_pair_frequency)
-print(second_pair_frequency)
-mapped_frequencies = []
+	first_pair_frequency = [a for a,b in frequency_peaks]
+	second_pair_frequency = [b for a,b in frequency_peaks]
 
-for i in range(8):
-	a = findClosestFrequency(first_pair_frequency, new_peaks_array[i][0])
-	b = findClosestFrequency(second_pair_frequency, new_peaks_array[i][1])
-	print(a,b)
-# 	mapped_frequencies.append( (a,b))
+	mapped_frequencies = []
+
+	for i in range(8):
+		a = findClosestFrequency(first_pair_frequency, new_peaks_array[i][0])
+		b = findClosestFrequency(second_pair_frequency, new_peaks_array[i][1])
+		c = np.intersect1d(a,b)
+		mapped_frequencies.append(c[0])
+	print(mapped_frequencies)
+	return mapped_frequencies
+
+mapToValues(frequency_peaks)
 # print(mapped_frequencies)
 
  

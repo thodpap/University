@@ -66,7 +66,7 @@ def flat_list(complicated_list):
 # number of octaves = log_2(f2/f1)
 scales = []
 upper_bound_window = Fs / 2 # 500
-limit_lower_bound = 15.625/2 # 15.625
+limit_lower_bound = 1.0 # 15.625
 samples_per_octave = 16
 while True: 
     lower_bound_window = upper_bound_window/2
@@ -86,22 +86,20 @@ while True:
     scales.append(interval_added)
     upper_bound_window = upper_bound_window / 2
 
-# flat the scales list
-scales = flat_list(scales)
-# inverse list
+# flat the scales list and inverse list
+scales = flat_list(scales) 
 scales = list(reversed(scales))
 
 print(np.array(scales))
 
  
-# scales = np.power(2, np.linspace(3, 9, 100)) 
+# scales = np.power(2, np.linspace(4, 9, 100)) 
 # for i in range(len(scales)):
 #      if scales[i] > 500:
 #          scales[i] = 500
 #      else: continue
 # print(scales)
-
-
+ 
 coefs, frequencies = pywt.cwt(signal, scales, 'cmor3.0-1.0') 
 
 wavTransform = np.abs(coefs)

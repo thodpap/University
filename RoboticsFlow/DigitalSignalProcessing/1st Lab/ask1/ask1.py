@@ -91,7 +91,7 @@ pylab.legend(['1','2'])
 
 
 # 06236122 = 03118040 + 03118082
-# phone_number = [1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9,0,0,0,5,4,2,7,8,2] # for testing
+# phone_number = [2,1,0,6,6,1,6,6,2,7] # for testing
 phone_number = [0,6,2,3,6,1,2,2]
 phone_number_length = len(phone_number)
 phone_number_array = []
@@ -112,9 +112,8 @@ window = get_window('hamming',N)
 # pylab.plot(np.arange(N),window)
 
 pylab.figure(3)
-pylab.title('Our phone number signal: [0,6,2,3,6,1,2,2]')
-
-pylab.plot(np.arange(8700), phone_number_array)
+pylab.title('Our phone number signal: [0,6,2,3,6,1,2,2]') 
+pylab.plot(np.arange(len(phone_number_array)), phone_number_array)
 
 
 ##################################### 

@@ -9,11 +9,7 @@ Fs = 1000  # Hz
 
 time = (np.linspace(0, 2, 2000))
 
-noise = []
-for i in range(len(time)):
-    noise.append((np.random.normal(0)))
-
-noise = np.array(noise) 
+noise = np.array([np.random.normal(0) for _ in range(len(time))])
 
 signal = (2 * np.cos(2 * math.pi * 70 * time) 
         + 3 * np.sin(2 * math.pi * 100 * time) 
@@ -66,7 +62,7 @@ def flat_list(complicated_list):
 # number of octaves = log_2(f2/f1)
 scales = []
 upper_bound_window = Fs / 2 # 500
-limit_lower_bound = 1.0 # 15.625
+limit_lower_bound = 15.625
 samples_per_octave = 16
 while True: 
     lower_bound_window = upper_bound_window/2

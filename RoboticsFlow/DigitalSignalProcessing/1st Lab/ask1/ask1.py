@@ -18,8 +18,7 @@ frequencies_column  = [0.9273, 1.0247, 1.1328]
 
 ##################################### 
 # 			1.1						#
-#####################################
-
+##################################### 
 
 # Let our signals be named d[n] = sin(v1*t) + sin(v2*t)
 d = []
@@ -30,6 +29,21 @@ for row in frequencies_row:
 			continue
 		d.append(np.sin(row * n) + np.sin(column * n))
 d = np.array(d) 
+
+
+pylab.figure(1, figsize=(20,20)) 
+pylab.title("The number's signals")
+figure_counter = 1
+for i in range(3):
+	for j in range(3):
+		pylab.subplot2grid((4,3), (i,j))
+		pylab.plot(np.arange(len(d[figure_counter])),d[figure_counter])
+
+
+pylab.subplot2grid((4,3), (3,1))
+pylab.plot(np.arange(len(d[0])),d[0]) 
+
+
 
 
 ##################################### 
@@ -60,14 +74,15 @@ X_2 = DFT(d[2])
 X_7 = DFT(d[7])
 # f/fs = k/N
 
-pylab.figure(1)
+pylab.figure(2) 
+pylab.title('Title')
 pylab.subplot(121)
-pylab.title('DFT of number 2')
+# pylab.text('|DFT_2[k]|')
 pylab.plot(freq, abs(X_2))
 pylab.subplot(122)
-pylab.title('DFT of number 7')
+# pylab.text('|DFT_7[k]|')
 pylab.plot(freq, abs(X_7))
-
+pylab.legend(['1','2'])
 
 
 ##################################### 
@@ -96,15 +111,17 @@ window = get_window('hamming',N)
 # pylab.figure(2)
 # pylab.plot(np.arange(N),window)
 
-# pylab.figure(3)
-# pylab.plot(np.arange(8700), phone_number_array)
+pylab.figure(3)
+pylab.title('Our phone number signal: [0,6,2,3,6,1,2,2]')
+
+pylab.plot(np.arange(8700), phone_number_array)
 
 
 ##################################### 
 # 			1.4						#
 #####################################
 
-# i ????????? TODO: Write the 1.4.i
+# TODO: Finish 1.4
 
 # ii 
 hamming_result = []
@@ -116,6 +133,7 @@ for index, number in enumerate(phone_number):
 			hamming_result.append(0)
 
 pylab.figure(4)
+pylab.title('This is the result of signal * hamming window')
 pylab.plot(np.arange(len(hamming_result)), hamming_result)
 
 
@@ -183,26 +201,29 @@ def mapToValues(frequency_peaks, new_peaks_array, samples):
 		mapped_frequencies.append(c[0]) 
 	return mapped_frequencies
 
-mapped_frequencies = mapToValues(frequency_peaks, peaks_array, 8 ) 
+mapped_frequencies = mapToValues(frequency_peaks, peaks_array, phone_number_length ) 
 
 def ttdecode(filename, peaks, N):  
+	def findNextStart(i, data, dataSize, maxValueAllowed):
+		while True:
+			if i + 1 > dataSize:
+				break
+			if abs(data[i]) <= maxValueAllowed and abs(data[i+1]) <= maxValueAllowed: # Works even with some noise
+				i += 1
+			else:
+				break
+		return i
+
 	samplerate, data = read(filename)
-	frequency_peaks = []  
-	samples = 0
-	start, last = 0, N
+	frequency_peaks = []   
+	start, last, i, samples = 0, N, 0, 0 
 	size = len(data) 
-	i = 0
+
 	while True:
 		if samples > 0:
 			i = start + 1000
-		while True:
-			if i + 1 > size:
-				i += 1
-				break
-			if abs(data[i]) <= 0.01 and abs(data[i+1]) <= 0.01:
-				i += 1
-			else:
-				break 
+		i = findNextStart(i, data, size, 0.01) 
+
 		start = i+1
 		last = start + 1000
 		if start >= size:
@@ -212,13 +233,9 @@ def ttdecode(filename, peaks, N):
  
 		samples += 1 
 		temp_peaks = findPeaksInInterval(data[start:last]) * samplerate / N
-		# print('find peaks: ', temp_peaks* total_frequency / N)
-		frequency_peaks.append( (temp_peaks[0], temp_peaks[1])) 
-		# start += 1
-	# print(peaks)
-	return mapToValues(peaks, frequency_peaks, samples)  
+		frequency_peaks.append( (temp_peaks[0], temp_peaks[1]))  
 
-# 	return vector
+	return mapToValues(peaks, frequency_peaks, samples)   
 
 
 # ###################################
@@ -226,7 +243,12 @@ def ttdecode(filename, peaks, N):
 # pylab.figure(2)
 # pylab.plot(np.arange(len(phone_number_array)),phone_number_array)
 # pylab.show()
-print(ttdecode("tone_sequence.wav", frequency_peaks, N))
+testOurNumner = ttdecode("tone_sequence.wav", frequency_peaks, N)
+print(testOurNumner)
+if testOurNumner == phone_number_array:
+	print('ttdecode worked correctly')
+else:
+	print('ttdecode worked incorrectly, you passed: ', phone_number_array, ' and the function returned: ', testOurNumner)
 
 
 

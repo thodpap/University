@@ -13,4 +13,3 @@
 void write_file(int fd, const char *infile, int fd_inn,  char* buff, bool boo);
 
 #endif
- 

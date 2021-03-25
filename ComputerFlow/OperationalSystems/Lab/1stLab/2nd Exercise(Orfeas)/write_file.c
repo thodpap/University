@@ -1,3 +1,4 @@
+
 #include "write_file.h"
 
 
@@ -7,7 +8,8 @@ void  write_file(int fd, const char *infile, int fd_inn, char* buff, bool boo){
                 doWrite(fd, buff, strlen(buff));
 
         }
-        else{ 
+        else{
+
                 int fd1;
                 fd1 = open(infile, O_RDONLY);
 
@@ -59,5 +61,3 @@ void  write_file(int fd, const char *infile, int fd_inn, char* buff, bool boo){
                 fclose(fp);
         }
 }
-
-

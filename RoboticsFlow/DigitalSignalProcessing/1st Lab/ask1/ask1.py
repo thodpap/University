@@ -180,11 +180,7 @@ def ttdecode(filename, peaks, N):
 		frequency_peaks.append( (temp_peaks[0], temp_peaks[1])) 
 		# start += 1
 	# print(peaks)
-	return mapToValues(peaks, frequency_peaks, samples)
- 
-
- 
-	
+	return mapToValues(peaks, frequency_peaks, samples)  
 
 # 	return vector
 

@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import librosa
 import pywt
 
+from scipy.signal import get_window
+
 Fs = 1000  # Hz
 
 time = np.linspace(0, 2, 2000)
@@ -63,7 +65,7 @@ for window_length in windows_length:
 
     counter += 1
     plt.figure(counter)
-    timer = np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1) * Fs / n_fft
+    timer = np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1)
     plt.contour(timer, freqs, spectogram)
     plt.xlabel("Time")
     plt.ylabel("Frequency Amplitude")
@@ -104,11 +106,19 @@ wavTransform = np.abs(coefs)
 
 print("frqs: ", frequencies)
 
+
 counter += 1
 plt.figure(counter)
 plt.contour(time, frequencies, wavTransform)
-plt.title("Wavelet transform of signal")
+plt.title("Wavelet transform of signal with colormesh")
 plt.xlabel("Time")
 plt.ylabel("Scales")
 
+counter += 1
+plt.figure(counter)
+plt.pcolormesh(time, frequencies, wavTransform)
+plt.title("Wavelet transform of signal with color mesh")
+plt.xlabel("Time")
+plt.ylabel("Scales")
+ 
 plt.show()

@@ -50,7 +50,7 @@ for window_length in windows_length:
 
     counter += 1
     plt.figure(counter)
-    timer = np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1) * Fs / n_fft
+    timer = np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1) 
     plt.pcolormesh(timer, freqs, spectogram)
     plt.xlabel("Time")
     plt.ylabel("Frequency Amplitude")

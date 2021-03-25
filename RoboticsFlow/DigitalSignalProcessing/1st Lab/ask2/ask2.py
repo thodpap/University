@@ -13,10 +13,12 @@ noise = []
 for i in range(len(time)):
     noise.append((np.random.normal(0)))
 
-noise = np.array(noise)
-print(noise)
+noise = np.array(noise) 
 
-signal = 2 * np.cos(2 * math.pi * 70 * time) + 3 * np.sin(2 * math.pi * 100 * time) + 0.1 * noise
+signal = (2 * np.cos(2 * math.pi * 70 * time) 
+        + 3 * np.sin(2 * math.pi * 100 * time) 
+        + 0.1 * noise)
+
 
 counter = 0  # for figure()
 
@@ -31,7 +33,7 @@ plt.ylabel("time")
 
 # b) - g)
 
-my_array = [80, 160, 240]
+my_array = [20, 40, 80]
 
 for i in my_array:
     n_fft = i
@@ -56,62 +58,51 @@ for i in my_array:
     plt.title("spectogram of signal")
 
 
-### d)
+### d) 
 
-
-#SE AUTA TA ORIO PAIZEIS MPALA
-#------------------------------------------------------------
-
-def flat_me(listed):
-    flat = []
-    for sublist in listed:
-        for item in sublist:
-            flat.append(item)
-    return flat
-
-
-my_val = Fs / 2
+def flat_list(complicated_list):
+    return [item for sublist in complicated_list for item in sublist]
+ 
+# number of octaves = log_2(f2/f1)
 scales = []
-counter_me = 0
-my_val1 = 0
-
-for i in range(int(math.log2(Fs / 2))):
-    if my_val1 == 15.625 and my_val == 15.625:
+upper_bound_window = Fs / 2 # 500
+limit_lower_bound = 15.625/2 # 15.625
+samples_per_octave = 16
+while True: 
+    lower_bound_window = upper_bound_window/2
+    if upper_bound_window <= limit_lower_bound: 
         break
-    my_val1 = my_val / 2
-    # print("my_val: ", my_val)
-    # print("my_val1: ", my_val1)
-    if my_val1 <= 15.625:
-        my_val1 = 15.625
-    # print("my_val1: ", my_val1)
-    scales.append(list(np.linspace(my_val, my_val1, 16)))
-    my_val = my_val / 2
+    if lower_bound_window <= limit_lower_bound:
+        lower_bound_window = limit_lower_bound
 
+    if upper_bound_window < Fs/2: # delete last element of array
+        interval_added = list(np.linspace(lower_bound_window,upper_bound_window, samples_per_octave + 1))
+        del(interval_added[-1])
+    else:
+        interval_added = list(np.linspace(lower_bound_window,upper_bound_window, samples_per_octave + 1))
+
+    # inverse list
+    interval_added = list(reversed(interval_added)) 
+    scales.append(interval_added)
+    upper_bound_window = upper_bound_window / 2
+
+# flat the scales list
+scales = flat_list(scales)
+# inverse list
+scales = list(reversed(scales))
+
+print(np.array(scales))
+
+ 
+# scales = np.power(2, np.linspace(3, 9, 100)) 
+# for i in range(len(scales)):
+#      if scales[i] > 500:
+#          scales[i] = 500
+#      else: continue
 # print(scales)
-# scales = scales[1]
-scales = flat_me(scales)
-scales = scales[::-1]  # reverse
-# scales = [int(i) for i in scales]
-print("scales: ", scales)
-
-sampling_perion = 1/Fs
-
-scales = np.power(2, np.linspace(2, 9, 100))
-for i in range(len(scales)):
-     if scales[i] > 500:
-         scales[i] = 500
-     else: continue
-
-print("scales: ", scales)
-
-# -------------------------------------------------------------------------------------
-
-#PERMISSION DENIED FRIJO
 
 
-coefs, frequencies = pywt.cwt(signal, scales, 'cmor3.0-1.0')
-
-
+coefs, frequencies = pywt.cwt(signal, scales, 'cmor3.0-1.0') 
 
 wavTransform = np.abs(coefs)
 

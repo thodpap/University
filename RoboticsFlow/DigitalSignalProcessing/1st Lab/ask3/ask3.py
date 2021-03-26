@@ -1,39 +1,45 @@
 import numpy as np 
 from scipy.io import wavfile
-import matplotlib.pyplot as plt
+import pylab 
+
+##########################################################################
+# 							IMPORTANT									 #
+##########################################################################
+# We converted  the initial .wav file to .mp3 and then back to .wav,     #
+# so there is a likelihood that the audio quality maybe slightly damaged #
+# The initial conversion was required since we could not read the audio  #
+# We used this website for the conversion: https://convertio.co/		 #
+##########################################################################
+
+samplerate, data = wavfile.read('speech_utterance.wav') 
 
 def short_time_energy(signal, len_divisor):
-    window = []
-    window_length = int(len(signal)/len_divisor)
-    window = np.hamming(window_length)
+    window = [] 
+    window = np.hamming(len_divisor)
 
     energy = []
     energy = np.convolve(signal, window)
     return energy
 
-counter = 0
-
-
-#conversion from type b-Nist to wav file from:https://convertio.co/
-samplerate, data = wavfile.read('speech_utterance.wav')
-
-length = len(data)
-
-counter += 1
-plt.figure(counter)
-n = np.arange(0, length)
-plt.plot(n, data)
-plt.show()
-
-
 energy = []
-energy = short_time_energy(data, 50)
+
+# 1 16κ 
+# 25*16  
+energy = short_time_energy(abs(data)**2, 40) 
+energy /= max(abs(data) )
+
 len_en = int(len(energy))
 time = np.arange(0, len_en)
+ 
+counter = 1
+pylab.figure(counter)
+pylab.subplot(121)
+pylab.plot(time,energy, 'b')
+pylab.subplot(122)
+pylab.plot(np.arange(0,len(data)),data, 'r')
 
-print(len(time))
-print(len(n))
 
 # counter += 1
-# plt.figure(counter)
-# plt.plot()
+# pylab.figure(counter)
+pylab.show()
+	

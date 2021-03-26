@@ -13,7 +13,7 @@ import pylab
 
 
 
-samplerate, data = wavfile.read('speech_utterance.wav')
+samplerate, data = wavfile.read('../speech_utterance.wav')
 
 data = data/(max(abs(data)))
 
@@ -80,15 +80,18 @@ pylab.plot(np.arange(0, len(data)), data, 'b')
 # counter += 1
 # pylab.figure(counter)
 pylab.show()
+ 
 
-segments = np.zeros(10000)
+newArray = []
+for i in range(6000,len(data)-1, 6000):
+	for j in range(i,min(len(data),i+6000)):
+		newArray.append(data[j])
+	for j in range(10000):
+		newArray.append(0.0)
+	break
+newArray = np.array(newArray)
 
-for i in range(0, 10000):
-    segments[i] = data[i]
 
-
-wavfile.write('segments.wav', 16000, segments)
+write("easySigInitial.wav", samplerate, newArray) 
 
 ##ZERO_CROSS_RATING
-
-	

@@ -1,6 +1,6 @@
-import numpy as np 
+import numpy as np
 from scipy.io import wavfile
-import pylab 
+import pylab
 
 ##########################################################################
 # 							IMPORTANT									 #
@@ -11,35 +11,84 @@ import pylab
 # We used this website for the conversion: https://convertio.co/		 #
 ##########################################################################
 
-samplerate, data = wavfile.read('speech_utterance.wav') 
 
+
+samplerate, data = wavfile.read('speech_utterance.wav')
+
+data = data/(max(abs(data)))
+
+
+
+##SHORT_TIME_ENERGY
 def short_time_energy(signal, len_divisor):
-    window = [] 
+    window = []
     window = np.hamming(len_divisor)
-
     energy = []
     energy = np.convolve(signal, window)
     return energy
 
-energy = []
 
-# 1 16κ 
-# 25*16  
-energy = short_time_energy(abs(data)**2, 40) 
-energy /= max(abs(data) )
+# assert samplerate % 1000 == 0
+#
+# sampsPerMilli = int(samplerate / 1000)
+# millisPerFrame = 20
+# sampsPerFrame = sampsPerMilli * millisPerFrame
+# nFrames = int(len(data) / sampsPerFrame)  # number of non-overlapping _full_ frames
+#
+# print
+# 'samples/millisecond  ==> ', sampsPerMilli
+# print
+# 'samples/[%dms]frame  ==> ' % millisPerFrame, sampsPerFrame
+# print
+# 'number of frames     ==> ', nFrames
+#
+# STEs = []                                      # list of short-time energies
+# for k in range(nFrames):
+#      startIdx = k * sampsPerFrame
+#      stopIdx = startIdx + sampsPerFrame
+#      window = np.zeros(data.shape)
+#      window[startIdx:stopIdx] = 1               # rectangular window
+#      STE = sum((data ** 2) * (window ** 2))
+#      STEs.append(STE)
+#
+# pylab.figure(1)
+# pylab.plot(STEs)
+# pylab.title('Short-Time Energy')
+# pylab.ylabel('ENERGY')
+# pylab.xlabel('FRAME')
+# pylab.autoscale(tight='both');
+
+# energy = []
+#
+# # 1 16κ
+# # 25*16
+energy = short_time_energy(abs(data) ** 2, 400)
+# energy = energy/max(abs(data))**2
 
 len_en = int(len(energy))
 time = np.arange(0, len_en)
- 
+
+energy_normalized = energy/max(abs(data))
+
 counter = 1
 pylab.figure(counter)
 pylab.subplot(121)
-pylab.plot(time,energy, 'b')
+pylab.plot(time, energy, 'r')
 pylab.subplot(122)
-pylab.plot(np.arange(0,len(data)),data, 'r')
-
+pylab.plot(np.arange(0, len(data)), data, 'b')
 
 # counter += 1
 # pylab.figure(counter)
 pylab.show()
+
+segments = np.zeros(10000)
+
+for i in range(0, 10000):
+    segments[i] = data[i]
+
+
+wavfile.write('segments.wav', 16000, segments)
+
+##ZERO_CROSS_RATING
+
 	

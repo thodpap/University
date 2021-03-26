@@ -52,7 +52,8 @@ void dfs() {
 } 
 int main(int argc,char **argv){
 	ios_base::sync_with_stdio(false);
-
+	cin.tie(NULL);
+	
 	FILE *file;
 	file = freopen(argv[1], "r", stdin);
 

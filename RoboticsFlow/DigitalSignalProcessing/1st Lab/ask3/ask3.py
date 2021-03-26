@@ -2,6 +2,7 @@ import numpy as np
 from scipy.io import wavfile
 import pylab
 
+from scipy.io.wavfile import write 
 ##########################################################################
 # 							IMPORTANT									 #
 ##########################################################################
@@ -80,18 +81,18 @@ pylab.plot(np.arange(0, len(data)), data, 'b')
 # counter += 1
 # pylab.figure(counter)
 pylab.show()
- 
-
-newArray = []
-for i in range(6000,len(data)-1, 6000):
-	for j in range(i,min(len(data),i+6000)):
-		newArray.append(data[j])
-	for j in range(10000):
-		newArray.append(0.0)
-	break
-newArray = np.array(newArray)
 
 
-write("easySigInitial.wav", samplerate, newArray) 
+# newArray = []
+# for i in range(11000,len(data)-1, 6000):
+# 	for j in range(i,min(len(data),i+6000)):
+# 		newArray.append(data[j])
+# 	for j in range(10000):
+# 		newArray.append(0.0)
+# 	break
+# newArray = np.array(newArray)
+
+
+# write("easySigInitial.wav", samplerate, newArray) 
 
 ##ZERO_CROSS_RATING

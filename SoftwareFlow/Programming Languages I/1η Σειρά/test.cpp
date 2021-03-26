@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <map>
 
 using namespace std; 
 /* sums: 0 42 ... */ 
@@ -22,7 +23,7 @@ int recursion(int start, int last, int sums[], int N, int M) {
     
 	return max(one,two);
 }
-
+int sums[10000];
 int dp[1000][1000]; 
 void dpSolution(int start, int last, int sums[], int N, int M) {
 	if (start >= last) return ;
@@ -71,22 +72,40 @@ int anotherSolution2(int N,int M,int sums[]) {
 	}
 	return ans;
 }
-int anotherSolution3(int N,int M,int sums[]) {
+ 
+int logarithmicSolution(int N,int M, int arr[]) {
+	map<int,int> sums;
+	sums[0] = 0; // empty -> have the whole sums map
+	int sum = 0;
 	int ans = 0;
-	for(int K = 1; K < M; ++K) {
-		for(int endingPoint = 0; endingPoint < M; ++endingPoint) { 
-			int sum = sums[endingPoint] - sums[endingPoint - K - 1];
-			if ( (double)((double)sum / (double)(K * N)) <= -1.0){
-				ans = K;
-			}
+	cout << (arr[0]) << " " <<  (arr[1]) << endl;
+	cout << "Start: " << endl;
+	for(int i = 1; i <= M; ++i) {
+		sum += arr[i-1];
+
+		if (sum <= -i * N) {
+			cout << i << endl;
+			ans = i;
+		} 
+		else {
+			// sum - sums[min(k)] <= -(i - k) * N 
+			// sums[k] > sum + (i-k) * N > sum + (ans + 1) * N - 1
+
+			cout << sum << " . We are searching for sum > " << (sum + (ans+1) * N - 1) << endl;
+			auto upper = sums.upper_bound(sum + (ans+1) * N - 1);
+			
+			for (auto u = upper; u != sums.end(); ++u)
+				if (sum - u->first <= - N * (i - u->second)) 
+					ans = max(ans, i - u->second);  
 		}
-	} 
+		
+
+		sums[sum] = i;
+	}
 	return ans;
 }
-
-int sums[1000];
 int main() {
-	int arr[] = {42, -10, 8, 1, 11, -6, -12, 16, -15, -11, 13};
+	int arr[] = {42,-10, 8, 1, 11, -6, -12, 16, -15, -11, 13};
 	int N = 3;
 	int M = 11;
 	for(int i = 0; i < M; ++i) {
@@ -94,11 +113,7 @@ int main() {
 	}
 
 	cout << recursion(0,M-1,sums,N,M) << endl;
+	cout << logarithmicSolution(N,M-1,arr) << endl;
 
-	dpSolution(0,M-1,sums,N,M);
-	cout << dp[0][M-1] << endl; 
-	cout << anotherSolution(N,M,sums) << endl;
-	cout << anotherSolution2(N,M,sums) << endl;
-	cout << anotherSolution3(N,M,sums) << endl;
 	return 0;
 }

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdio>
 #include <algorithm>
 using namespace std;
 
@@ -49,7 +50,12 @@ void dfs() {
 			find_parents(i,q);
 			
 } 
-int main(){
+int main(int argc,char **argv){
+	ios_base::sync_with_stdio(false);
+
+	FILE *file;
+	file = freopen(argv[1], "r", stdin);
+
 	cin >> N >> M;
 	for(int i = 0; i < N; ++i) 
 		for (int j = 0; j < N; ++j) 
@@ -57,4 +63,6 @@ int main(){
 	dfs();
 	cout << (N*M - counter) << endl;
 
+	fclose(file);
+	return 0;
 }

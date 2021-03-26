@@ -85,17 +85,17 @@ int logarithmicSolution(int N,int M, int arr[]) {
 	}
 	return ans;
 }
-int arr[];
+int arr[500005];
 int N,M;
-int main() {
+int main(int argc, char **argv) {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	
 	FILE *file;
 	file = freopen(argv[1], "r", stdin);
-	cin >> N >> M;
+	cin >> M >> N;
 	for (int i = 0; i < M; ++i) cin >> arr[i];
-
+		
 	cout << logarithmicSolution(N,M-1,arr) << endl;
 	
 	fclose(file);

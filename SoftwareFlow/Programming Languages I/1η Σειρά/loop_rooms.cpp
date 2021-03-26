@@ -28,7 +28,7 @@ void dfs() {
 	p = 0;
 	for(int j = 0; j < M; ++j) 
 		if (arr[p][j] == 'U') 
-			find_parents(q,j);
+			find_parents(p,j);
 
 	/* i = N-1 and j 	     */
 	p = N-1;

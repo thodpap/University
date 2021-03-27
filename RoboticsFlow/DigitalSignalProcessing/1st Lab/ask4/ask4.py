@@ -7,9 +7,8 @@ import pywt
 import warnings
 warnings.simplefilter("ignore", UserWarning)
 
-counter = 0 #for plots
-
-data, samplerate = librosa.load('foxtrot_excerpt1.mp3') #default 22050 samplerate freq
+counter = 0 #for plots 
+data, samplerate = librosa.load('../foxtrot_excerpt1.mp3') #default 22050 samplerate freq
 
 
 
@@ -91,14 +90,24 @@ while True:
     diff /= 2
 
 array = array[:7]
-filtered_high = []
+y_details = []
 filtered_low = []
 y = []
 
 cutt_offed = signal
-
+cA, cD = [], []
 for index, low, high in enumerate(array):
-    filtered_high = (butter_bandpass_filter(cutt_offed, low, high, samplerate, order=5))
+    temp_cA, temp_cD = pywt.dwt(cutt_offed, 'db4')
+    cA.append(temp_cA)
+    cD.append(temp_cD)
+    y_details.append(butter_bandpass_filter(cutt_offed, low, high, samplerate, order=5))
+
+y_approximation_7 = butter_bandpass_filter(cutt_offed, 0, samplerate/128,samplerate, order=5)
     
+
+####################################################
+# 4.3# 
+# a
+z = abs(y_details)
 
 plt.show()

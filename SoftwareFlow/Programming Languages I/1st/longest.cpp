@@ -2,9 +2,12 @@
 #include <cstdio>
 #include <algorithm>
 #include <map>
+#include <vector>
 
 using namespace std; 
 
+int arr[500005];
+int N,M;
 int recursion(int start, int last, int sums[], int N, int M) {
 	if (start >= last) return -1; // error
 
@@ -57,7 +60,40 @@ int anotherSolution(int N,int M, int sums[]) {
 		}
 	}
 	return ans;
-} 
+}  
+int nSolution() {
+	vector<pair<int,int>> highs,lows;
+	for (int i = 0; i < M; ++i) {
+		sums[i] = sums[i-1] + arr[i];
+		cout << sums[i] << " ";
+	}cout << endl;
+
+	int high = sums[0];
+	int low = sums[M-1];
+	highs.push_back(make_pair(high,0));
+	lows.push_back(make_pair(low,M-1));
+
+	for (int i = 0; i < M; ++i) 
+		if (sums[i] > high) {
+			high = sums[i];
+			highs.push_back(make_pair(high,i));
+		}
+	for (int i = M-1; i >= 0; --i) 
+		if (sums[i] < low) {
+			low = sums[i];
+			lows.push_back(make_pair(low,i));
+		}
+		
+	int ans = 0;
+	for (auto h:highs) {
+		for (auto l:lows) {
+			if (l.second > l.first) continue;
+			if (l.first - h.first <= (h.second - l.second ) * N) 
+				ans = max(ans, l.second - h.second);
+		}
+	}
+	return ans;
+}
  
 int logarithmicSolution(int N,int M, int arr[]) {
 	map<int,int> sums;
@@ -85,8 +121,6 @@ int logarithmicSolution(int N,int M, int arr[]) {
 	}
 	return ans;
 }
-int arr[500005];
-int N,M;
 int main(int argc, char **argv) {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
@@ -95,9 +129,13 @@ int main(int argc, char **argv) {
 	file = freopen(argv[1], "r", stdin);
 	cin >> M >> N;
 	for (int i = 0; i < M; ++i) cin >> arr[i];
+
+	for(int i = 0; i < M; ++i) {
+		sums[i] = arr[i] + sums[i-1]; 
+	}
 		
 	cout << logarithmicSolution(N,M-1,arr) << endl;
-	
+	cout << nSolution() << endl;
 	fclose(file);
 	return 0;
 }

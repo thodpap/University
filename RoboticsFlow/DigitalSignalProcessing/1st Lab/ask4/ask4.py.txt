@@ -1,0 +1,104 @@
+import numpy as np
+from scipy.io import wavfile
+import matplotlib.pyplot as plt
+import librosa
+import pywt
+
+import warnings
+warnings.simplefilter("ignore", UserWarning)
+
+counter = 0 #for plots
+
+data, samplerate = librosa.load('foxtrot_excerpt1.mp3') #default 22050 samplerate freq
+
+
+
+## 4_1
+signal = data[10000:(2**16+10000)]
+n = np.arange(0, len(signal))
+
+counter += 1
+plt.figure(counter)
+plt.plot(n, signal)
+
+
+
+## 4_2
+
+from scipy.signal import butter, lfilter, freqz
+#
+# def butter_lowpass(cutoff, fs, order=5):
+#     nyq = 0.5 * fs
+#     normal_cutoff = cutoff / nyq
+#     b, a = butter(order, normal_cutoff, btype='low', analog=False)
+#     return b, a
+#
+#
+# def butter_lowpass_filter(data, cutoff, fs, order=5):
+#     b, a = butter_lowpass(cutoff, fs, order=order)
+#     y = lfilter(b, a, data)
+#     return y
+
+
+### source: https://stackoverflow.com/questions/12093594/how-to-implement-band-pass-butterworth-filter-with-scipy-signal-butter
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band')
+    return b, a
+
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
+## max_freq of the signal
+# from scipy.fft import fft
+# fft_ed = fft(signal)
+# spectogram = np.abs(fft_ed) ** 2
+#
+# for i in range(len(spectogram)-1, 0, -1):
+#     if spectogram[i] != 0:
+#         index = i
+#         break
+#
+#
+# max_freq = i*samplerate/(len(spectogram))
+#
+# n = np.arange(0, len(fft_ed))
+#
+# counter += 1
+# plt.figure(counter)
+# plt.plot(n*22050, abs(fft_ed))
+
+
+
+# counter += 1
+# plt.figure(counter)
+#
+#
+high = samplerate / 2
+diff = high/2
+array = []
+
+while True:
+    if high <= 0:
+        break
+    array.append((high-diff, high))
+    high -= diff
+    diff /= 2
+
+array = array[:7]
+filtered_high = []
+filtered_low = []
+y = []
+
+cutt_offed = signal
+
+for index, low, high in enumerate(array):
+    filtered_high = (butter_bandpass_filter(cutt_offed, low, high, samplerate, order=5))
+    
+
+plt.show()

@@ -3,13 +3,26 @@ from scipy.io import wavfile
 import pylab
 
 from scipy.io.wavfile import write 
+
+
+##############################################################################
+#                                                                            #
+#    3.1: Analysie speech utterance.wav file						         #
+#                                                                            #
+##############################################################################
+
+
 ##########################################################################
+#                                                                        #
 # 							IMPORTANT									 #
+#                                                                        #
 ##########################################################################
-# We converted  the initial .wav file to .mp3 and then back to .wav,     #
+#                                                                        #
+# We converted  the initial .wav file to a new .wav,				     #
 # so there is a likelihood that the audio quality maybe slightly damaged #
 # The initial conversion was required since we could not read the audio  #
 # We used this website for the conversion: https://convertio.co/		 #
+#                                                                        #
 ##########################################################################
 
 
@@ -19,6 +32,12 @@ samplerate, data = wavfile.read('../speech_utterance.wav')
 data = data/(max(abs(data)))
 
 
+
+##############################################################################
+#                                                                            #
+#    
+#                                                                            #
+############################################################################## 
 
 ##SHORT_TIME_ENERGY
 def short_time_energy(signal, len_divisor):

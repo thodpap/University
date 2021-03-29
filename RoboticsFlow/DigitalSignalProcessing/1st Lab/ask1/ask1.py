@@ -4,7 +4,6 @@ import pylab
 from scipy.io.wavfile import read
 from scipy.io.wavfile import write 
 from scipy.signal import get_window
-from scipy.signal import find_peaks
 
 figure_counter = 0
 
@@ -254,6 +253,7 @@ print('The frequency peaks are', frequency_peaks)
 ##############################################################################
 
 def findPeaksInInterval(array ):
+	from scipy.signal import find_peaks
 	t = np.fft.fft(array)
 	peaks, _ = find_peaks(abs(t), threshold=max(abs(t)/10))
 	return peaks

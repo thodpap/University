@@ -101,13 +101,8 @@ for window_length in windows_length:
 ##############################################################################
 
 def flat_list(complicated_list):
-    return [item for sublist in complicated_list for item in sublist]
- 
-# number of octaves = log_2(f2/f1)
-
-# 2 -> 500 
-# 4 -> 250
-# 62 -> 15.625
+    return [item for sublist in complicated_list for item in sublist] 
+    
 scales = [] 
 samples_per_octave = 16
 scale_temp = 2

@@ -147,12 +147,12 @@ x = []
 
 for i in range(8):
     x_i = np.zeros(len(z[i]))
-    a_0 = (2**(i+1))*a_array[2]
+    a_0 = (2**(i+1))*a_array[0]
     if i == 7:
         a_0 = a_0/2
     for j in range(len(x_i)):
         if j == 0:
-            x_i[j] = a_0 * z[i][j] # x_i[j] = (1 - a_0) * x_i[j-1] + a_0 * z[i][j] but index -1 does not exist
+            x_i[j] = a_0 * z[i][j]  # x_i[j] = (1 - a_0) * x_i[j-1] + a_0 * z[i][j] but index -1 does not exist for x
             continue
         x_i[j] = (1-a_0)*x_i[j-1] + a_0*z[i][j]
 
@@ -163,6 +163,7 @@ print(np.array(x))
 for i in range(8):
     mean = stat.mean(x[i])
     x[i] = x[i] - mean
+    #  x[i] = x[i]
 
 n = np.arange(len(z[1]))
 
@@ -191,7 +192,8 @@ for i in range(8):
         length = length_
 
 # print(length)
-length = length*2 # length of original signal, (maybe should be length and not length*2, garoufh pou eisai <3)
+length = length*2# length of original signal, (maybe should be length and not length*2, garoufh pou eisai <3)
+length = len(signal)
 
 for i in range(8):
     values = np.linspace(0, len(x[i]), length)
@@ -206,29 +208,29 @@ for i in range(8):
 
 
 
-sum_of_ = np.zeros(length)
-
+sum_of = np.zeros(length)
+x = np.array(x)
 for i in range(length):
     for j in range(8):
-        sum_of_[i] += x[j][i]
+        sum_of[i] += x[j][i]
 
 counter += 1
 plt.figure(counter)
-plt.plot(np.arange(0, length), sum_of_)
-plt.title("sum_of_")
+plt.plot(np.arange(0, length), sum_of)
+plt.title("sum_of")
 
 
 
 ## autocorrelation
 
 
-print(len(sum_of_))
+print(len(sum_of))
 
 def autocorr(x):
     result = np.correlate(x, x, mode='full')
     return result[int(result.size/2):]
 
-autocorrelation = autocorr(sum_of_)
+autocorrelation = autocorr(sum_of)
 
 
 counter += 1
@@ -236,5 +238,40 @@ plt.figure(counter)
 plt.plot(np.arange(len(autocorrelation)), autocorrelation)
 plt.title("autocorrelation")
 
+
+## 4_5
+
+## mas endiaferei to diasthma (se BPM): 60-200 (hdh apo to xroniko diagramma tou shmatos blepoume oti tha exoume sigoura 60 BPM kathws epanalambanete
+## enas xtupos ana 1 deutero
+
+
+from scipy.ndimage import gaussian_filter1d
+
+def findPeaksInInterval(array):
+    from scipy.signal import find_peaks
+    #t = np.fft.fft(array)
+    peaks, _ = find_peaks(array)
+    return peaks
+
+autocorrelation_filtered = gaussian_filter1d(autocorrelation, 1)
+
+counter += 1
+plt.figure(counter)
+plt.plot(np.arange(len(autocorrelation)), autocorrelation)
+plt.title("autocorrelation_filtered")
+
+peaks = findPeaksInInterval(autocorrelation_filtered[6615:22051])
+print(peaks)
+for i in range(len(peaks)):
+    peaks[i] += 6615
+print(peaks)
+BPM = []
+
+for i in peaks:
+    BPM.append(60*22050/i)
+
+BPM_sorted = BPM.sort()
+
+print(BPM)
 
 plt.show()

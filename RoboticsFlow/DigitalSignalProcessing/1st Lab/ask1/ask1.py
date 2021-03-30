@@ -4,6 +4,7 @@ import pylab
 from scipy.io.wavfile import read
 from scipy.io.wavfile import write 
 from scipy.signal import get_window
+import matplotlib.pyplt as plt
 
 figure_counter = 0
 

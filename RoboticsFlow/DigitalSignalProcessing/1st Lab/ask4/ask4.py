@@ -1,45 +1,47 @@
 import numpy as np
 from scipy.io import wavfile
-import matplotlib.pyplot as plt
-import librosa
-import pywt
 
+import matplotlib
+matplotlib.use('TkAgg') # To fix error
+
+import matplotlib.pyplot as plt 
+import librosa
+import pywt 
 import warnings
 warnings.simplefilter("ignore", UserWarning)
 
-counter = 0 #for plots
+figure_counter = 0   
 
-data, samplerate = librosa.load('foxtrot_excerpt1.mp3') #default 22050 samplerate freq
+# default at 22050 samplerate frequency
+data, samplerate = librosa.load('../foxtrot_excerpt1.mp3') 
+ 
 
+#########################################################################
+#                                                                       #
+#  4.1 : Load the audio file, and isolate a window of length 2^16       #
+#       and plot it                                                     #
+#                                                                       #
+#########################################################################
 
-
-## 4_1
 signal = data[10000:(2**16+10000)]
 n = np.arange(0, len(signal))
 
-counter += 1
-plt.figure(counter)
-plt.plot(n, signal)
+figure_counter += 1
+plt.figure(figure_counter)
+plt.plot(n, signal) 
+plt.show()
 
-
-
-## 4_2
+#########################################################################
+#                                                                       #
+#  4.2 : Use Discrete Wavelet Transform (dwt) in our signal             #
+#                                                                       #
+#########################################################################
+#                                                                       #
+#   To do so,                                                                        
+#                                                                       #
+#########################################################################  
 
 from scipy.signal import butter, lfilter, freqz
-#
-# def butter_lowpass(cutoff, fs, order=5):
-#     nyq = 0.5 * fs
-#     normal_cutoff = cutoff / nyq
-#     b, a = butter(order, normal_cutoff, btype='low', analog=False)
-#     return b, a
-#
-#
-# def butter_lowpass_filter(data, cutoff, fs, order=5):
-#     b, a = butter_lowpass(cutoff, fs, order=order)
-#     y = lfilter(b, a, data)
-#     return y
-
-
 ### source: https://stackoverflow.com/questions/12093594/how-to-implement-band-pass-butterworth-filter-with-scipy-signal-butter
 def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
@@ -54,31 +56,7 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     y = lfilter(b, a, data)
     return y
 
-## max_freq of the signal
-# from scipy.fft import fft
-# fft_ed = fft(signal)
-# spectogram = np.abs(fft_ed) ** 2
-#
-# for i in range(len(spectogram)-1, 0, -1):
-#     if spectogram[i] != 0:
-#         index = i
-#         break
-#
-#
-# max_freq = i*samplerate/(len(spectogram))
-#
-# n = np.arange(0, len(fft_ed))
-#
-# counter += 1
-# plt.figure(counter)
-# plt.plot(n*22050, abs(fft_ed))
 
-
-
-# counter += 1
-# plt.figure(counter)
-#
-#
 high = samplerate / 2
 diff = high/2
 array = []
@@ -95,14 +73,12 @@ array = array[:7]
 array = np.array(array)
 array[6][0] = 0
 print(array)
-filtered_high = []
-filtered_low = []
+
+filtered_high, filtered_low = [], []
 y = []
 
-signaled = signal
-
-details = []
-approximation = []
+signaled = signal 
+details, approximation = [], []
 
 for index in range(7):
     # filtered_high = (butter_bandpass_filter(cutt_offed, low, high, samplerate, order=5))
@@ -167,7 +143,7 @@ for i in range(8):
 
 n = np.arange(len(z[1]))
 
-counter += 2
+figure_counter += 2
 fig, (ax1, ax2) = plt.subplots(2)
 fig.suptitle("yd2 and xd2")
 ax1.plot(n, details[1])
@@ -202,8 +178,8 @@ for i in range(8):
     # print(len(x[i]))
 
 for i in range(8):
-    counter += 1
-    plt.figure(counter)
+    figure_counter
+    plt.figure(figure_counter)
     plt.plot(np.arange(0, length), x[i])
 
 
@@ -214,8 +190,8 @@ for i in range(length):
     for j in range(8):
         sum_of[i] += x[j][i]
 
-counter += 1
-plt.figure(counter)
+figure_counter += 1
+plt.figure(figure_counter)
 plt.plot(np.arange(0, length), sum_of)
 plt.title("sum_of")
 
@@ -233,8 +209,8 @@ def autocorr(x):
 autocorrelation = autocorr(sum_of)
 
 
-counter += 1
-plt.figure(counter)
+figure_counter += 1
+plt.figure(figure_counter)
 plt.plot(np.arange(len(autocorrelation)), autocorrelation)
 plt.title("autocorrelation")
 
@@ -255,8 +231,8 @@ def findPeaksInInterval(array):
 
 autocorrelation_filtered = gaussian_filter1d(autocorrelation, 1)
 
-counter += 1
-plt.figure(counter)
+figure_counter += 1
+plt.figure(figure_counter)
 plt.plot(np.arange(len(autocorrelation)), autocorrelation)
 plt.title("autocorrelation_filtered")
 

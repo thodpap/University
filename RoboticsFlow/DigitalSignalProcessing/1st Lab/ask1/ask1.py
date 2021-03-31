@@ -1,14 +1,11 @@
 import numpy as np
-import math 
-import pylab  
-from scipy.io.wavfile import read
-from scipy.io.wavfile import write 
+import math  
+from scipy.io.wavfile import read, write
 from scipy.signal import get_window
-import matplotlib.pyplt as plt
-
-figure_counter = 0
+import matplotlib.pyplot as plt
 
 # Define our main variables
+figure_counter = 0
 N = 1000
 n = np.array(range(1,1001)) 
 total_frequency = 8192 # Hz
@@ -38,19 +35,22 @@ for row in frequencies_row:
 d = np.array(d) 
 
 figure_counter += 1
-pylab.figure(figure_counter, figsize=(20,20)) 
-pylab.title("The number's signals")
-figure_counter = 1
+plt.figure(figure_counter, figsize=(20,20)) 
+plt.suptitle("The Number's Signals") 
+
 for i in range(3):
 	for j in range(3):
-		pylab.subplot2grid((4,3), (i,j))
-		pylab.plot(np.arange(len(d[figure_counter])),d[figure_counter])
+		string = 'd[' + str(i * 3 + j + 1) + ']'
+		ax = plt.subplot2grid((4,3), (i,j))
+		plt.title(string)
+		plt.plot(np.arange(len(d[figure_counter])),d[figure_counter])
 
 
-pylab.subplot2grid((4,3), (3,1))
-pylab.plot(np.arange(len(d[0])),d[0]) 
+ax = plt.subplot2grid((4,3), (3,1))
+plt.title('d[0]')
+plt.plot(np.arange(len(d[0])),d[0])  
+plt.tight_layout() 
 
-  
 
 ##############################################################################
 #																			 #
@@ -77,34 +77,46 @@ def DFT(x):
 
 ##############################################################################
 #																			 #
-#	  Calculates the respective frequencies and plot them			     	 #
+#	  Calculates the respective DFT's and plot them			     	 		 #
 #																			 #
 ############################################################################## 
-array_n = np.arange(N)
-freq = array_n * total_frequency/ N
 
-X_2 = DFT(d[2])
-X_7 = DFT(d[7]) 
+freq = np.arange(N) * total_frequency/ N
+dft_array = []
+for i in range(10):
+	dft_array.append(DFT(d[i]))
+
+X_2 = dft_array[2]
+X_7 = dft_array[7]
 
 
-
-
-##############################################################################
-#																			 #
-#  --> 	TODO: Fix the subplots using pyplot						     	  	 #
-#																			 #
-############################################################################## 
 figure_counter += 1
-pylab.figure(figure_counter) 
-pylab.title('Title')
-pylab.subplot(121)
-# pylab.text('|DFT_2[k]|')
-pylab.plot(freq, abs(X_2))
-pylab.subplot(122)
-# pylab.text('|DFT_7[k]|')
-pylab.plot(freq, abs(X_7))
-pylab.legend(['1','2'])
+plt.figure(figure_counter)
+plt.suptitle('Dft of d[2] and d[7]')
 
+plt.subplot(121)
+plt.title('DFT(d[2])')
+plt.plot(freq,abs(X_2))
+
+plt.subplot(122)
+plt.title('DFT(d[7])')
+plt.plot(freq,abs(X_7)) 
+
+
+figure_counter +=1
+plt.figure(figure_counter, figsize=(20,30))
+plt.suptitle("All the DFT's")
+for i in range(3):
+	for j in range(3):
+		ax = plt.subplot2grid( (4,3), (i,j) )
+		plt.title('DFT of d[' + str(i*3+j + 1) + ']')
+		plt.plot(freq, abs(dft_array[i*3+j + 1]))
+ 
+
+ax = plt.subplot2grid((4,3), (3,1))
+plt.title('DFT of d[0]')
+plt.plot(freq,abs(dft_array[0]))
+plt.tight_layout()  
 
 
 
@@ -118,10 +130,11 @@ pylab.legend(['1','2'])
 # 	  separated by 100 zero points 											 #
 #																			 #																			 #
 ############################################################################## 
+#																			 #
+#			06236122 = 03118040 + 03118082 									 #
+#																			 #																		 #
+############################################################################## 
 
-
-# 06236122 = 03118040 + 03118082
-# phone_number = [2,1,0,6,6,1,6,6,2,7] # for testing
 phone_number = [0,6,2,3,6,1,2,2]
 phone_number_length = len(phone_number)
 phone_number_array = []
@@ -135,15 +148,12 @@ for index, number in enumerate(phone_number):
 			phone_number_array.append(0) 
 
 phone_number_array = np.array(phone_number_array)
-write("tone_sequence.wav", total_frequency, phone_number_array) 
-
-# pylab.figure(2)
-# pylab.plot(np.arange(N),window)
+write("tone_sequence.wav", total_frequency, phone_number_array)  
 
 figure_counter += 1
-pylab.figure(figure_counter)
-pylab.title('Our phone number signal: [0,6,2,3,6,1,2,2]') 
-pylab.plot(np.arange(len(phone_number_array)), phone_number_array)
+plt.figure(figure_counter)
+plt.title('Our phone number signal: [0,6,2,3,6,1,2,2]') 
+plt.plot(np.arange(len(phone_number_array)), phone_number_array)
 
 
 ##############################################################################
@@ -174,9 +184,9 @@ for index, number in enumerate(phone_number):
 
 print(square_window, d[0])
 figure_counter += 1
-pylab.figure(figure_counter)
-pylab.title('Signal with a boxcar window')
-pylab.plot(np.arange(len(square_result)), square_result)
+plt.figure(figure_counter)
+plt.title('Signal with a boxcar window')
+plt.plot(np.arange(len(square_result)), square_result)
 
 
 ##############################################################################
@@ -196,9 +206,9 @@ for index, number in enumerate(phone_number):
 			hamming_result.append(0)
 
 figure_counter += 1
-pylab.figure(figure_counter)
-pylab.title('Signal with a hamming window')
-pylab.plot(np.arange(len(hamming_result)), hamming_result)
+plt.figure(figure_counter)
+plt.title('Signal with a hamming window')
+plt.plot(np.arange(len(hamming_result)), hamming_result)
 
 
 
@@ -263,8 +273,12 @@ def findPeaksInInterval(array ):
 peaks_array = []
 for i in range(phone_number_length):
 	start,last = i*1000 + 100*i, (i+1)*1000 + 100*(i+1)
-	
-	peaks_array.append(list(findPeaksInInterval(hamming_result[start:last]) * total_frequency / (N+100) ) ) # * total_frequency / (N+100))
+	const = total_frequency / (N+100) 
+	peaks_array.append(
+		list(
+			findPeaksInInterval(hamming_result[start:last]) * const
+		) 
+	) 
 
  
 ############################################################################## 
@@ -339,7 +353,9 @@ def ttdecode(filename, peaks, N):
 		while True:
 			if i + 1 > dataSize:
 				break
-			if abs(data[i]) <= maxValueAllowed and abs(data[i+1]) <= maxValueAllowed: # Works even with some noise
+
+			# Works even with some noise too
+			if abs(data[i]) <= maxValueAllowed and abs(data[i+1]) <= maxValueAllowed: 
 				i += 1
 			else:
 				break
@@ -380,8 +396,8 @@ testOurNumber = ttdecode("tone_sequence.wav", frequency_peaks, N)
 #		If this fails the execution stops								     #
 #																			 #
 ############################################################################## 
-
-assert testOurNumber == phone_number_array   
+print(np.array(testOurNumber),np.array(phone_number))
+assert (np.array(testOurNumber)==np.array(phone_number)).all()  
 
 
 
@@ -398,8 +414,6 @@ write("easySigInitial.wav", total_frequency, easySigArray)
 write("hardSigInitial.wav", total_frequency, hardSigArray)
 
 print(ttdecode("easySigInitial.wav", frequency_peaks, N))
-print(ttdecode("hardSigInitial.wav", frequency_peaks, N))
+print(ttdecode("hardSigInitial.wav", frequency_peaks, N)) 
 
-
-
-pylab.show()
+plt.show()

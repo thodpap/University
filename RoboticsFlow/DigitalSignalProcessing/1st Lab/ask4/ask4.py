@@ -9,9 +9,13 @@ import librosa
 import pywt
 import warnings
 
+file1 = '../foxtrot_excerpt1.mp3'
+file2 = '../foxtrot_excerpt2.mp3'
+file3 = '../salsa_excerpt.mp3'
+
 warnings.simplefilter("ignore", UserWarning)
 figure_counter = 0 #for plots
-data, samplerate = librosa.load('../foxtrot_excerpt1.mp3') #default 22050 samplerate freq
+data, samplerate = librosa.load(file3) #default 22050 samplerate freq
 
 
 
@@ -47,7 +51,6 @@ signaled = signal
 details, approximation = [], []
 
 for index in range(7):
-    # filtered_high = (butter_bandpass_filter(cutt_offed, low, high, samplerate, order=5))
     cA, cD = pywt.dwt(signaled, 'db4')
     details.append(cD)
     signaled = cA
@@ -152,7 +155,7 @@ for i in range(3):
         plt.plot(np.arange(len(x_new[3*i + j])), x_new[3*i + j])
 
 plt.tight_layout() 
-
+plt.savefig("diagrams/x.png")
 
 
 sum_of_x = np.zeros(length)
@@ -167,7 +170,7 @@ figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(np.arange(length), sum_of_x)
 plt.title("sum_of_x")
-
+plt.savefig("diagrams/sum_of_x.png")
 
 
 #########################################################################
@@ -218,6 +221,7 @@ plt.plot(np.arange(len(autocorrelation)), autocorrelation)
 ax = plt.subplot2grid((2,1),(1,0))
 plt.plot(np.arange(len(autocorrelation_filtered)), autocorrelation_filtered)
 plt.title("autocorrelation_filtered")
+plt.tight_layout()  
 plt.savefig('diagrams/autocorrelation.png')
 
 peaks = findPeaksInInterval(autocorrelation_filtered[6615:22051])

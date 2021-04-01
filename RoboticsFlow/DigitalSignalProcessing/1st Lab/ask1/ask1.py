@@ -36,14 +36,14 @@ d = np.array(d)
 
 figure_counter += 1
 plt.figure(figure_counter, figsize=(20,20)) 
-plt.suptitle("The Number's Signals") 
+# plt.suptitle("The Number's Signals") 
 
 for i in range(3):
 	for j in range(3):
 		string = 'd[' + str(i * 3 + j + 1) + ']'
 		ax = plt.subplot2grid((4,3), (i,j))
 		plt.title(string)
-		plt.plot(np.arange(len(d[figure_counter])),d[figure_counter])
+		plt.plot(np.arange(len(d[i * 3 + j + 1])),d[i * 3 + j + 1])
 
 
 ax = plt.subplot2grid((4,3), (3,1))
@@ -53,6 +53,25 @@ plt.savefig('diagrams/d[n].png')
 plt.tight_layout() 
 
 
+figure_counter += 1
+plt.figure(figure_counter, figsize=(20,20)) 
+# plt.suptitle("The Number's Signals") 
+
+for i in range(3):
+	for j in range(3):
+		string = 'in d[' + str(i * 3 + j + 1) + ']'
+		ax = plt.subplot2grid((4,3), (i,j))
+		plt.title(string)
+		plt.plot(np.arange(len(d[i * 3 + j + 1][:50])),d[i * 3 + j + 1][:50])
+
+
+ax = plt.subplot2grid((4,3), (3,1))
+plt.title('in d[0]')
+plt.plot(np.arange(len(d[0][:50])),d[0][:50])  
+plt.savefig('diagrams/d[n]_zoom.png')
+plt.tight_layout() 
+
+plt.show()
 ##############################################################################
 #																			 #
 #		1.2 : Calculate DFT of 2 and 7							     	  	 #
@@ -106,12 +125,12 @@ plt.savefig('diagrams/dft_2&7.png')
 
 figure_counter +=1
 plt.figure(figure_counter, figsize=(20,30))
-plt.suptitle("All the DFT's")
+plt.suptitle("All the DFT's in 250 range")
 for i in range(3):
 	for j in range(3):
 		ax = plt.subplot2grid( (4,3), (i,j) )
 		plt.title('DFT of d[' + str(i*3+j + 1) + ']')
-		plt.plot(freq, abs(dft_array[i*3+j + 1]))
+		plt.plot(np.arange(250), abs(dft_array[i*3+j + 1][:250]))
  
 
 ax = plt.subplot2grid((4,3), (3,1))
@@ -119,7 +138,7 @@ plt.title('DFT of d[0]')
 plt.plot(freq,abs(dft_array[0]))
 plt.tight_layout()  
 plt.savefig('diagrams/all_dfts.png')
-
+plt.show()
 
 
 ##############################################################################
@@ -189,7 +208,7 @@ figure_counter += 1
 plt.figure(figure_counter)
 plt.title('Signal with a boxcar window')
 plt.plot(np.arange(len(square_result)), square_result)
-plt.savefig('boxcar_window_result.png')
+plt.savefig('diagrams/boxcar_window_result.png')
  
 ##############################################################################
 #																			 #

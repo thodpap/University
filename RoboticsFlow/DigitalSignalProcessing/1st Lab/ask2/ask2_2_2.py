@@ -46,8 +46,8 @@ plt.figure(figure_counter)
 plt.plot(time, signal)
 plt.title("given signal")
 plt.xlabel("amplitude")
-plt.ylabel("time")
-
+plt.ylabel("time")  
+plt.savefig('ask2_2/signal.png')
 
 
 ##############################################################################
@@ -81,21 +81,22 @@ for window_length in windows_length:
 
     figure_counter += 1
     plt.figure(figure_counter)
-    timer = np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1)
-    plt.contour(timer, freqs, spectogram)
+
+    ax = plt.subplot2grid((2,1), (0,0)) 
+    plt.contour(np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1), freqs, spectogram)
     plt.xlabel("Time")
     plt.ylabel("Frequency Amplitude")
-    plt.title("Spectrogram of Signal")
-    plt.legend([str(window_length)])###????????
-    
-    figure_counter += 1
-    plt.figure(figure_counter)
-    plt.pcolormesh(timer, freqs, spectogram)
-    plt.title("Wavelet transform of signal with color mesh")
+    plt.title("Spectrogram of Signal with window " + str(window_length)) 
+     
+    ax = plt.subplot2grid((2,1), (1,0))    
+    plt.pcolormesh(np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1), freqs, spectogram)
+    plt.title("Wavelet transform of signal with window " + str(window_length))
     plt.xlabel("Time")
     plt.ylabel("Scales")
-    plt.legend([str(window_length)]) ###????????
 
+
+    plt.tight_layout()
+    plt.savefig('ask2_2/sectograms_' + str(window_length) + '.png')
 
 ##############################################################################
 #                                                                            #
@@ -152,16 +153,20 @@ print("frqs: ", frequencies)
 
 figure_counter += 1
 plt.figure(figure_counter)
+
+ax = plt.subplot2grid((2,1),(0,0))
 plt.contour(time, frequencies, wavTransform)
 plt.title("Wavelet transform of signal with colormesh")
 plt.xlabel("Time")
 plt.ylabel("Scales")
 
-figure_counter += 1
-plt.figure(figure_counter)
+ax = plt.subplot2grid((2,1),(1,0))
 plt.pcolormesh(time, frequencies, wavTransform)
 plt.title("Wavelet transform of signal with color mesh")
 plt.xlabel("Time")
 plt.ylabel("Scales")
+
+plt.tight_layout()
+plt.savefig('ask2_2/wavelet_transform.png')
 
 plt.show()

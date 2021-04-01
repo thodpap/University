@@ -49,6 +49,7 @@ for i in range(3):
 ax = plt.subplot2grid((4,3), (3,1))
 plt.title('d[0]')
 plt.plot(np.arange(len(d[0])),d[0])  
+plt.savefig('diagrams/d[n].png')
 plt.tight_layout() 
 
 
@@ -100,8 +101,8 @@ plt.plot(freq,abs(X_2))
 
 plt.subplot(122)
 plt.title('DFT(d[7])')
-plt.plot(freq,abs(X_7)) 
-
+plt.plot(freq,abs(X_7))  
+plt.savefig('diagrams/dft_2&7.png')
 
 figure_counter +=1
 plt.figure(figure_counter, figsize=(20,30))
@@ -117,6 +118,7 @@ ax = plt.subplot2grid((4,3), (3,1))
 plt.title('DFT of d[0]')
 plt.plot(freq,abs(dft_array[0]))
 plt.tight_layout()  
+plt.savefig('diagrams/all_dfts.png')
 
 
 
@@ -154,7 +156,7 @@ figure_counter += 1
 plt.figure(figure_counter)
 plt.title('Our phone number signal: [0,6,2,3,6,1,2,2]') 
 plt.plot(np.arange(len(phone_number_array)), phone_number_array)
-
+plt.savefig('diagrams/phone_number_array.png')
 
 ##############################################################################
 #																			 #
@@ -187,8 +189,8 @@ figure_counter += 1
 plt.figure(figure_counter)
 plt.title('Signal with a boxcar window')
 plt.plot(np.arange(len(square_result)), square_result)
-
-
+plt.savefig('boxcar_window_result.png')
+ 
 ##############################################################################
 #																			 #
 #		1.4.ii : Transform our signal with a Hamming window		     	  	 #
@@ -209,7 +211,7 @@ figure_counter += 1
 plt.figure(figure_counter)
 plt.title('Signal with a hamming window')
 plt.plot(np.arange(len(hamming_result)), hamming_result)
-
+plt.savefig('diagrams/hamming_window_result.png')
 
 
 ##############################################################################

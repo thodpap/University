@@ -34,7 +34,7 @@ plt.plot(time, signal)
 plt.title("given signal")
 plt.xlabel("amplitude")
 plt.ylabel("time")
-
+plt.savefig('ask2_1/signal.png')
 
 ##############################################################################
 #                                                                            #
@@ -58,22 +58,23 @@ plt.ylabel("time")
 
 windows_length = [40, 80,160]
 
-for window_length in windows_length:
+for index, window_length in enumerate(windows_length):
     n_fft = window_length
  
     stft_ed = librosa.stft(signal, n_fft=n_fft, hop_length=int(n_fft / 2))
     spectogram = np.abs(stft_ed) ** 2 
 
     freqs = np.linspace(0, Fs / 2, int(1 + n_fft / 2)) 
+    timer = np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1) 
 
     figure_counter += 1
     plt.figure(figure_counter)
-    timer = np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1) 
     plt.pcolormesh(timer, freqs, spectogram)
     plt.xlabel("Time")
     plt.ylabel("Frequency Amplitude")
-    plt.title("Spectrogram of Signal")
-
+    plt.title("Spectrogram of Signal with window " + str(window_length))
+ 
+    plt.savefig('ask2_1/sectograms_' + str(window_length) + '.png')
 
 
 ##############################################################################
@@ -133,5 +134,6 @@ plt.pcolormesh(time, frequencies, wavTransform)
 plt.title("Wavelet transform of signal")
 plt.xlabel("Time")
 plt.ylabel("Scales")
-
+plt.savefig('ask2_1/wavelet_transform.png')
+plt.tight_layout()
 plt.show()

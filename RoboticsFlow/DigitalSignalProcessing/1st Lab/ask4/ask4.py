@@ -4,17 +4,16 @@ from scipy.io import wavfile
 import matplotlib
 matplotlib.use('TkAgg') # To fix error
 
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 import librosa
-import pywt 
+import pywt
 import warnings
+
 warnings.simplefilter("ignore", UserWarning)
+figure_counter = 0 #for plots
+data, samplerate = librosa.load('../foxtrot_excerpt1.mp3') #default 22050 samplerate freq
 
-figure_counter = 0   
 
-# default at 22050 samplerate frequency
-data, samplerate = librosa.load('../foxtrot_excerpt1.mp3') 
- 
 
 #########################################################################
 #                                                                       #
@@ -29,7 +28,9 @@ n = np.arange(0, len(signal))
 figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(n, signal) 
-plt.show()
+plt.savefig('diagrams/signal.png')
+
+
 
 #########################################################################
 #                                                                       #
@@ -37,47 +38,12 @@ plt.show()
 #                                                                       #
 #########################################################################
 #                                                                       #
-#   To do so,                                                                        
+#   To do so, we calculate the                                          # 
 #                                                                       #
 #########################################################################  
 
-from scipy.signal import butter, lfilter, freqz
-### source: https://stackoverflow.com/questions/12093594/how-to-implement-band-pass-butterworth-filter-with-scipy-signal-butter
-def butter_bandpass(lowcut, highcut, fs, order=5):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band')
-    return b, a
 
-
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
-
-
-high = samplerate / 2
-diff = high/2
-array = []
-
-while True:
-    if high <= 0:
-        break
-    array.append((high-diff, high))
-    high -= diff
-    diff /= 2
-
-
-array = array[:7]
-array = np.array(array)
-array[6][0] = 0
-print(array)
-
-filtered_high, filtered_low = [], []
-y = []
-
-signaled = signal 
+signaled = signal
 details, approximation = [], []
 
 for index in range(7):
@@ -88,138 +54,143 @@ for index in range(7):
     if index == 6:
         approximation = cA
 
-# counter += 1
-# plt.figure(counter)
-# plt.plot(approximation)
-#
-# counter += 1
-# plt.figure(counter)
-# plt.plot(details[0])
+ 
+#########################################################################
+#                                                                       #
+#  4.3.a : Caclulate z_i[n] = | y_i[n]                                  #
+#                                                                       #
+#########################################################################
 
-# wavfile.write("approximation.wav", 44100,  approximation)
-# wavfile.write("detail.wav", 44100, details[0])
-
-
-### 4_3
-
-#a)
-
-z = []
-for i in details:
-    z.append(abs(i))
-
+z = [abs(detail) for detail in details]
 z.append(abs(approximation))
-
 z = np.array(z)
-#print(z)
 
 
-#b)
+#########################################################################
+#                                                                       #
+#  4.3.b : Caclulate z_i[n] = | y_i[n]                                  #
+#                                                                       #
+#########################################################################
+
 import statistics as stat
 
-a_array = [0.001, 0.002, 0.005]
-
-x = []
+a_array, x = [0.001, 0.002, 0.005], []
 
 for i in range(8):
     x_i = np.zeros(len(z[i]))
-    a_0 = (2**(i+1))*a_array[0]
+    a_0 = (2**(i+1))*a_array[2]
     if i == 7:
         a_0 = a_0/2
     for j in range(len(x_i)):
         if j == 0:
-            x_i[j] = a_0 * z[i][j]  # x_i[j] = (1 - a_0) * x_i[j-1] + a_0 * z[i][j] but index -1 does not exist for x
+            # x_i[j] = (1 - a_0) * x_i[j-1] + a_0 * z[i][j] 
+            # but index -1 does not exist for x
+            x_i[j] = a_0 * z[i][j]  
             continue
-        x_i[j] = (1-a_0)*x_i[j-1] + a_0*z[i][j]
-
+        x_i[j] = (1-a_0)*x_i[j-1] + a_0*z[i][j] 
     x.append(x_i)
 
 print(np.array(x))
 
-for i in range(8):
-    mean = stat.mean(x[i])
-    x[i] = x[i] - mean
-    #  x[i] = x[i]
-
-n = np.arange(len(z[1]))
-
-figure_counter += 2
-fig, (ax1, ax2) = plt.subplots(2)
-fig.suptitle("yd2 and xd2")
-ax1.plot(n, details[1])
-ax2.plot(n, x[1], 'b')
 
 
-n = np.arange(len(z[3]))
+#########################################################################
+#                                                                       #
+#  4.3.c : Plot y_d2[n] and y_d4[n]  and calculate the new x            #
+#                                                                       #
+#########################################################################
 
-fig, (ax3, ax4) = plt.subplots(2)
-fig.suptitle("yd4 and xd4")
-ax3.plot(n, details[3])
-ax4.plot(n, x[3], 'b')
+x_new = [ (x[i] - stat.mean(x[i])) for i in range(8)]
+x = x_new 
+
+figure_counter += 1
+plt.figure(figure_counter) 
+
+ax = plt.subplot2grid( (2,1), (0,0) )
+plt.title('Details[1]')
+plt.plot(np.arange(len(z[1])), details[1])
+
+ax = plt.subplot2grid( (2,1), (1,0) )
+plt.title('x[1]')
+plt.plot(np.arange(len(x[1])), x[1], 'b')
+plt.tight_layout() 
+plt.savefig('diagrams/x[1]_details[1].png')
+
+figure_counter += 1
+plt.figure(figure_counter) 
+
+ax = plt.subplot2grid( (2,1), (0,0) )
+plt.title('Details[3]')
+plt.plot(np.arange(len(z[3])), details[3])
+
+ax = plt.subplot2grid( (2,1), (1,0) )
+plt.title('x[3]')
+plt.plot(np.arange(len(x[3])), x[3], 'b') 
+plt.tight_layout() 
+plt.savefig('diagrams/x[3]_details[3].png') 
 
 
-## 4_4
-
-length = 0
-
-for i in range(8):
-    length_ = len(z[i])
-    if length < length_:
-        length = length_
-
-# print(length)
-length = length*2# length of original signal, (maybe should be length and not length*2, garoufh pou eisai <3)
+#########################################################################
+#                                                                       #
+#  4.4: Add the sourroundings                                           #
+#                                                                       #
+#########################################################################
+  
 length = len(signal)
+x_new = [np.interp(np.linspace(0, len(x_new[i]), length) , np.arange(len(x_new[i])), x_new[i]) for i in range(8)  ]
 
-for i in range(8):
-    values = np.linspace(0, len(x[i]), length)
-    # print(len(x[i]))
-    x[i] = np.interp(values, np.arange(0, len(x[i])), x[i])
-    # print(len(x[i]))
-
-for i in range(8):
-    figure_counter
-    plt.figure(figure_counter)
-    plt.plot(np.arange(0, length), x[i])
-
-
-
-sum_of = np.zeros(length)
-x = np.array(x)
-for i in range(length):
-    for j in range(8):
-        sum_of[i] += x[j][i]
+ 
 
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(np.arange(0, length), sum_of)
-plt.title("sum_of")
+for i in range(3):
+    for j in range(3):
+        if i == 2 and j == 2:
+            continue
+        ax = plt.subplot2grid((3,3), (i,j)) 
+        plt.title('x[' + str(3*i + j) +']')
+        plt.plot(np.arange(len(x_new[3*i + j])), x_new[3*i + j])
+
+plt.tight_layout() 
 
 
 
-## autocorrelation
+sum_of_x = np.zeros(length)
+x_new = np.array(x_new)
+
+for i in range(8):
+    for j in range(length):
+        sum_of_x[j] += x_new[i][j]
 
 
-print(len(sum_of))
+figure_counter += 1
+plt.figure(figure_counter)
+plt.plot(np.arange(length), sum_of_x)
+plt.title("sum_of_x")
+
+
+
+#########################################################################
+#                                                                       #
+#  autocorrelation                                                      #
+#                                                                       #
+#########################################################################
+
+
+print(len(sum_of_x))
 
 def autocorr(x):
     result = np.correlate(x, x, mode='full')
     return result[int(result.size/2):]
 
-autocorrelation = autocorr(sum_of)
+autocorrelation = autocorr(sum_of_x)  
 
 
-figure_counter += 1
-plt.figure(figure_counter)
-plt.plot(np.arange(len(autocorrelation)), autocorrelation)
-plt.title("autocorrelation")
-
-
-## 4_5
-
-## mas endiaferei to diasthma (se BPM): 60-200 (hdh apo to xroniko diagramma tou shmatos blepoume oti tha exoume sigoura 60 BPM kathws epanalambanete
-## enas xtupos ana 1 deutero
-
+#########################################################################
+#                                                                       #
+#  4.5: Find the bpm. We are instreaded in a range of 60-200 bpm.       #
+#                                                                       #
+######################################################################### 
 
 from scipy.ndimage import gaussian_filter1d
 
@@ -231,10 +202,23 @@ def findPeaksInInterval(array):
 
 autocorrelation_filtered = gaussian_filter1d(autocorrelation, 1)
 
+#########################################################################
+#                                                                       #
+#  plot both autocorrelation and autocorrelation filtered               #
+#                                                                       #
+#########################################################################
+
 figure_counter += 1
 plt.figure(figure_counter)
+
+ax = plt.subplot2grid((2,1),(0,0))
+plt.title("autocorrelation")
 plt.plot(np.arange(len(autocorrelation)), autocorrelation)
+
+ax = plt.subplot2grid((2,1),(1,0))
+plt.plot(np.arange(len(autocorrelation_filtered)), autocorrelation_filtered)
 plt.title("autocorrelation_filtered")
+plt.savefig('diagrams/autocorrelation.png')
 
 peaks = findPeaksInInterval(autocorrelation_filtered[6615:22051])
 print(peaks)
@@ -243,11 +227,27 @@ for i in range(len(peaks)):
 print(peaks)
 BPM = []
 
+
 for i in peaks:
     BPM.append(60*22050/i)
 
 BPM_sorted = BPM.sort()
 
 print(BPM)
+
+
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.title('Peaks')
+plt.stem(np.arange(len(peaks)), peaks)
+plt.savefig('diagrams/peaks.png')
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.title('Possible BPMs')
+plt.stem(np.arange(len(BPM)), BPM)
+plt.savefig('diagrams/bpm.png')
+
 
 plt.show()

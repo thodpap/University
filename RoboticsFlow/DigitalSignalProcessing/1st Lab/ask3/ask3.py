@@ -1,13 +1,9 @@
 import numpy as np
 from scipy.io import wavfile
-import pylab
+import matplotlib.pyplot as plt
 
-from scipy.io.wavfile import write
+from scipy.io.wavfile import write 
 
-##########################################################################
-#                                                                        #
-# 							IMPORTANT									 #
-#                                                                        #
 ##########################################################################
 #                                                                        #
 # We converted  the initial .wav file to a new .wav, because we coudn't  #
@@ -15,141 +11,84 @@ from scipy.io.wavfile import write
 #                                                                        #
 ########################################################################## 
 
+figure_counter = 0 
 samplerate, data = wavfile.read('../speech_utterance.wav')
+data = data/((max(abs(data)))) # normalize our data
 
-data = data/((max(abs(data))))
+##########################################################################
+#                                                                        #
+# Short time energy function 											 #
+#                                                                        #
+########################################################################## 
 
-
-
-##SHORT_TIME_ENERGY
 def short_time_energy(signal, len_divisor):
-    window = []
     window = np.hamming(len_divisor)
-    energy = []
-    energy = np.convolve(signal, window)
-    energy = list(energy)
+    energy = list(np.convolve(signal, window))
+
     for i in range(len(window)):
         energy.pop(i)
-    energy = np.array(energy)
-    return energy
+
+    return np.array(energy)
 
 
-# assert samplerate % 1000 == 0
-#
-# sampsPerMilli = int(samplerate / 1000)
-# millisPerFrame = 20
-# sampsPerFrame = sampsPerMilli * millisPerFrame
-# nFrames = int(len(data) / sampsPerFrame)  # number of non-overlapping _full_ frames
-#
-# print
-# 'samples/millisecond  ==> ', sampsPerMilli
-# print
-# 'samples/[%dms]frame  ==> ' % millisPerFrame, sampsPerFrame
-# print
-# 'number of frames     ==> ', nFrames
-#
-# STEs = []                                      # list of short-time energies
-# for k in range(nFrames):
-#      startIdx = k * sampsPerFrame
-#      stopIdx = startIdx + sampsPerFrame
-#      window = np.zeros(data.shape)
-#      window[startIdx:stopIdx] = 1               # rectangular window
-#      STE = sum((data ** 2) * (window ** 2))
-#      STEs.append(STE)
-#
-# pylab.figure(1)
-# pylab.plot(STEs)
-# pylab.title('Short-Time Energy')
-# pylab.ylabel('ENERGY')
-# pylab.xlabel('FRAME')
-# pylab.autoscale(tight='both');
-
-# energy = []
-#
-# # 1 16κ
-# # 25*16
 energy = short_time_energy(abs(data) ** 2, 200) #### FRIJO DIABASE EKFWNHSH NA BALEIS SWSTA SHMEIA ANTI GIA DIAKOSSIA H PARE CALL
 energy = energy/(max(abs(energy)))
 
 len_en = int(len(energy))
 time_en = np.arange(0, len_en)
+ 
 
-# energy_normalized = energy
+figure_counter += 1
+plt.figure(figure_counter)
+plt.xlabel("time in sec")
+plt.ylabel("normalized amplitudes")
+plt.plot(np.arange(0, len(data))*(1/samplerate), data, 'b', label="initial signal")
+plt.plot(time_en*(1/samplerate), energy, 'r', label="energy")
+plt.legend() 
+plt.savefig('diagrams/signal.png')
+ 
 
-counter = 0
-# pylab.figure(counter)
-# pylab.subplot(121)
-# pylab.plot(time, energy, 'r')
-# pylab.subplot(122)
-# pylab.plot(np.arange(0, len(data)), data, 'b')
+##########################################################################
+#                                                                        #
+# Zero crossing Rate													 #
+#                                                                        #
+########################################################################## 
 
-counter += 1
-pylab.figure(counter)
-pylab.xlabel("time in sec")
-pylab.ylabel("normalized amplitudes")
-pylab.plot(np.arange(0, len(data))*(1/samplerate), data, 'b', label="initial signal")
-pylab.plot(time_en*(1/samplerate), energy, 'r', label="energy")
-pylab.legend()
-
-
-# newArray = []
-# for i in range(11000,len(data)-1, 6000):
-# 	for j in range(i,min(len(data),i+6000)):
-# 		newArray.append(data[j])
-# 	for j in range(10000):
-# 		newArray.append(0.0)
-# 	break
-# newArray = np.array(newArray)
-
-
-# write("easySigInitial.wav", samplerate, newArray)
-
-##ZERO_CROSS_RATING
-
-def zero_crossing_rate(signal, len_divisor):
-    window = []
+def zero_crossing_rate(signal, len_divisor): 
     window = np.hamming(len_divisor)
-    cross = []
-    for i in range(1, len(signal)):
-        cross.append(abs(np.sign(signal[i]) - np.sign(signal[i-1])))
-    cross_rate = np.convolve(cross, window)
-    cross_rate = list(cross_rate)
+    cross = [(abs(np.sign(signal[i+1]) - np.sign(signal[i]))) for i in range(len(signal) - 1)]
+     
+    cross_rate = list(np.convolve(cross, window))
+
     for i in range(len(window)):
         cross_rate.pop(i)
-    cross_rate = np.array(cross_rate)
-    return cross_rate
+
+    return np.array(cross_rate)
 
 cross_rate = zero_crossing_rate(data, 400)
-cross_rate = cross_rate/max(abs(cross_rate))
+cross_rate = cross_rate/max(abs(cross_rate))   
 
 
-# counter += 1
-# pylab.figure(counter)
-# pylab.subplot(121)
-# time = np.arange(0, len(cross_rate))
-# pylab.plot(time, cross_rate, 'r')
-# pylab.subplot(122)
-# pylab.plot(np.arange(0, len(data)), data, 'b')
 
-len_cross = int(len(cross_rate))
-time_cross = np.arange(0, len_cross)
 
-counter += 1
-pylab.figure(counter)
-pylab.xlabel("time in sec")
-pylab.ylabel("normalized amplitudes")
-pylab.plot(np.arange(0, len(data))*(1/samplerate), data, 'b', label="initial signal")
-pylab.plot(time_cross*(1/samplerate), cross_rate, 'orange', label="cross rate")
-pylab.legend()
+figure_counter += 1
+plt.figure(figure_counter)
+plt.xlabel("time in sec")
+plt.ylabel("normalized amplitudes")
+plt.plot(np.arange(len(data))*(1/samplerate), data, 'b', label="initial signal")
+plt.plot(np.arange(int(len(cross_rate)) )*(1/samplerate), cross_rate, 'orange', label="cross rate")
+plt.legend()
+plt.savefig('diagrams/data_cross_rate.png')
 
-counter += 1
-pylab.figure(counter)
-pylab.title("combined plot")
-pylab.xlabel("tim in sec")
-pylab.ylabel("normalized amplitudes")
-pylab.plot(np.arange(0, len(data))*(1/samplerate), data, 'b', label="initial signal")
-pylab.plot(time_cross*(1/samplerate), cross_rate, 'green', label="cross rate")
-pylab.plot(time_en*(1/samplerate), energy, 'r', label="energy")
-pylab.legend()
+figure_counter += 1
+plt.figure(figure_counter)
+plt.title("combined plot")
+plt.xlabel("tim in sec")
+plt.ylabel("normalized amplitudes")
+plt.plot(np.arange(0, len(data))*(1/samplerate), data, 'b', label="initial signal")
+plt.plot(np.arange(0, int(len(cross_rate)) )*(1/samplerate), cross_rate, 'green', label="cross rate")
+plt.plot(time_en*(1/samplerate), energy, 'r', label="energy")
+plt.legend()
+plt.savefig('diagrams/combined_plot.png') 
 
-pylab.show()
+plt.show() 

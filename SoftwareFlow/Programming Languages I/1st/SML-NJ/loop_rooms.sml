@@ -20,8 +20,20 @@
 
 		val (M,N, arr) = parse "longest.txt" *)
 
+fun check a = if a < 5 then ((print(Int.toString(a))); ()) else ();
 
-val array = ["U", "L", "R", "L"];
+
+fun equals(b:string) = if b = "g" then true else false;
+
+ val x = Array.fromList(["U","L","R","D"]);
+
+fun run(a:array, counter:int) =
+    if Array.sub(a, counter) = "U" then true else false;
+    
+run(x, 1);
+
+
+(* val array = ["U", "L", "R", "L"];
 val arr = Array.fromList (array);
 
 fun loop_rooms(arr:array, N:int, M:int) = 
@@ -53,4 +65,4 @@ fun loop_rooms(arr:array, N:int, M:int) =
 
         in
             find_parents(0, 0)
-        end;
+        end; *)

@@ -1,38 +1,57 @@
- 
-
-val M = 11;
-val N = 3;
-val arr = [42, ~10, 8, 1, 11, ~6, ~12, 16, ~15 , ~11, 13];
-
-fun dpSolution (M:int , N:int, l) = 
-	let  
-		fun sums l = 
+fun longest file = 
+	let 
+		fun parse file =
 		    let 
-		        fun addTo ([], sumSoFar) = []
-		                | addTo (l, sumSoFar) = 
-		                    sumSoFar + hd l :: addTo(tl l, sumSoFar + hd l)
+		        fun readInt input = 
+			    Option.valOf (TextIO.scanStream (Int.scan StringCvt.DEC) input)
 
+		    	val inStream = TextIO.openIn file
+		 	
+				val m = readInt inStream  
+				val n = readInt inStream
+				val _ = TextIO.inputLine inStream 
+
+				fun readInts 0 acc = acc 
+			  		| readInts i acc = readInts (i - 1) (readInt inStream :: acc)
+		 
 		    in
-		        addTo(l,0)
-  		  	end 
-  		val a = Array.fromList (sums l)
-  		
-  		fun recursion (start, last, a) = 
-  			if start >= last then ~1
-  			else 
-  				let 
-  					fun sumOfStartLast (0, last, a) = Array.sub (a, last)  
-  						| sumOfStartLast(start, last,a) =  Array.sub (a, last) - Array.sub(a, start - 1)
-  					val sum = sumOfStartLast (start, last, a)
-  					val K = last - start + 1
+		   		(m,n, readInts m []) 
+		    end
 
-  				in 
-  					if sum <= ~ K * N then K
-  					else Int.max( recursion(start + 1,last,a) , recursion(start, last - 1, a) )
-  				end  
+		val (M,N, arr) = parse "longest.txt"
 
-  	in 
-  		recursion (0,M-1, a)
-  	end;
+		fun longestArg (M:int , N:int, l) = 
+			let  
+				fun sums l = 
+				    let 
+				        fun addTo ([], sumSoFar) = []
+				                | addTo (l, sumSoFar) = 
+				                    sumSoFar + hd l :: addTo(tl l, sumSoFar + hd l)
 
-dpSolution (M,N,arr)
+				    in
+				        addTo(l,0)
+		  		  	end 
+		  		val a = Array.fromList (sums l)
+		  		
+		  		fun recursion (start, last, a) = 
+		  			if start >= last then ~1
+		  			else 
+		  				let 
+		  					fun sumOfStartLast (0, last, a) = Array.sub (a, last)  
+		  						| sumOfStartLast(start, last,a) =  Array.sub (a, last) - Array.sub(a, start - 1)
+		  					val sum = sumOfStartLast (start, last, a)
+		  					val K = last - start + 1
+
+		  				in 
+		  					if sum <= ~ K * N then K
+		  					else Int.max( recursion(start + 1,last,a) , recursion(start, last - 1, a) )
+		  				end  
+
+		  	in 
+		  		recursion (0,M-1, a)
+		  	end
+
+
+	in 
+		longestArg (M,N,arr)
+	end;

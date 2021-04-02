@@ -50,17 +50,32 @@ void dpSolution(int start, int last, int sums[], int N, int M) {
 	} 
 }  
 
-int anotherSolution(int N,int M, int sums[]) {
-	int ans = 0;
-	for (int i = 0; i < M; ++i) {
-		for (int j = i; j < M; ++j) { 
-			if ( (double)((double)(sums[j] - sums[i-1]) / (double)((j - i + 1) * N)) <= -1.0){
-				ans = max(ans, j - i + 1); 
-			}				 
+int logarithmicSolution(int N,int M, int arr[]) {
+	map<int,int> sums;
+	sums[0] = 0; // empty -> have the whole sums map
+	int sum = 0, ans = 0;
+
+	for(int i = 1; i <= M; ++i) {
+		sum += arr[i-1];
+
+		if (sum <= -i * N) {
+			cout << i << endl;
+			ans = i;
+		} 
+		else {
+			// sum - sums[min(k)] <= -(i - k) * N 
+			// sums[k] > sum + (i-k) * N > sum + (ans + 1) * N - 1
+
+			auto upper = sums.upper_bound(sum + (ans+1) * N - 1);
+			
+			for (auto u = upper; u != sums.end(); ++u)
+				if (sum - u->first <= - N * (i - u->second)) 
+					ans = max(ans, i - u->second);  
 		}
+		sums[sum] = i;
 	}
 	return ans;
-}  
+}
 int nSolution() {
 	vector<pair<int,int>> highs,lows;
 	for (int i = 0; i < M; ++i) {
@@ -95,32 +110,6 @@ int nSolution() {
 	return ans;
 }
  
-int logarithmicSolution(int N,int M, int arr[]) {
-	map<int,int> sums;
-	sums[0] = 0; // empty -> have the whole sums map
-	int sum = 0, ans = 0;
-
-	for(int i = 1; i <= M; ++i) {
-		sum += arr[i-1];
-
-		if (sum <= -i * N) {
-			cout << i << endl;
-			ans = i;
-		} 
-		else {
-			// sum - sums[min(k)] <= -(i - k) * N 
-			// sums[k] > sum + (i-k) * N > sum + (ans + 1) * N - 1
-
-			auto upper = sums.upper_bound(sum + (ans+1) * N - 1);
-			
-			for (auto u = upper; u != sums.end(); ++u)
-				if (sum - u->first <= - N * (i - u->second)) 
-					ans = max(ans, i - u->second);  
-		}
-		sums[sum] = i;
-	}
-	return ans;
-}
 int main(int argc, char **argv) {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);

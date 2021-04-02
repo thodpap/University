@@ -102,7 +102,7 @@ int nSolution() {
 	int ans = 0;
 	for (auto h:highs) {
 		for (auto l:lows) {
-			if (l.second > l.first) continue;
+			if (h.second > l.first) continue;
 			if (l.first - h.first <= (h.second - l.second ) * N) 
 				ans = max(ans, l.second - h.second);
 		}

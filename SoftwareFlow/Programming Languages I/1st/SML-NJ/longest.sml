@@ -14,7 +14,7 @@ fun dpSolution (M:int , N:int, l) =
 
 		    in
 		        addTo(l,0)
-  		  end 
+  		  	end 
   		val a = Array.fromList (sums l)
   		
   		fun recursion (start, last, a) = 
@@ -27,11 +27,9 @@ fun dpSolution (M:int , N:int, l) =
   					val K = last - start + 1
 
   				in 
-  					if sum < ~ K * N then K
+  					if sum <= ~ K * N then K
   					else Int.max( recursion(start + 1,last,a) , recursion(start, last - 1, a) )
-  				end
-
-  		
+  				end  
 
   	in 
   		recursion (0,M-1, a)

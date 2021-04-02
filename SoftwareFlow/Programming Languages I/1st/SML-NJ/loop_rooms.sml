@@ -1,56 +1,63 @@
-(* fun loop_rooms file = 
-	let 
-		fun parse file =
-		    let 
-		        fun readInt input = 
-			    Option.valOf (TextIO.scanStream (Int.scan StringCvt.DEC) input)
+  
 
-		    	val inStream = TextIO.openIn file
-		 	
-				val m = readInt inStream  
-				val n = readInt inStream
-				val _ = TextIO.inputLine inStream 
+val N = 2;
+val M = 2;  
 
-				fun readInts 0 acc = acc 
-				    | readInts i acc = readInts (i - 1) (readInt inStream :: acc)
-		 
-		    in
-		   		(m,n, readInts m []) 
-		    end
+val input = ["R", "D", "U", "U"];
+val arr = Array.fromList (input);
+ 
 
-		val (M,N, arr) = parse "longest.txt" *)
-
-
-val array = ["U", "L", "R", "L"];
-val arr = Array.fromList (array);
-
-fun loop_rooms(arr:array, N:int, M:int) = 
-        let
-            val counter = 0
-            val visited = Array.array(N*M, 0)
-            fun find_parents(i, j) = 
-                index = i*M + j
-                Array.update(visited, index)
-                counter = counter + 1
-                (* val _ = if j >= 1 andalso not Array.sub(visited, index-1) andalso Array.sub(arr, index-1) == 'R' 
-                    then find_parents(i,j - 1) 
+fun loop_rooms(N, M, arr) = 
+    let
+        
+        fun get_list_n 0 = [] 
+            | get_list_n n =  0 :: get_list_n (n-1) 
+        
+        val visited = Array.fromList (get_list_n (N*M))
+         
+        
+        fun find_parents(i:int,j:int) = 
+            let   
+                val idx =  i*M + j
+                val _ = Array.update(visited, idx, 1)   
+                
+                val _ = if j > 0 andalso 
+                    (Array.sub(visited,idx - 1) = 0 andalso
+                    Array.sub(arr,idx - 1) = "R")
+                    then  (print("then1"); find_parents(i,j-1))
                     else ()
                     
-                val _ = if j < M  andalso not Array.sub(visited, index+1) andalso Array.sub(arr, index+1) == 'L' 
-                    then find_parents(i,j + 1) 
+                val _ = if j < M - 1 andalso Array.sub(visited, idx + 1) = 0 andalso
+                        Array.sub(arr,idx + 1) = "L" 
+                        then (print("then2\n"); find_parents(i,j+1))
                     else ()
-                   
-                val _ = if i >= 1 andalso not Array.sub(visited, index-M) andalso Array.sub(arr, index-M) == 'D' 
-                    then find_parents(i - 1,j) 
-                    else ()
-                   
-                val _ = if i < N  andalso not Array.sub(visited, index+M) andalso Array.sub(arr, index+M) == 'U' 
-                    then find_parents(i + 1,j) 
-                    else () *)
                 
-                print(Int.toString(counter) ^ "\n")
+                
+                val _ = if i > 0 andalso
+                    Array.sub(visited, idx - M) = 0 andalso
+                    Array.sub(arr,idx - M) = "D" 
+                    then (print("then3\n"); find_parents(i-1,j))
+                    else ()
+                    
+                val _ = if i < N - 1 andalso
+                    Array.sub(visited, idx + M) = 0 andalso
+                    Array.sub(arr,idx + M) = "U"
+                    then (print("then4\n"); find_parents(i+1,j))
+                    else ()
+                        
+                in 
+                    ()
+                end 
+            
+            fun dfs() = 
+                let 
+                    
+                in
+                
+                end 
+         
+    in 
+        (visited)
+    end;
 
-
-        in
-            find_parents(0, 0)
-        end;
+loop_rooms(N,M, arr)

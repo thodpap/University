@@ -12,4 +12,4 @@ for i in range(M):
 	else:
 		f.write(str(t) + " ") 
 
-f.close()
+f.close() 

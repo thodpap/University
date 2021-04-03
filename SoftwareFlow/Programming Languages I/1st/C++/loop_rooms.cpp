@@ -28,25 +28,25 @@ void dfs() {
 	/* i = 0   and j 	     */
 	p = 0;
 	for(int j = 0; j < M; ++j) 
-		if (arr[p][j] == 'U') 
+		if (arr[p][j] == 'U' && !visited[p][j]) 
 			find_parents(p,j);
 
 	/* i = N-1 and j 	     */
 	p = N-1;
 	for (int j = 0; j < M; ++j) 
-		if (arr[p][j] == 'D') 
+		if (arr[p][j] == 'D' && !visited[p][j]) 
 			find_parents(p,j);
 
 	/* i 	   and j = 0 	 */
 	q = 0;
 	for (int i = 0; i < N; ++i) 
-		if (arr[i][q] == 'L') 
+		if (arr[i][q] == 'L' && !visited[i][q]) 
 			find_parents(i,q);
 
 	/* i 	   and j = M - 1 */
 	q = M - 1;
 	for (int i = 0; i < M; ++i) 
-		if (arr[i][q] == 'R') 
+		if (arr[i][q] == 'R' && !visited[i][q]) 
 			find_parents(i,q);
 			
 } 

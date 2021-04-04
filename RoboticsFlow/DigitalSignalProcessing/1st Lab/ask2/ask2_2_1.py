@@ -72,7 +72,7 @@ for index, window_length in enumerate(windows_length):
     plt.pcolormesh(timer, freqs, spectogram)
     plt.xlabel("Time")
     plt.ylabel("Frequency Amplitude")
-    plt.title("Spectrogram of Signal with window " + str(window_length))
+    plt.title("Spectrogram of Signal with window " + str(window_length) + " samples")
  
     plt.savefig('ask2_1/sectograms_' + str(window_length) + '.png')
 

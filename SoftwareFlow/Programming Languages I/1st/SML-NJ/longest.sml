@@ -8,7 +8,7 @@ fun longest file =
 		    	val inStream = TextIO.openIn file
 		 	
 				val m = readInt inStream  
-				val n = readInt inStream
+				val n = readInt inStream 
 				val _ = TextIO.inputLine inStream 
 
 				fun readInts 0 acc = acc 

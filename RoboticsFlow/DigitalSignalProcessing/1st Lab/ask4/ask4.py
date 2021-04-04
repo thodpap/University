@@ -12,11 +12,10 @@ import warnings
 files = ['../foxtrot_excerpt1.mp3', 
          '../foxtrot_excerpt2.mp3', 
          '../salsa_excerpt.mp3' ]
-
-file = files[1]
+ 
 warnings.simplefilter("ignore", UserWarning)
 figure_counter = 0 #for plots
-data, samplerate = librosa.load(file) #default 22050 samplerate freq
+data, samplerate = librosa.load(files[0]) #default 22050 samplerate freq
 
 
 
@@ -111,27 +110,27 @@ figure_counter += 1
 plt.figure(figure_counter) 
 
 ax = plt.subplot2grid( (2,1), (0,0) )
-plt.title('Details[1]')
+plt.title('Details[2]')
 plt.plot(np.arange(len(z[1])), details[1])
 
 ax = plt.subplot2grid( (2,1), (1,0) )
-plt.title('x[1]')
+plt.title('x[2]')
 plt.plot(np.arange(len(x[1])), x[1], 'b')
 plt.tight_layout() 
-plt.savefig('diagrams/x[1]_details[1].png')
+plt.savefig('diagrams/x[2]_details[2].png')
 
 figure_counter += 1
 plt.figure(figure_counter) 
 
 ax = plt.subplot2grid( (2,1), (0,0) )
-plt.title('Details[3]')
+plt.title('Details[4]')
 plt.plot(np.arange(len(z[3])), details[3])
 
 ax = plt.subplot2grid( (2,1), (1,0) )
-plt.title('x[3]')
+plt.title('x[4]')
 plt.plot(np.arange(len(x[3])), x[3], 'b') 
 plt.tight_layout() 
-plt.savefig('diagrams/x[3]_details[3].png') 
+plt.savefig('diagrams/x[4]_details[4].png') 
 
 
 #########################################################################
@@ -140,7 +139,7 @@ plt.savefig('diagrams/x[3]_details[3].png')
 #                                                                       #
 #########################################################################
   
-length = len(signal)
+length = len(signal)/2
 x_new = [np.interp(np.linspace(0, len(x_new[i]), length) , np.arange(len(x_new[i])), x_new[i]) for i in range(8)  ]
 
  
@@ -152,7 +151,10 @@ for i in range(3):
         if i == 2 and j == 2:
             continue
         ax = plt.subplot2grid((3,3), (i,j)) 
-        plt.title('x[' + str(3*i + j) +']')
+        if 3*i + j < 7:
+            plt.title('x[' + str(3*i + j+1) +']')
+        else:
+            plt.title('a[' + str(3*i + j + 1) +']')
         plt.plot(np.arange(len(x_new[3*i + j])), x_new[3*i + j])
 
 plt.tight_layout() 
@@ -208,22 +210,16 @@ autocorrelation_filtered = gaussian_filter1d(autocorrelation, 1)
 
 #########################################################################
 #                                                                       #
-#  plot both autocorrelation and autocorrelation filtered               #
+#  plot autocorrelation filtered                                        #
 #                                                                       #
 #########################################################################
 
 figure_counter += 1
 plt.figure(figure_counter)
-
-ax = plt.subplot2grid((2,1),(0,0))
-plt.title("autocorrelation")
-plt.plot(np.arange(len(autocorrelation)), autocorrelation)
-
-ax = plt.subplot2grid((2,1),(1,0))
-plt.plot(np.arange(len(autocorrelation_filtered)), autocorrelation_filtered)
-plt.title("autocorrelation_filtered")
-plt.tight_layout()  
-plt.savefig('diagrams/autocorrelation.png')
+ 
+plt.title("Autocorrelation Filtered")
+plt.plot(np.arange(len(autocorrelation_filtered)), autocorrelation_filtered) 
+plt.savefig('diagrams/autocorrelation_filtered.png')
 
 peaks = findPeaksInInterval(autocorrelation_filtered[6615:22051])
 print(peaks)
@@ -234,7 +230,7 @@ BPM = []
 
 
 for i in peaks:
-    BPM.append(60*22050/i)
+    BPM.append(int(60*22050/i))
 
 BPM_sorted = BPM.sort()
 
@@ -256,3 +252,5 @@ plt.savefig('diagrams/bpm.png')
 
 
 plt.show()
+ 
+ 

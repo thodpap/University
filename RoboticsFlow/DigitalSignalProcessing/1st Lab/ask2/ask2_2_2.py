@@ -86,11 +86,11 @@ for window_length in windows_length:
     plt.contour(np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1), freqs, spectogram)
     plt.xlabel("Time")
     plt.ylabel("Frequency Amplitude")
-    plt.title("Spectrogram of Signal with window " + str(window_length)) 
+    plt.title("Spectrogram of Signal with window " + str(window_length) + " samples") 
      
     ax = plt.subplot2grid((2,1), (1,0))    
     plt.pcolormesh(np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1), freqs, spectogram)
-    plt.title("Wavelet transform of signal with window " + str(window_length))
+    # plt.title("Wavelet transform of signal with window " + str(window_length) + " samples")
     plt.xlabel("Time")
     plt.ylabel("Scales")
 
@@ -156,16 +156,14 @@ plt.figure(figure_counter)
 
 ax = plt.subplot2grid((2,1),(0,0))
 plt.contour(time, frequencies, wavTransform)
-plt.title("Wavelet transform of signal with colormesh")
+plt.title("Wavelet transform of signal")
 plt.xlabel("Time")
 plt.ylabel("Scales")
 
 ax = plt.subplot2grid((2,1),(1,0))
-plt.pcolormesh(time, frequencies, wavTransform)
-plt.title("Wavelet transform of signal with color mesh")
+plt.pcolormesh(time, frequencies, wavTransform) 
 plt.xlabel("Time")
 plt.ylabel("Scales")
-
 plt.tight_layout()
 plt.savefig('ask2_2/wavelet_transform.png')
 

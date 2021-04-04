@@ -9,13 +9,14 @@ import librosa
 import pywt
 import warnings
 
-file1 = '../foxtrot_excerpt1.mp3'
-file2 = '../foxtrot_excerpt2.mp3'
-file3 = '../salsa_excerpt.mp3'
+files = ['../foxtrot_excerpt1.mp3', 
+         '../foxtrot_excerpt2.mp3', 
+         '../salsa_excerpt.mp3' ]
 
+file = files[1]
 warnings.simplefilter("ignore", UserWarning)
 figure_counter = 0 #for plots
-data, samplerate = librosa.load(file3) #default 22050 samplerate freq
+data, samplerate = librosa.load(file) #default 22050 samplerate freq
 
 
 

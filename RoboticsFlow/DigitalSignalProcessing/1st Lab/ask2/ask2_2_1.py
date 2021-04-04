@@ -31,7 +31,7 @@ signal = (2 * np.cos(2 * math.pi * 70 * time)
 figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(time, signal)
-plt.title("given signal")
+plt.title("Signal")
 plt.xlabel("amplitude")
 plt.ylabel("time")
 plt.savefig('ask2_1/signal.png')
@@ -61,11 +61,11 @@ windows_length = [40, 80,160]
 for index, window_length in enumerate(windows_length):
     n_fft = window_length
  
-    stft_ed = librosa.stft(signal, n_fft=n_fft, hop_length=int(n_fft / 2))
-    spectogram = np.abs(stft_ed) ** 2 
+    stft_ed = librosa.stft(signal, n_fft=2000, win_length=n_fft, hop_length=int(n_fft / 2))
+    spectogram = np.abs(stft_ed)
 
-    freqs = np.linspace(0, Fs / 2, int(1 + n_fft / 2)) 
-    timer = np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1) 
+    freqs = np.linspace(0, Fs / 2, spectogram.shape[0])  # int(1 + n_fft / 2)
+    timer = np.linspace(0, 2, spectogram.shape[1])       # int(2 * len(signal) / n_fft) + 1) 
 
     figure_counter += 1
     plt.figure(figure_counter)
@@ -131,9 +131,20 @@ print("frqs: ", frequencies)
 figure_counter += 1
 plt.figure(figure_counter)
 plt.pcolormesh(time, frequencies, wavTransform)
-plt.title("Wavelet transform of signal")
+plt.title("C(τ,f)")
+plt.xlabel("Time")
+plt.ylabel("Frequencies")
+plt.savefig('ask2_1/wavelet_transform_f.png')
+plt.tight_layout()
+
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.pcolormesh(time, scales, wavTransform)
+plt.title("C(τ,s)")
 plt.xlabel("Time")
 plt.ylabel("Scales")
-plt.savefig('ask2_1/wavelet_transform.png')
+plt.savefig('ask2_1/wavelet_transform_s.png')
 plt.tight_layout()
+
 plt.show()

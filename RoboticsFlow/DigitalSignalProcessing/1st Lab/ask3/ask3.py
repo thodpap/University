@@ -12,7 +12,10 @@ from scipy.io.wavfile import write
 ########################################################################## 
 
 figure_counter = 0 
-samplerate, data = wavfile.read('../speech_utterance.wav')
+file = ['../speech_utterance.wav',
+        '../music.wav']
+
+samplerate, data = wavfile.read(file[1])
 data = data/((max(abs(data)))) # normalize our data
 
 ##########################################################################
@@ -31,7 +34,7 @@ def short_time_energy(signal, len_divisor):
     return np.array(energy)
 
 
-energy = short_time_energy(abs(data) ** 2, 200) #### FRIJO DIABASE EKFWNHSH NA BALEIS SWSTA SHMEIA ANTI GIA DIAKOSSIA H PARE CALL
+energy = short_time_energy(abs(data) ** 2, 400)  
 energy = energy/(max(abs(energy)))
 
 len_en = int(len(energy))

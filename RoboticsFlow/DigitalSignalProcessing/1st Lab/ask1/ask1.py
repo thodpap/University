@@ -135,7 +135,7 @@ for i in range(3):
 
 ax = plt.subplot2grid((4,3), (3,1))
 plt.title('DFT of d[0]')
-plt.plot(freq,abs(dft_array[0]))
+plt.plot(np.arange(250),abs(dft_array[0][:250]))
 plt.tight_layout()  
 plt.savefig('diagrams/all_dfts.png')
 plt.show()

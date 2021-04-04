@@ -25,35 +25,19 @@ figure_counter = 0
 
 time = np.linspace(0, 2, 2000)
 # noise = np.array([np.random.normal(0) for _ in range(len(time))])
-noise = np.random.normal(0, 1, 2000)
-dirac_1, dirac_2 = [], []
-# for t in time:
-#     if abs(t - 0.725) <= 0.0005:
-#         dirac_1.append(1.7)
-#     else:
-#         dirac_1.append(0.0)
-# for t in time:
-#     if abs(t - 0.900) <= 0.0005:
-#         dirac_2.append(1.7)
-#     else:
-#         dirac_2.append(0.0)
+noise = np.random.normal(0, 1, 2000)  
 dirac1 = signal.unit_impulse(2000, 725)
 dirac2 = signal.unit_impulse(2000, 900)
-
-# signal = (1.5 * np.cos(2 * math.pi * 80 * time)
-#           + 0.15 * noise
-#           + dirac_1
-#           - dirac_2)
 
 signal = 1.5*np.cos(2*math.pi*80*time) + 0.15*noise + 1.7*dirac1 - 1.7*dirac2
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(time, signal)
-plt.title("given signal")
+plt.title("Signal")
 plt.xlabel("amplitude")
 plt.ylabel("time")
-
+plt.savefig('ask2_2/signal.png')
 
 
 ##############################################################################
@@ -80,25 +64,25 @@ windows_length = [40, 80, 160]
 for window_length in windows_length:
     n_fft = window_length
 
-    stft_ed = librosa.core.stft(signal, n_fft=2000, win_length=n_fft, hop_length=int(n_fft/2))   # n_fft=n_fft, hop_length=int(n_fft / 2))
+    stft_ed = librosa.core.stft(signal, n_fft=2000, win_length=n_fft, hop_length=int(n_fft/2))   
     spectogram = np.abs(stft_ed)
     print(spectogram.shape)
-    freqs = np.linspace(0, Fs / 2, spectogram.shape[0])  # int(1 + n_fft / 2))
+    freqs = np.linspace(0, Fs / 2, spectogram.shape[0])  
 
     figure_counter += 1
     plt.figure(figure_counter)
-    timer = np.linspace(0, 2, spectogram.shape[1])  # int(2 * len(signal) / n_fft) + 1)
+    ax = plt.subplot2grid((2,1), (0,0))    
+    timer = np.linspace(0, 2, spectogram.shape[1])  
     plt.contour(timer, freqs, np.abs(spectogram), 15)
     plt.xlabel("Time")
-    plt.ylabel("Frequency Amplitude")
-
-    plt.title("Spectrogram of Signal with window " + str(window_length) + " samples") 
+    plt.ylabel("Frequency Amplitude") 
+    plt.title("Spectogram of Signal with window " + str(window_length) + " samples") 
      
     ax = plt.subplot2grid((2,1), (1,0))    
-    plt.pcolormesh(np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1), freqs, spectogram)
-    # plt.title("Wavelet transform of signal with window " + str(window_length) + " samples")
+    plt.pcolormesh(np.linspace(0, 2, int(2 * len(signal) / n_fft) + 1), freqs, spectogram) 
     plt.xlabel("Time")
     plt.ylabel("frequencies")
+    plt.savefig('ask2_2/spectograms_' + str(window_length) + '.png')
 
 
 

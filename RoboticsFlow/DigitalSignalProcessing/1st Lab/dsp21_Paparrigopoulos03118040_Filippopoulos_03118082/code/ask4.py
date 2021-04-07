@@ -261,7 +261,7 @@ max_amplitude = 0
 ans_bpm = 0
 for bpm, peak, value in BPMs:
     if value > max_amplitude:
-        ans_bpm = value
+        max_amplitude = value
         ans_bpm = bpm
 
 print(ans_bpm)

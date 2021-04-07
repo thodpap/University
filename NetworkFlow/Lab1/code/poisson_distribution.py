@@ -15,8 +15,7 @@ labelTuple = [
 	("k values","Probability"),
 	("k values","Probability"),
 	("k values","Probability"), 
-]
-
+] 
  
 
 

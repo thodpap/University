@@ -1,0 +1,30 @@
+IN 10H
+LXI B,01F4H 	; 500
+MVI A,01H
+
+PRINT:
+CMA		; Inverse logic at 3000Η
+STA 3000H	; store A in 3000H
+CMA		; restore value			
+MOV D,A		; save to A to D 
+
+START:	
+CALL DELB  	; pause for 1ms * B = 1ms * 500 = 0.5 s
+LDA 2000H	; load 2000H to A 
+ANI 81H		; A = A AND 10000001 (To keep MSB and LSB)
+CPI 01H		; if A equals 00000001 then Zero flag = 1 else 0
+JZ LEFT		; if zero flag = 1 jump to LEFT
+CPI 81H		; check now if A equals to 10000001 then zero flag = 1 else 0
+JZ RIGHT	; if zero flag = 1 then jump to RIGHT
+JMP START	; else jump to back to START (we are in a waiting position) 
+
+LEFT:			
+MOV A,D		; Save the previous value of the counter (stored in D)
+RLC		; Rotate Left without Carry
+JMP PRINT	; Jump back to PRINT
+
+RIGHT:
+MOV A,D		; Save the previous value of the counter (stored in D)
+RRC		; Rotate Right without Carry
+JMP PRINT	; Jump back to PRINT
+END

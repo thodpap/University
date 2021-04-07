@@ -58,7 +58,7 @@ plt.savefig('diagrams/signal.png')
 ########################################################################## 
 
 def zero_crossing_rate(signal, len_divisor): 
-    window = np.hamming(len_divisor)
+    window = np.hamming(len_divisor) ** 2
     cross = [(abs(np.sign(signal[i+1]) - np.sign(signal[i]))) for i in range(len(signal) - 1)]
      
     cross_rate = list(np.convolve(cross, window))

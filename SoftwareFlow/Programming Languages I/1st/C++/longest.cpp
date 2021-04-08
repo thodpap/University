@@ -112,10 +112,16 @@ int linearSolution(int N,int M,int arr[]) {
 			min_so_far = sums_n[i];
 			min_from_left.push_back(make_pair(min_so_far,i));
 		}
-	} 
+	}  
 	int ans = 0;
-	for (auto &maxi : max_from_right) {
+	for (auto &maxi : max_from_right) { 
+		if (M-1 - maxi.second <= ans)
+			break;
 		for (auto &mini : min_from_left) {
+			if ( mini.second <= maxi.second) {
+				break;
+			}
+
 			if ( mini.first - maxi.first <= 0) {
 				ans = max(ans, mini.second - maxi.second);
 				break;

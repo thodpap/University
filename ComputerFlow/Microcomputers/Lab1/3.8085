@@ -5,7 +5,7 @@ CPI C8H		; if A equals 200 then zero flag sets to 1 else 0
 JNZ HUND2		; if zero flag is 0 jump to HUND2 
 CPI 64H		; if zero flag is 1 check if A equals 100
 JNZ HUND		; if zero flag is 0 jump to HUND
-MVI B,FFH		; else set B = 255
+MVI B,FFH		; else set B = 255 
 
 DECA:		
 INR B			; B = B + 1 

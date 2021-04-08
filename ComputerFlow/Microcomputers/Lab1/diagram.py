@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt 
 
-axis = np.arange(10000)
+axis = np.arange(12000)
 
 line_ic = 20000 + axis*20
 line_fpgas = 10000 + axis*40

@@ -42,7 +42,8 @@ plt.savefig("../figures/ExponentialDistribution/" + str(figure_counter) + ".png"
 ##############################
 
 figure_counter += 1
-plt.figure(figure_counter)
+plt.figure(figure_counter) 
+plt.title(figure_titles[figure_counter])
 for i, lamda in enumerate(inverse_lamdas): 
 	plt.plot(axis, expon.cdf(axis, 0,lamda), label=str(lamda))  
 

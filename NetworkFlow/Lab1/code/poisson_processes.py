@@ -36,11 +36,10 @@ plt.step(range(100), grid,label = "Poisson Process Counting", color = "red")
 xlabel, ylabel = labelTuple[figure_counter]
 plt.xlabel(xlabel)
 plt.ylabel(ylabel)
-plt.grid() 	
-
+plt.grid() 	 
+plt.savefig("../figures/PoissonProcesses/" + str(figure_counter) + ".png")
 plt.show()
 
-plt.savefig("../figures/PoissonProcesses/" + str(figure_counter) + ".png")
 
 ##############################
 # B 						 #
@@ -49,9 +48,4 @@ plt.savefig("../figures/PoissonProcesses/" + str(figure_counter) + ".png")
 for i in [2,3,5,10,100]:
     grid = np.random.poisson(lamda,i*100)
     print ("For Lambda = {}, mean is {}".format(i*100,np.mean(grid)))
-
-# For Lambda = 200, mean is 4.775
-# For Lambda = 300, mean is 5.036666666666667
-# For Lambda = 500, mean is 5.038
-# For Lambda = 1000, mean is 4.966
-# For Lambda = 10000, mean is 5.0013
+ 

@@ -82,6 +82,49 @@ int logarithmicSolution(int N,int M, int arr[]) {
 		sums[sum] = i;
 	}
 	return ans;
+}
+
+int sums_n[500005];
+int linearSolution(int N,int M,int arr[]) {
+	for (int i = 0; i < M; ++i) {
+		sums_n[i] = sums_n[i-1]+ arr[i] + N; 
+	}  
+
+
+
+	vector<pair<int,int>> max_from_right, min_from_left;
+
+	int max_so_far = sums_n[0];
+	int min_so_far = sums_n[M-1];
+
+
+	max_from_right.push_back(make_pair(max_so_far,0));
+	min_from_left.push_back(make_pair(min_so_far, M-1));
+
+	for (int i = 1; i < M; ++i) {
+		if (sums_n[i] > max_so_far) {
+			max_so_far = sums_n[i];
+			max_from_right.push_back(make_pair(max_so_far,i));
+		}
+	}
+	for (int i = M - 2; i >= 0; --i) {
+		if (sums_n[i] < min_so_far) {
+			min_so_far = sums_n[i];
+			min_from_left.push_back(make_pair(min_so_far,i));
+		}
+	} 
+	int ans = 0;
+	for (auto &maxi : max_from_right) {
+		for (auto &mini : min_from_left) {
+			if ( mini.first - maxi.first <= 0) {
+				ans = max(ans, mini.second - maxi.second);
+				break;
+			}
+		}
+	}
+
+	return ans;
+}
 
  
 int main(int argc, char **argv) {
@@ -100,6 +143,7 @@ int main(int argc, char **argv) {
 	// dpSolution(0,M-1,sums);
 	// cout << "DP = " << dp[0][M-1] << endl;
 	cout << "NlogN = " << logarithmicSolution(N,M,arr) << endl; 
+	cout << "N = " << linearSolution(N,M,arr) << endl;
 	fclose(file);
 	return 0;
 } 

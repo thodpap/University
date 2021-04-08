@@ -88,9 +88,8 @@ int sums_n[500005];
 int linearSolution(int N,int M,int arr[]) {
 	for (int i = 0; i < M; ++i) {
 		sums_n[i] = sums_n[i-1]+ arr[i] + N; 
-	}  
-
-
+	}   
+	cout << sums_n[M-1] << endl;
 
 	vector<pair<int,int>> max_from_right, min_from_left;
 

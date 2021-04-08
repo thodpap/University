@@ -26,7 +26,7 @@ int recursion(int start, int last, int sums[]) {
 	return max(one,two);
 }
 int sums[10000];
-int dp[1000][1000]; 
+int dp[50000][500000]; 
 void dpSolution(int start, int last, int sums[]) {
 	if (start >= last) return ;
 

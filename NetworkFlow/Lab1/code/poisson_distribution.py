@@ -31,25 +31,24 @@ plt.figure(figure_counter)
 plt.title(figure_titles[figure_counter])
 colors = ['red','green','blue','black'] 
 for i, lamda in enumerate(lamdas): 
-	markerline, stemlines, baseline = plt.stem(axis, poisson.pmf(axis, lamda), colors[i] , use_line_collection=True) 
+	markerline, stemlines, baseline = plt.stem(axis, poisson.pmf(axis, lamda), colors[i] , use_line_collection=True,label="lamda = " + str(lamda) ) 
 	markerline.set_markerfacecolor(colors[i])
 
 
-	xlabel, ylabel = labelTuple[figure_counter]
-	plt.xlabel(xlabel)
-	plt.ylabel(ylabel)
-	plt.grid() 
+xlabel, ylabel = labelTuple[figure_counter]
+plt.xlabel(xlabel)
+plt.ylabel(ylabel)
+plt.grid() 
+plt.legend()
 plt.savefig("../figures/PoissonDistribution/" + str(figure_counter) + ".png")
 
 ##############################
 # B 						 #
 ##############################
 
-
-lamdas = 30
-mean,var ,skew, kurt = poisson.stats(lamdas,moments='mvsk')
-print(mean)
-print ("For lamda = ", lamdas, "\twe have mean = ", mean, " and variance = ", var)
+for lamda in lamdas:
+	mean,var ,skew, kurt = poisson.stats(lamda,moments='mvsk')
+	print ("For lamda = ", lamda, ", we have mean = ", mean, " and variance = ", var)
 
 
 

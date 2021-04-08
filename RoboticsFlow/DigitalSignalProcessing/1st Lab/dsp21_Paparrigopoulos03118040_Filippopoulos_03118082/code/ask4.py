@@ -27,6 +27,12 @@ data, samplerate = librosa.load(file) #default 22050 samplerate freq
 #                                                                       #
 #########################################################################
 
+starting_position = 4000
+if file == files[1]:
+    starting_position = 10000
+elif file == files[2]: 
+    starting_position = 16000
+
 signal = data[10000:(2**16+10000)]
 n = np.arange(0, len(signal))
 
@@ -242,14 +248,13 @@ plt.savefig('diagrams/autocorrelation_filtered.png')
 peaks = findPeaksInInterval(autocorrelation_filtered[6615:22051]) # So that 60 <= bpm <= 200
 
 BPMs = []
-print(peaks)
-
+values = []
 for peak in peaks:
     value = autocorrelation_filtered[peak+6615]
     bpm = int(60*22050 / (peak+6615))
-    BPMs.append( (bpm, peak + 6615, value))
- 
-print(np.array(sorted(BPMs, key=lambda tup: tup[0])))
+    BPMs.append(bpm)
+    values.append(value)
+  
 
 #########################################################################
 #                                                                       #
@@ -257,14 +262,14 @@ print(np.array(sorted(BPMs, key=lambda tup: tup[0])))
 #                                                                       #
 #########################################################################
 
-max_amplitude = 0
-ans_bpm = 0
-for bpm, peak, value in BPMs:
-    if value > max_amplitude:
-        max_amplitude = value
-        ans_bpm = bpm
 
-print(ans_bpm)
+ 
+bpm = 0
+max_amplitude = max(values)
+for index,value in enumerate(values):
+    if max_amplitude == value:
+        bpm = BPMs[index]
+print(bpm)
  
 
 plt.show()

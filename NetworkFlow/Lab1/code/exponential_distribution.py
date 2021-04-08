@@ -61,7 +61,7 @@ plt.savefig("../figures/ExponentialDistribution/" + str(figure_counter) + ".png"
 print ("Pr(X>30.000) = ", 1 - expon.cdf(axis[30000],0,2.5))
 print ("Pr(X>50.000) = ", 1 - expon.cdf(axis[50000],0,2.5))
 print ("Pr(X>20.000) = ", 1 - expon.cdf(axis[20000],0,2.5))
-print ("Pr(X>50.000 | X>20.000) = ",(1 - expon.cdf(axis[50000],0,2.5))/(1-expon.cdf(tau[20000],0,2.5)))
+print ("Pr(X>50.000 | X>20.000) = ",(1 - expon.cdf(axis[50000],0,2.5))/(1-expon.cdf(axis[20000],0,2.5)))
 
 
 plt.show()

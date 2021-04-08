@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <map>
 #include <vector>
-
+#include <time.h>
 using namespace std; 
 
 int arr[500005];
@@ -60,44 +60,21 @@ int anotherSolution(int N,int M, int sums[]) {
 		}
 	} 
 	return ans;
-}  
-
-int logarithmicSolution(int N,int M, int arr[]) {
-	map<int,int> sums;
-	sums[0] = 0; // empty -> have the whole sums map
-	int sum = 0, ans = 0;
-
-	for(int i = 1; i < M; ++i) {
-		sum += arr[i-1];
-
-		if (sum <= -i * N) { 
-			ans = i;
-		} 
-		else { 
-			auto upper = sums.upper_bound(sum + (ans+1) * N - 1);
-			for (auto u = upper; u != sums.end(); ++u)
-				if (sum - u->first <= - N * (i - u->second)) 
-					ans = max(ans, i - u->second);  
-		}
-		sums[sum] = i;
-	}
-	return ans;
-}
+}   
 
 int sums_n[500005];
-int linearSolution(int N,int M,int arr[]) {
+int linearSolution(int N,int M,int arr[]) { 
+	int ans = 0; 
 	for (int i = 0; i < M; ++i) {
 		sums_n[i] = sums_n[i-1]+ arr[i] + N; 
-	}   
-	cout << sums_n[M-1] << endl;
+	}    
+	vector<pair<long long,int>> max_from_right, min_from_left;
 
-	vector<pair<int,int>> max_from_right, min_from_left;
-
-	int max_so_far = sums_n[0];
+	int max_so_far = 0;
 	int min_so_far = sums_n[M-1];
 
 
-	max_from_right.push_back(make_pair(max_so_far,0));
+	max_from_right.push_back(make_pair(max_so_far,-1));
 	min_from_left.push_back(make_pair(min_so_far, M-1));
 
 	for (int i = 1; i < M; ++i) {
@@ -112,20 +89,22 @@ int linearSolution(int N,int M,int arr[]) {
 			min_from_left.push_back(make_pair(min_so_far,i));
 		}
 	}  
-	int ans = 0;
-	for (auto &maxi : max_from_right) { 
-		if (M-1 - maxi.second <= ans)
-			break;
-		for (auto &mini : min_from_left) {
-			if ( mini.second <= maxi.second) {
-				break;
-			}
+	auto i = max_from_right.begin();
+	auto j = min_from_left.rbegin();
 
-			if ( mini.first - maxi.first <= 0) {
-				ans = max(ans, mini.second - maxi.second);
-				break;
-			}
-		}
+	while(i != max_from_right.end() && j != min_from_left.rend()) {
+		if (j->first <= i->first) {
+			while (j + 1 != min_from_left.rend() && (j+1)->first <= i->first) 
+				++j;
+			ans = max(ans, j->second - i->second);
+			++i;
+			++j;
+		} 
+		else if (i->second <  j->second - 1)
+			++i;
+		else 
+			j++;
+
 	}
 
 	return ans;
@@ -133,6 +112,7 @@ int linearSolution(int N,int M,int arr[]) {
 
  
 int main(int argc, char **argv) {
+    clock_t tStart = clock();
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	
@@ -141,14 +121,15 @@ int main(int argc, char **argv) {
 	cin >> M >> N;
 	for (int i = 0; i < M; ++i) cin >> arr[i];
 
-	for(int i = 0; i < M; ++i) {
-		sums[i] = arr[i] + sums[i-1]; 
-	} 
-	cout << "N^2 = " << anotherSolution(N,M,sums) << endl;
+	// for(int i = 0; i < M; ++i) {
+	// 	sums[i] = arr[i] + sums[i-1]; 
+	// } 
+	// cout << "N^2 = " << anotherSolution(N,M,sums) << endl;
 	// dpSolution(0,M-1,sums);
-	// cout << "DP = " << dp[0][M-1] << endl;
-	cout << "NlogN = " << logarithmicSolution(N,M,arr) << endl; 
+	// cout << "DP = " << dp[0][M-1] << endl; 
 	cout << "N = " << linearSolution(N,M,arr) << endl;
 	fclose(file);
+	printf("Time taken: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
+    
 	return 0;
 } 

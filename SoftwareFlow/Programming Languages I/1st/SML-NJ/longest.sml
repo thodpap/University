@@ -18,7 +18,7 @@ fun longest file =
 		   		(m,n, readInts m []) 
 		    end
 
-		val (M,N, arr) = parse "longest.txt"
+		val (M,N, arr) = parse file
 
 		fun longestArg (M:int , N:int, l) = 
 			let  
@@ -53,5 +53,5 @@ fun longest file =
 
 
 	in 
-		longestArg (M,N,arr)
+		print(Int.toString(longestArg (M,N,arr)))
 	end;

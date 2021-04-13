@@ -1,24 +1,24 @@
 START:
 LXI B,01F4H		; B = 500 (500ms delay)
 LDA 2000H		; Load 2000H to A
-CPI C8H		; if A greater than or equals to 200 then Carry flag sets to 0 else 1
+CPI C8H			; if A greater than or equals to 200 then Carry flag sets to 0 else 1
 JNC CASE2		; if Carry flag is 0 jump to CASE2
-CPI 64H		; if A greater than or equals to 100 then Carry flag sets to 0 else 1
+CPI 64H			; if A greater than or equals to 100 then Carry flag sets to 0 else 1
 JNC CASE1		; if Carry flag is 0 jump to CASE1
 MVI B,FFH		; else set B = 255 
 
 DECA:		
 INR B			; B = B + 1 
-SUI 0AH		; A = A - 10
+SUI 0AH			; A = A - 10
 JNC DECA		; if caryy flag is 1 then jump to DECA
-ADI 0AH		; A = A + 10
-MOV C,A		; C = A 
-MOV A,B		; A = B 
+ADI 0AH			; A = A + 10
+MOV C,A			; C = A 
+MOV A,B			; A = B 
 RLC			; Rotate accumulator Left without Carry 4 times
-RLC			; This way we keep the 4-bits of the bcd
+RLC			; This way we keep the 4 MSBs of the bcd number
 RLC
 RLC
-ADD C			; A = A + C
+ADD C			; A = A + C (Add 4 LSBs of the bcd number)
 STA 3000H		; Store at 3000H address the content of A
 RST 1			; system pause
 JMP START		; Jump back to START
@@ -26,18 +26,18 @@ JMP START		; Jump back to START
 
 
 CASE2:
-MVI A,F0H		;  A = 240
+MVI A,F0H		;  A = 240 (11110000)
 STA 3000H		; Store A to 3000H address
 CALL DELB		; wait 
-MVI A,00H		; Set A = 0
+MVI A,00H		; Set A = 0 (00000000)
 STA 3000H		; Store at 3000H address 0
 JMP START		; Jump back to START
 
 CASE1:			
-MVI A,0FH		; A = 15
+MVI A,0FH		; A = 15 (00001111)
 STA 3000H		; Store at 3000H 15 (A)
 CALL DELB		; wait
-MVI A,00H		; A = 0
+MVI A,00H		; A = 0 (00000000)
 STA 3000H		; Store at 3000H address 0
 JMP START 		; Jump back to START
 

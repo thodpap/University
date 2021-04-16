@@ -78,28 +78,31 @@ fun loop_rooms file =
                                     in 
                                         ()
                                     end 
+
+                                val precalc1 = (N-1)*M
+                                
                                 fun dfs_top j = 
                                     if j < M then  
-                                        if Array.sub (arr, j) = "U" then (find_parents(0,j); dfs_top (j+1)) 
+                                        if Array.sub (arr, j) = "U" andalso Array.sub(visited, j) = 0 then (find_parents(0,j); dfs_top (j+1)) 
                                         else dfs_top (j+1)
                                     else ()
                                     
                                 fun dfs_bottom j = 
                                     if j < M then 
-                                        if Array.sub(arr,(N-1)*M + j) = "D" then (find_parents(N-1,j); dfs_bottom(j+1)) 
+                                        if Array.sub(arr,precalc1 + j) = "D" andalso Array.sub(visited, precalc1+j) = 0  then (find_parents(N-1,j); dfs_bottom(j+1)) 
                                         else dfs_bottom (j+1)
                                     else ()
                                     
                                     
                                 fun dfs_right i = 
                                     if i < N then 
-                                        if Array.sub(arr, i*M) = "L" then (find_parents(i,0); dfs_right(i+1)) 
+                                        if Array.sub(arr, i*M) = "L" andalso Array.sub(visited, i*M) = 0  then (find_parents(i,0); dfs_right(i+1)) 
                                         else dfs_right(i+1)
                                     else ()
                                     
                                 fun dfs_left i = 
                                     if i < N then
-                                        if Array.sub(arr, i*M + M-1) = "R" then (find_parents(i,M-1); dfs_left(i+1)) 
+                                        if Array.sub(arr, i*M + M-1) = "R" andalso Array.sub(visited, i*M+M-1) = 0  then (find_parents(i,M-1); dfs_left(i+1)) 
                                         else dfs_left(i+1)
                                     else () 
                             in

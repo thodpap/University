@@ -30,8 +30,7 @@ for i in range(7):
 
 samplerate, original, bits = wavfile.read("Material/MicArraySimulatedSignals/source.wav")
  
-
-## calculate τn
+ 
 # samplerate = 48000
 tn = []
 for i in range(7):
@@ -52,6 +51,7 @@ dft_len = len(dfts[0])
 
 # shifted
 
+output = []
 idfts = []
 for i in range(7):
     temp = []
@@ -61,7 +61,6 @@ for i in range(7):
     idfts.append(np.fft.ifft(temp))
   
 
-output = []
 for i in range(len(idfts[0])):
     sum  = 0.0
     for j in range(7):
@@ -72,16 +71,10 @@ for i in range(len(idfts[0])):
 print("00: ", output[5000])
 output = np.array(output)
 original = np.array(original)
-diff = []
-for i in range(len(output)):
-    diff.append(output[i] - original[i])
 
-diff = np.array(diff)
-
-# diff = np.real(diff)
-print(diff)
-print(diff.astype(n[3].dtype))
-write("beam_former_ouput.wav", samplerate, output.astype(n[3].dtype))
+diff = output - original
+ 
+write("beam_former_ouput.wav", samplerate, diff.astype(n[3].dtype))
 
 ## B
 

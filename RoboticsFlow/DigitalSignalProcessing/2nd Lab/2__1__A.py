@@ -29,7 +29,9 @@ for i in range(7):
     n.append(data) 
 
 samplerate, original, bits = wavfile.read("Material/MicArraySimulatedSignals/source.wav")
- 
+
+# data *= 100
+# original *= 100
  
 # samplerate = 48000
 tn = []
@@ -157,61 +159,18 @@ plt.title("fft of output signal")
 plt.ylabel("amplitude")
 
 # 3)
+noise = output - original
 
-# def signaltonoise(a, axis=0, ddof=0):
-#     a = np.asanyarray(a)
-#     m = a.mean(axis)
-#     sd = a.std(axis=axis, ddof=ddof)
-#     return np.where(sd == 0, 0, m/sd)
-#
-#
-# SNR_n3 = signaltonoise(n_3)
-# SNR_bfoutput = signaltonoise(output)
-#
-# print(SNR_bfoutput)
-# print(SNR_n3)
+def signal_energy(signal):
+    energy = 0.0
+    for n in range(len(signal)):
+        energy += abs(signal[n] ** 2)
+    return energy / len(signal)
+# output = output.astype(n[3].dtype)
 
-noise1 = []
-noise2 = []
-
-output = output.astype(n[3].dtype)
-print(output)
-
-for i in range(len(original)):
-    noise1.append(n[3][i] - original[i])
-    noise2.append(output[i] - original[i])
-
-figure_counter += 1
-plt.figure(figure_counter)
-plt.plot(noise2)
-
-figure_counter += 1
-plt.figure(figure_counter)
-plt.plot(output)
-
-
-# def energy(x):
-#     temp1 = []
-#     for j in range(len(x)):
-#         if x[j]*x[j] <= 0:
-#             temporary = (-1)*x[j]*x[j]
-#         else:
-#             temporary = x[j]*x[j]
-#         temp1.append(temporary)
-#     return sum(temp1)/len(x)
-
-
-def energy(x):
-    print(np.sum(np.abs(x) ** 2) * (1/len(x)))
-    return np.sum(np.abs(x) ** 2) * (1/len(x))
-
-def SNR(s1,s2):
-    return 10*np.log10(energy(s1)/energy(s2))
-
-SNR_output = SNR(output, noise2)
-SNR_n_3 = SNR(n[3],noise1)
-print(SNR_output)
-print(SNR_n_3)
+SNR = 20 * np.log10( signal_energy(output) / signal_energy(noise))
+print(SNR)
+  
 
 # SNR_n3 = energy(n_3)/energy(noise1)
 # SNR_output = energy(output)/energy(noise2)
@@ -219,4 +178,4 @@ print(SNR_n_3)
 # print("SNR n_3: ", SNR_n3)
 # print("SNR output: ", SNR_output)
 
-plt.show()
+# plt.show()

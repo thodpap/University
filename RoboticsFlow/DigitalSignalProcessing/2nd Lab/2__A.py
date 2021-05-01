@@ -49,11 +49,7 @@ dfts = []
 for i in range(7):
     dfts.append(fft(n[i]))
 
-dft_len = len(dfts[0])
-
-
-
-# shifted
+dft_len = len(dfts[0]) 
 
 new_dfts = []
 

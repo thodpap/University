@@ -6,6 +6,7 @@ import cmath
 from scipy.fft import fft, ifft
 from scipy.io.wavfile import read, write
 from scipy.signal import spectrogram
+import wavfile
 
 import warnings
 
@@ -19,17 +20,16 @@ figure_counter = 0
 theta_signal = math.pi / 4
 theta_noise = 3 * math.pi / 4
 
-samplerate, n_0 = read("Material/MicArraySimulatedSignals/sensor_0.wav")
-_, n_1 = read("Material/MicArraySimulatedSignals/sensor_1.wav")
-_, n_2 = read("Material/MicArraySimulatedSignals/sensor_2.wav")
-_, n_3 = read("Material/MicArraySimulatedSignals/sensor_3.wav")
-_, n_4 = read("Material/MicArraySimulatedSignals/sensor_4.wav")
-_, n_5 = read("Material/MicArraySimulatedSignals/sensor_5.wav")
-_, n_6 = read("Material/MicArraySimulatedSignals/sensor_6.wav")
-_, original = read("Material/MicArraySimulatedSignals/source.wav")
-print(original[5000])
+path = "Material/MicArraySimulatedSignals/sensor_"
+endpath = ".wav"
 
-n = [list(n_0), list(n_1), list(n_2), list(n_3), list(n_4), list(n_5), list(n_6)]
+n = []
+for i in range(7):
+    Fs, data, bits = wavfile.read(path + str(i) + endpath)
+    n.append(data) 
+
+samplerate, original, bits = wavfile.read("Material/MicArraySimulatedSignals/source.wav")
+ 
 
 ## calculate τn
 # samplerate = 48000
@@ -52,26 +52,23 @@ dft_len = len(dfts[0])
 
 # shifted
 
-new_dfts = []
-
+idfts = []
 for i in range(7):
     temp = []
     for k in range(dft_len):
         temp.append(dfts[i][k] * np.exp(-1j * 2 * math.pi * k * tn[N - 1 - i] / dft_len))  # m = tn[i]
-    new_dfts.append(temp)
-
-idfts = []
-for i in range(7):
-    idfts.append(np.fft.ifft(new_dfts[i]))
-
-print("gsfgfgdg: ", idfts[2][5001])
-
-print("idft: ", idfts[0])
+    
+    idfts.append(np.fft.ifft(temp))
+  
 
 output = []
 for i in range(len(idfts[0])):
-    output.append(
-        (1 / 7) * (idfts[0][i] + idfts[1][i] + idfts[2][i] + idfts[3][i] + idfts[4][i] + idfts[5][i] + idfts[6][i]))
+    sum  = 0.0
+    for j in range(7):
+        sum += idfts[j][i]
+
+    output.append( (1 / 7) * sum)
+
 print("00: ", output[5000])
 output = np.array(output)
 original = np.array(original)
@@ -83,8 +80,8 @@ diff = np.array(diff)
 
 # diff = np.real(diff)
 print(diff)
-print(diff.astype(n_3.dtype))
-write("beam_former_ouput.wav", samplerate, output.astype(n_3.dtype))
+print(diff.astype(n[3].dtype))
+write("beam_former_ouput.wav", samplerate, output.astype(n[3].dtype))
 
 ## B
 
@@ -118,22 +115,22 @@ plt.title("fft of source signal")
 
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(np.arange(len(n_3)), list(n_3))
+plt.plot(np.arange(len(n[3])), list(n[3]))
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
-plt.title("n_3 signal")
+plt.title("n[3] signal")
 
-f3, t3, Sxx3 = spectrogram(n_3, fs=48000)
+f3, t3, Sxx3 = spectrogram(n[3], fs=48000)
 figure_counter += 1
 plt.figure(figure_counter)
 plt.pcolormesh(t3, f3, Sxx3)
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
-plt.title("spectogram of n_3 signal")
+plt.title("spectogram of n[3] signal")
 
 figure_counter += 1
 plt.figure(figure_counter)
-fft3 = fft(list(n_3))
+fft3 = fft(list(n[3]))
 plt.plot(np.arange(len(fft3)), fft3)
 plt.xlabel("discrete time")
 
@@ -147,7 +144,7 @@ plt.ylabel("amplitude")
 plt.title("output signal")
 
 output = np.array(output)
-output = output.astype(n_3.dtype)
+output = output.astype(n[3].dtype)
 f_output, t_output, Sxx_output = spectrogram(output, fs=48000)
 figure_counter += 1
 print("foutput: ", f_output)
@@ -184,11 +181,11 @@ plt.ylabel("amplitude")
 noise1 = []
 noise2 = []
 
-output = output.astype(n_3.dtype)
+output = output.astype(n[3].dtype)
 print(output)
 
 for i in range(len(original)):
-    noise1.append(n_3[i] - original[i])
+    noise1.append(n[3][i] - original[i])
     noise2.append(output[i] - original[i])
 
 figure_counter += 1
@@ -219,7 +216,7 @@ def SNR(s1,s2):
     return 10*np.log10(energy(s1)/energy(s2))
 
 SNR_output = SNR(output, noise2)
-SNR_n_3 = SNR(n_3,noise1)
+SNR_n_3 = SNR(n[3],noise1)
 print(SNR_output)
 print(SNR_n_3)
 

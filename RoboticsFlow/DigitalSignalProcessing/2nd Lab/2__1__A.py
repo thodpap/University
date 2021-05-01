@@ -160,20 +160,14 @@ plt.ylabel("amplitude")
 
 # 3)
 noise = output - original
-def absolute(a):
-    if a > 0:
-        return a
-    else:
-        return (-1) * a
+
 def signal_energy(signal):
     energy = 0.0
     print(signal)
     for n in range(len(signal)):
         energy += math.pow(signal[n], 2)
          
-    return energy / len(signal)
-# output = output.astype(n[3].dtype)
-
+    return energy / len(signal) 
 
 SNR = 20 * np.log10( signal_energy(output) / signal_energy(noise)) 
 print(SNR)

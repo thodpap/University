@@ -1,0 +1,84 @@
+;a)
+
+IN 10H
+MVI A,00H ;counter 0-255
+LXI H,0900H ;starting memory
+MOV M,A ;store A in 0900
+
+FOR:
+	INX H ;HL<-HL+1 (next memory location)
+	INR A ;increase counter
+	MOV M,A ;store A in memory
+	CPI FFH ;if equals to 255 stop
+	JNZ FOR ;if not continue
+
+;b)
+
+LXI B,0000H
+LXI H,0900H
+MOV E,M ;number counter
+
+TOTAL_ONES:
+	MVI D,00H ;for 8 bits counter
+	
+	COUNT_ONES:
+		MOV A,E 
+		RRC
+		JNC SKIP_ME ;if CY != 1 skip increasing counter
+		INX B
+		SKIP_ME:
+			INR D ;increase 8 bit counter
+			MOV E,A ; shifted for next bit
+			MOV A,D 
+			CPI 08H ; if 8th bit -> next number
+			JNZ COUNT_ONES
+			MOV A,E 
+			CPI FFH ;end if 255
+			JZ TASK_C
+			INR H ;NEXT NUMBER
+			MOV E,M ;number counter
+			JMP TOTAL_ONES
+
+
+
+
+
+;c)
+
+TASK_C:
+
+MVI D,00H
+LXI H,0900H
+MVI B,00H ;INDEX, BCS ARRAY MAY NOT BE IN ascending order
+
+FIND:
+	MOV A,M ;number counter
+	CPI 10H ; PRATKIKA ELEGXW EAN TO INDEX EINAI MESA STO RANGE 00H-FFH stis 
+		 ; parakatw grammes kwdika
+	JC SKIP 
+	CPI 61H
+	JNC SKIP
+	INR D
+	SKIP:	
+		MOV C,A 
+		MOV A,B 
+		CPI FFH ;if 255 stop
+		JZ TASK_END
+		MOV A,C
+		INR B
+	INX H
+	JMP FIND
+
+
+TASK_END:	
+RST 1		
+END		
+
+
+
+
+
+
+	
+	
+	

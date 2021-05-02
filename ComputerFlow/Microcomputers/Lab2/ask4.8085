@@ -1,0 +1,44 @@
+START:
+LDA 2000H ;Load dip switch
+MOV B,A   ;Intial number
+RRC
+MOV D,A	; Right shift that A1 and B1 are in the same position
+
+ANA B		;Store AND A3-B3 at A  
+RRC
+RRC
+RRC		;Result is sent to X3
+ANI 08H	;Keeps only X3
+MOV E,A	;E is the current result
+MOV A,D	; Load the shifted value 
+
+ANA B		;Store AND A2-B2 at A
+RRC		;Result is sent to X3
+ANI 08H	;apomonwnetai
+ORA E		;OR between A2 AND B2 and A3 AND B3 to X3
+RRC 		;Move to X2
+ADD E		
+MOV E,A	;Store A to E
+MOV A,D	;Load the shifted value
+
+XRA B		;XOR A1 and B1
+RRC		; Move to X1
+ANI 02H	; Keep only this bit
+MOV C,A	;Store it to use later 
+ADD E
+MOV E,A	; Store A to E
+
+MOV A,C	;Store previous result A1 XOR B1 to A
+RRC		;Move to X0
+MOV C,A	;Store A to C
+MOV A,D	;Load again the shifted value
+XRA B		; A0 XOR B0
+ANI 01H	;Keep only this bit
+XRA C		;XOR of A1 XOR B1 and A0 XOR B0
+ADD E		;Now A has the final output
+CMA
+STA 3000H
+
+JMP START
+END
+

@@ -1,0 +1,40 @@
+START:
+LDA 2000H
+CPI 00H ;if number is zero read next input
+JZ ZERO 
+MVI B,00H ;final position of 1 (int)
+
+
+
+FOR:
+INR B 
+RRC   ;if CY = 0 then loop
+JNC FOR
+ 
+MVI C,01H ;LED OUTPUT (by the time is not zero
+	   ;it is initialized to 00000001)
+MOV A,B   ;position of first 1
+
+FOR_:
+CPI 01H ;if A = 00000001 then end
+JZ LOAD 
+MOV D,A ;save position
+MOV A,C ;by the time A is not 01 move position 1 pos
+	 ;left
+RLC 
+MOV C,A
+MOV A,D
+DCR A   ;decrease A until 01
+JMP FOR_
+
+
+LOAD:
+MOV A,C ;save LED state to A
+
+
+ZERO:
+CMA
+STA 3000H
+RST 1
+JMP START
+END

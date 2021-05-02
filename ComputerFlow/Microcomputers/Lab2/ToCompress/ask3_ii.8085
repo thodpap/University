@@ -1,0 +1,28 @@
+START:
+CALL KIND ;read input from keyboard
+
+MVI C,01H ;01->10->100 ETC
+MVI B,00H ;result
+
+FOR:
+DCR A 
+CPI 00H ;while A is not 0
+JZ STOP
+MOV D,A ;save A
+MOV A,B ;result to A
+ORA C   ;and with C (next 1 added) (i.e. 0000011-> 0000111)
+MOV B,A ;current result to B
+MOV A,C ;next C
+RLC 
+MOV C,A ;Save next C to C
+MOV A,D ;get A
+JMP FOR ;repeat
+
+
+STOP:
+MOV A,B
+STA 3000H ;ALERT: NO NEED FOR CMA, LED STATE IS ALREADY FIXED
+	   ;ALREADY IN INVERSE LOGIC
+RST 1
+JMP START
+END

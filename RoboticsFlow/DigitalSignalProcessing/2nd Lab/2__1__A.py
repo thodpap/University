@@ -20,48 +20,53 @@ figure_counter = 0
 theta_signal = math.pi / 4
 theta_noise = 3 * math.pi / 4
 
-
 path = "Material/MicArraySimulatedSignals/sensor_"
 endpath = ".wav"
 
-def read_from_files(path,endpath):
+
+def read_from_files(path, endpath):
     n = []
     for i in range(7):
         data, y = lib.load(path + str(i) + endpath, sr=None)
         n.append(data)
 
-    original, samplerate  = lib.load("Material/MicArraySimulatedSignals/source.wav",sr=None) 
+    original, samplerate = lib.load("Material/MicArraySimulatedSignals/source.wav", sr=None)
     return samplerate, n, original
 
-samplerate, n, original = read_from_files(path,endpath)
 
-def time_delays(): 
+samplerate, n, original = read_from_files(path, endpath)
+
+
+def time_delays():
     tn = []
     for i in range(7):
         tn.append(((-(i - (N - 1) / 2) * d * math.cos(theta_signal)) / c) * samplerate)
     return np.array(tn)
+
+
 tn = time_delays()
 my_len = len(n[0])  # length of all signals
 
+
 # DFT OF SIGNALS
-def calculate_output(n,tn):
+def calculate_output(n, tn):
     def calculate_dfts(n):
-        dfts = [] 
+        dfts = []
         for i in range(7):
             dfts.append(list(fft(n[i])))
         return np.array(dfts)
 
-    def calculate_idfts(dfts, dft_len): 
+    def calculate_idfts(dfts, dft_len):
         idfts = []
         for i in range(7):
             temp = []
-            for k in range(dft_len): 
+            for k in range(dft_len):
                 temp.append(dfts[i][k] * np.exp(-1j * 2 * math.pi * k * tn[N - 1 - i] / dft_len))  # m = tn[i]
 
             idfts.append(np.fft.ifft(temp))
         return idfts
 
-    def find_output(idfts): 
+    def find_output(idfts):
         output = []
         for i in range(len(idfts[0])):
             sum = 0.0
@@ -72,16 +77,16 @@ def calculate_output(n,tn):
         return output
 
     dfts = calculate_dfts(n)
-    dft_len = len(dfts[0])  
-    idfts = calculate_idfts(dfts,dft_len)
+    dft_len = len(dfts[0])
+    idfts = calculate_idfts(dfts, dft_len)
 
     return find_output(idfts)
 
 
-output = np.array(calculate_output(n,tn))
-original = np.array(original) 
+output = np.array(calculate_output(n, tn))
+original = np.array(original)
 
-write("beam_former_ouput.wav", samplerate, output.astype(n[3].dtype)) 
+write("beam_former_ouput.wav", samplerate, output.astype(n[3].dtype))
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -137,10 +142,11 @@ plt.plot(np.arange(len(output)), list(output))
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("output signal")
-  
-figure_counter += 1 
+
+figure_counter += 1
 plt.figure(figure_counter)
 plt.specgram(output, Fs=samplerate)
+plt.ylim([0, 23800])
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
 plt.title("spectogram of output signal")
@@ -155,10 +161,9 @@ plt.title("fft of output signal")
 plt.ylabel("amplitude")
 
 
-
 def SNR(original, output):
     def signal_energy(signal):
-        energy = 0.0 
+        energy = 0.0
         for n in range(len(signal)):
             energy += math.pow(abs(signal[n]), 2)
 
@@ -168,7 +173,8 @@ def SNR(original, output):
     SNR = 10 * np.log10(signal_energy(original) / signal_energy(noise))
     return SNR
 
-SNR = SNR(original,output)
+
+SNR = SNR(original, output)
 print(SNR)
 
 plt.show()

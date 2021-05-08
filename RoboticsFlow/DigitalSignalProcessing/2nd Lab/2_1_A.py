@@ -46,9 +46,7 @@ def time_delays():
 
 tn = time_delays()
 my_len = len(n[0])  # length of all signals
-
-
-# DFT OF SIGNALS
+ 
 def calculate_output(n, tn):
     def calculate_dfts(n):
         dfts = []
@@ -87,6 +85,27 @@ output = np.array(calculate_output(n, tn))
 original = np.array(original)
 
 write("beam_former_ouput.wav", samplerate, output.astype(n[3].dtype))
+
+def SNR(original, output):
+    def signal_energy(signal):
+        energy = 0.0
+        for n in range(len(signal)):
+            energy += math.pow(abs(signal[n]), 2)
+
+        return energy
+
+    noise = output - original
+    SNR = 10 * np.log10(signal_energy(original) / signal_energy(noise))
+    return SNR
+
+
+SNR = SNR(original, output)
+print(SNR)
+
+
+###################################################
+# Plots                                           #
+###################################################
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -158,23 +177,6 @@ plt.plot(np.arange(len(fft_output)), fft_output)
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("fft of output signal")
-plt.ylabel("amplitude")
-
-
-def SNR(original, output):
-    def signal_energy(signal):
-        energy = 0.0
-        for n in range(len(signal)):
-            energy += math.pow(abs(signal[n]), 2)
-
-        return energy
-
-    noise = output - original
-    SNR = 10 * np.log10(signal_energy(original) / signal_energy(noise))
-    return SNR
-
-
-SNR = SNR(original, output)
-print(SNR)
+plt.ylabel("amplitude") 
 
 plt.show()

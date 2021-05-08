@@ -230,11 +230,7 @@ def calculate_output(n, tn):
 
 output = np.array(calculate_output(n, tn))
 
-SNR_beam = SNR(original, output)
-
-#-----------------------------------------------------------------------------------------------------------------------
-
-
+SNR_beam = SNR(original, output) 
 print("SNR_beam: ", SNR_beam)
 print("SNR_input: ", SNR_input)
 print("SNR_wiener_output: ", SNR_output) 

@@ -111,6 +111,7 @@ def wiener(seg, noise_psd, figure_counter, num):
     Hw_seg = []
     for k in range(len(psd)):
         Hw_seg.append(1 - noise_psd[k] / psd[k])
+
     if num == 1:
         # figure_counter += 1
         plt.figure(50)
@@ -130,14 +131,14 @@ def wiener(seg, noise_psd, figure_counter, num):
         # dft_seg = np.fft.fft(seg, n=fft_num)
         # plt.plot(dft_seg)
     # print(len(psd), len(Hw_seg))
-    # seg_filtered = []
-    # dft_seg = np.fft.fft(seg, n=fft_num)
-    # for i in range(len(psd)):
-    #     seg_filtered.append(dft_seg[i] * Hw_seg[i])
-    # return list(np.fft.ifft(seg_filtered, n=fft_num).astype(int))
-    wiener_time = np.fft.ifft(Hw_seg)
-    wiener_time = np.real(wiener_time)
-    return np.convolve(wiener_time, seg)
+    seg_filtered = []
+    dft_seg = np.fft.fft(seg, n=fft_num)
+    for i in range(len(psd)):
+        seg_filtered.append(dft_seg[i] * Hw_seg[i])
+    return np.fft.ifft(seg_filtered, n=fft_num)
+    # wiener_time = np.fft.ifft(Hw_seg)
+    # wiener_time = np.real(wiener_time)
+    # return np.convolve(wiener_time, seg)
 
 
 filtered_signal_int = []

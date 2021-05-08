@@ -27,10 +27,10 @@ endpath = ".wav"
 def read_from_files(path,endpath):
     n = []
     for i in range(7):
-        data, y = lib.load(path + str(i) + endpath)
+        data, y = lib.load(path + str(i) + endpath, sr=None)
         n.append(data)
 
-    original, samplerate  = lib.load("Material/MicArraySimulatedSignals/source.wav") 
+    original, samplerate  = lib.load("Material/MicArraySimulatedSignals/source.wav",sr=None) 
     return samplerate, n, original
 
 samplerate, n, original = read_from_files(path,endpath)

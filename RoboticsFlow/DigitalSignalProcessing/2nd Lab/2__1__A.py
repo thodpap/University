@@ -6,7 +6,7 @@ import librosa as lib
 from scipy.fft import fft, ifft
 from scipy.io.wavfile import read, write
 from scipy.signal import spectrogram
-import wavfile
+# import wavfile
 
 import warnings
 
@@ -27,11 +27,10 @@ endpath = ".wav"
 def read_from_files(path,endpath):
     n = []
     for i in range(7):
-    y, data = read(path + str(i) + endpath)
-    n.append(data)
+        data, y = lib.load(path + str(i) + endpath)
+        n.append(data)
 
-    samplerate, original = read("Material/MicArraySimulatedSignals/source.wav")
-
+    original, samplerate  = lib.load("Material/MicArraySimulatedSignals/source.wav") 
     return samplerate, n, original
 
 samplerate, n, original = read_from_files(path,endpath)
@@ -40,26 +39,28 @@ def time_delays():
     tn = []
     for i in range(7):
         tn.append(((-(i - (N - 1) / 2) * d * math.cos(theta_signal)) / c) * samplerate)
-
+    return np.array(tn)
 tn = time_delays()
 my_len = len(n[0])  # length of all signals
 
 # DFT OF SIGNALS
-def calculate_output(n):
+def calculate_output(n,tn):
     def calculate_dfts(n):
         dfts = [] 
         for i in range(7):
-            dfts.append(fft(n[i]))
-        return dfts
-    def calculate_idfts(dfts, dft_len):
+            dfts.append(list(fft(n[i])))
+        return np.array(dfts)
+
+    def calculate_idfts(dfts, dft_len): 
         idfts = []
         for i in range(7):
             temp = []
-            for k in range(dft_len):
+            for k in range(dft_len): 
                 temp.append(dfts[i][k] * np.exp(-1j * 2 * math.pi * k * tn[N - 1 - i] / dft_len))  # m = tn[i]
 
             idfts.append(np.fft.ifft(temp))
         return idfts
+
     def find_output(idfts): 
         output = []
         for i in range(len(idfts[0])):
@@ -71,14 +72,13 @@ def calculate_output(n):
         return output
 
     dfts = calculate_dfts(n)
-    dft_len = len(dfts[0])
-
+    dft_len = len(dfts[0])  
     idfts = calculate_idfts(dfts,dft_len)
 
     return find_output(idfts)
 
 
-output = np.array(calculate_output(n))
+output = np.array(calculate_output(n,tn))
 original = np.array(original) 
 
 write("beam_former_ouput.wav", samplerate, output.astype(n[3].dtype)) 

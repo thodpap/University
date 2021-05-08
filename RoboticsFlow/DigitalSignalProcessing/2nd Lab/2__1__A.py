@@ -136,12 +136,8 @@ plt.plot(np.arange(len(output)), list(output))
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("output signal")
-
-output = np.array(output)
-output = output.astype(n[3].dtype)
-# f_output, t_output, Sxx_output = spectrogram(output, fs=48000)
-figure_counter += 1
-# print("foutput: ", f_output)
+  
+figure_counter += 1 
 plt.figure(figure_counter)
 plt.specgram(output, Fs=samplerate)
 plt.xlabel("discrete time")
@@ -161,18 +157,17 @@ plt.ylabel("amplitude")
 noise = output - original
 
 
-def signal_energy(signal):
-    energy = 0.0
-    # print(signal)
-    for n in range(len(signal)):
-        energy += math.pow(abs(signal[n]), 2)
+def SNR(signal, noise):
+    def signal_energy(signal):
+        energy = 0.0 
+        for n in range(len(signal)):
+            energy += math.pow(abs(signal[n]), 2)
 
-    return energy / len(signal)
+        return energy
+    SNR = 10 * np.log10(signal_energy(original) / signal_energy(noise))
+    return SNR
 
-
-SNR = 10 * np.log10(signal_energy(original) / signal_energy(noise))
+SNR = SNR(signal,noise)
 print(SNR)
-noise = n[3] - original
-SNR_input = 10*np.log10(signal_energy(original)/signal_energy(noise))
-print(SNR_input)
+
 plt.show()

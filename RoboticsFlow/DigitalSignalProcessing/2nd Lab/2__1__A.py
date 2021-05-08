@@ -61,6 +61,7 @@ def calculate_output(n):
             idfts.append(np.fft.ifft(temp))
         return idfts
     def find_output(idfts): 
+        output = []
         for i in range(len(idfts[0])):
             sum = 0.0
             for j in range(7):

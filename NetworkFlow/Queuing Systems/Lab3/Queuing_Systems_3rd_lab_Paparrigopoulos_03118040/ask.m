@@ -54,7 +54,7 @@ for lambda = [1,5,10]
     
     random_number = rand(1); % generate a random number (Uniform distribution)
         if current_state == 0 || random_number < threshold % arrival
-            % %{
+            %{
             if 0 < tracem_i < 31
                 tracem(tracem_i,4) = 1
                 %disp("arrival"), disp(current_state);
@@ -68,7 +68,7 @@ for lambda = [1,5,10]
                 current_state = current_state + 1;
             endif
             else % departure
-            % %{
+            %{
             if 0 < tracem_i < 31
                 tracem(tracem_i,5) = 1 
             endif
@@ -101,7 +101,7 @@ for lambda = [1,5,10]
   grid on;
   saveas (figure_counter, strjoin({"figure_",num2str(2),"_lambda_",num2str((lambda)),".png"}))
   
-  disp(figure_counter);
+  
   disp("trans state num_ar arr dep");
   disp(tracem);
     

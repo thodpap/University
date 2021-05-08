@@ -5,7 +5,7 @@ clc;
 clear all;
 close all;
 rand('seed',12163);
- 
+figure_counter = 0
 for i = [1,5,10]
     arrivals = [0,0,0,0,0,0,0,0,0,0,0]
     total_arrivals = 0; % to measure the total number of arrivals
@@ -59,7 +59,7 @@ for i = [1,5,10]
             %}
             total_arrivals = total_arrivals + 1;
             % to catch the exception if variable arrivals(i) is undefined. Required only for systems with finite capacity.
-            x = arrivals(current_state + 1) + 1
+            x = arrivals(current_state + 1) + 1;
             arrivals(current_state + 1) = x; % increase the number of arrivals in the current state
             if (current_state != 10) 
                 current_state = current_state + 1;
@@ -83,22 +83,22 @@ for i = [1,5,10]
     display(traceMatr);
     pause(5);
     #}
-    figure(1);
+    figure_counter += 1;
+    figure(figure_counter);
     plot(to_plot,"b","linewidth",2);
     title(strjoin({"Average number of clients in the M/M/1/10 queue: Convergence for Lambda = ",num2str((i))},""));
     xlabel("Transitions in thousands");
     ylabel("Average number of clients");
     grid on;
-    saveas (1, strjoin({"figure_",num2str(1),"_lambda_",num2str((i)),".png"},""))
-    figure(2);
+    saveas (figure_counter, strjoin({"figure_",num2str(1),"_lambda_",num2str((i)),".png"},""))
+    
+    figure_counter += 1;
+    figure(figure_counter);
     bar(0:1:(length(arrivals)-1),P,'b',0.4);
     title(strjoin({"Probabilities for Lambda = ",num2str((i))},""));
     grid on;
-    saveas (2, strjoin({"figure_",num2str(2),"_lambda_",num2str((i)),".png"},""))
-
-    clc;
-    clear all;
-    close all;
+    saveas (figure_counter, strjoin({"figure_",num2str(2),"_lambda_",num2str((i)),".png"},""))
     
-endfor
-exit;
+    disp(tracem);
+    
+endfor 

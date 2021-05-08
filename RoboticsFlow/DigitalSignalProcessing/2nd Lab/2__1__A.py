@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pylab as plt
 import math
-import librosa
 import cmath
+import librosa as lib
 from scipy.fft import fft, ifft
 from scipy.io.wavfile import read, write
 from scipy.signal import spectrogram
@@ -25,15 +25,15 @@ endpath = ".wav"
 
 n = []
 for i in range(7):
-    Fs, data, bits = wavfile.read(path + str(i) + endpath)
-    n.append(data) 
+    y, data = read(path + str(i) + endpath)
+    n.append(data)
 
-samplerate, original, bits = wavfile.read("Material/MicArraySimulatedSignals/source.wav")
+samplerate, original = read("Material/MicArraySimulatedSignals/source.wav")
 
 # data *= 100
 # original *= 100
- 
-# samplerate = 48000
+
+samplerate = 48000
 tn = []
 for i in range(7):
     tn.append(((-(i - (N - 1) / 2) * d * math.cos(theta_signal)) / c) * samplerate)
@@ -59,24 +59,23 @@ for i in range(7):
     temp = []
     for k in range(dft_len):
         temp.append(dfts[i][k] * np.exp(-1j * 2 * math.pi * k * tn[N - 1 - i] / dft_len))  # m = tn[i]
-    
+
     idfts.append(np.fft.ifft(temp))
-  
 
 for i in range(len(idfts[0])):
-    sum  = 0.0
+    sum = 0.0
     for j in range(7):
         sum += idfts[j][i]
 
-    output.append( (1 / 7) * sum)
+    output.append((1 / 7) * sum)
 
 print("00: ", output[5000])
 output = np.array(output)
 original = np.array(original)
 
 diff = output - original
- 
-write("beam_former_ouput.wav", samplerate, diff.astype(n[3].dtype))
+
+write("beam_former_ouput.wav", samplerate, output.astype(n[3].dtype))
 
 ## B
 
@@ -90,10 +89,10 @@ plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("source signal")
 
-f, t, Sxx = spectrogram(original, fs=48000)
+# f, t, Sxx = spectrogram(original, fs=48000)
 figure_counter += 1
 plt.figure(figure_counter)
-plt.pcolormesh(t, f, Sxx)
+plt.specgram(original, Fs=samplerate)
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
 plt.title("spectogram of source signal")
@@ -115,10 +114,10 @@ plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("n[3] signal")
 
-f3, t3, Sxx3 = spectrogram(n[3], fs=48000)
+# f3, t3, Sxx3 = spectrogram(n[3], fs=48000)
 figure_counter += 1
 plt.figure(figure_counter)
-plt.pcolormesh(t3, f3, Sxx3)
+plt.specgram(n[3], Fs=samplerate)
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
 plt.title("spectogram of n[3] signal")
@@ -140,11 +139,11 @@ plt.title("output signal")
 
 output = np.array(output)
 output = output.astype(n[3].dtype)
-f_output, t_output, Sxx_output = spectrogram(output, fs=48000)
+# f_output, t_output, Sxx_output = spectrogram(output, fs=48000)
 figure_counter += 1
-print("foutput: ", f_output)
+# print("foutput: ", f_output)
 plt.figure(figure_counter)
-plt.pcolormesh(t_output, f_output, Sxx_output)
+plt.specgram(output, Fs=samplerate)
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
 plt.title("spectogram of output signal")
@@ -161,15 +160,19 @@ plt.ylabel("amplitude")
 # 3)
 noise = output - original
 
+
 def signal_energy(signal):
     energy = 0.0
-    print(signal)
+    # print(signal)
     for n in range(len(signal)):
-        energy += math.pow(signal[n], 2)
-         
-    return energy / len(signal) 
+        energy += math.pow(abs(signal[n]), 2)
 
-SNR = 20 * np.log10( signal_energy(output) / signal_energy(noise)) 
+    return energy / len(signal)
+
+
+SNR = 10 * np.log10(signal_energy(original) / signal_energy(noise))
 print(SNR)
- 
+noise = n[3] - original
+SNR_input = 10*np.log10(signal_energy(original)/signal_energy(noise))
+print(SNR_input)
 plt.show()

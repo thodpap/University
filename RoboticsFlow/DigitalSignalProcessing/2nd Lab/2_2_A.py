@@ -16,7 +16,7 @@ figure_counter = 0
 theta_signal = math.pi / 4
 # theta_noise = 3 * math.pi / 4
 
-path = "Material/MicArraySimulatedSignals/sensor_"
+path = "Material/MicArrayRealSignals/sensor_"
 endpath = ".wav" 
 
 def read_from_files(path, endpath):
@@ -25,7 +25,7 @@ def read_from_files(path, endpath):
         data, y = lib.load(path + str(i) + endpath, sr=None)
         n.append(data)
     print(n)
-    original, samplerate = lib.load("Material/MicArraySimulatedSignals/source.wav", sr=None)
+    original, samplerate = lib.load("Material/MicArrayRealSignals/source.wav", sr=None)
     return samplerate, n, original
 
 
@@ -46,8 +46,8 @@ def calculate_output(n, tn):
     def calculate_dfts(n):
         dfts = []
         for i in range(7):
-            dfts.append(list(fft(n[i])))
-        return np.array(dfts)
+            dfts.append(fft(n[i]))
+        return dfts
 
     def calculate_idfts(dfts, dft_len):
         idfts = []
@@ -77,8 +77,7 @@ def calculate_output(n, tn):
  
 output = np.array(calculate_output(n, tn))
 original = np.array(original)
- 
- 
+
 #3)
 def SSNR(signal):
     def signal_power(signal):

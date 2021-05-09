@@ -119,6 +119,14 @@ SSNR_n_3 = SSNR(original, n[3])
 SSNR_output = SSNR(original, output) 
 print("SSNR_n_3: ", SSNR_n_3 )
 print("SSNR_output: ", SSNR_output) 
+ 
+
+
+###################################################
+# Plots                                           #
+###################################################
+
+
 
 figure_counter += 1
 plt.figure(figure_counter)

@@ -22,8 +22,7 @@ theta_noise = 3 * math.pi / 4
 
 path = "Material/MicArraySimulatedSignals/sensor_"
 endpath = ".wav"
-
-
+ 
 def read_from_files(path, endpath):
     n = []
     for i in range(7):
@@ -81,8 +80,7 @@ def calculate_output(n, tn):
     return find_output(idfts)
 
 
-output = np.array(calculate_output(n, tn))
-original = np.array(original)
+output = np.array(calculate_output(n, tn)) 
 
 write("beam_former_ouput.wav", samplerate, output.astype(n[3].dtype))
 
@@ -100,12 +98,15 @@ def SNR(original, output):
 
 
 SNR = SNR(original, output)
-print(SNR)
+print("SNR: ", SNR)
+
 
 
 ###################################################
 # Plots                                           #
 ###################################################
+
+
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -125,7 +126,7 @@ plt.title("spectogram of source signal")
 figure_counter += 1
 plt.figure(figure_counter)
 fft_source = fft(list(original))
-plt.plot(np.arange(len(fft_source)), fft_source)
+plt.plot(np.arange(len(fft_source)), np.real(fft_source))
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("fft of source signal")
@@ -138,8 +139,7 @@ plt.plot(np.arange(len(n[3])), list(n[3]))
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("n[3] signal")
-
-# f3, t3, Sxx3 = spectrogram(n[3], fs=48000)
+ 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.specgram(n[3], Fs=samplerate)
@@ -150,14 +150,14 @@ plt.title("spectogram of n[3] signal")
 figure_counter += 1
 plt.figure(figure_counter)
 fft3 = fft(list(n[3]))
-plt.plot(np.arange(len(fft3)), fft3)
+plt.plot(np.arange(len(fft3)), np.real(fft3))
 plt.xlabel("discrete time")
 
 # c)
 
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(np.arange(len(output)), list(output))
+plt.plot(np.arange(len(output)), output)
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("output signal")
@@ -173,7 +173,7 @@ plt.title("spectogram of output signal")
 figure_counter += 1
 plt.figure(figure_counter)
 fft_output = fft(list(output))
-plt.plot(np.arange(len(fft_output)), fft_output)
+plt.plot(np.arange(len(fft_output)), np.real(fft_output))
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("fft of output signal")

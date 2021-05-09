@@ -14,26 +14,25 @@ start, end = 0.47, 0.5
 c = 340 # m/s 
 
 path = "Material/MicArraySimulatedSignals/"
+
 def read_from_inputs(path):
     n_3, samplerate  = lib.load(path + "sensor_3.wav",sr=None, offset=start, duration=end-start)
     original, samplerate = lib.load(path + "source.wav", sr=None, offset=start, duration=end-start) 
 
     return n_3, original, samplerate
 
-n_3, original, samplerate = read_from_inputs(path)
-fft_num = 2*len(n_3)
+n_3, original, samplerate = read_from_inputs(path) 
 
-def calculate_hw(n_3, original, samplerate, fft_num): 
-    fft_ = np.fft.fft(original)
-    freqs = np.fft.fftfreq(len(fft_)) 
-     
+fft_num = len(n_3) 
+
+def calculate_hw(n_3, original, samplerate, fft_num):       
     noise = n_3 - original
     
     dft_n_3 = np.fft.fft(n_3, n=fft_num)
 
-    f1, Sn_3       = welch(n_3, detrend=False, return_onesided=False, fs=48000, nfft=fft_num)
-    f2, S_noise    = welch(noise, detrend=False, return_onesided=False, fs=48000, nfft=fft_num)
-    f3, S_original = welch(original, detrend=False, return_onesided=False, fs=48000, nfft=fft_num) 
+    f1, Sn_3       = welch(n_3, detrend=False, return_onesided=False, fs=samplerate, nfft=fft_num)
+    f2, S_noise    = welch(noise, detrend=False, return_onesided=False, fs=samplerate, nfft=fft_num)
+    f3, S_original = welch(original, detrend=False, return_onesided=False, fs=samplerate, nfft=fft_num) 
 
     Hw = []
     for i in range(len(S_noise)):
@@ -104,7 +103,7 @@ def calculate_wiener_output(Hw):
     freqs = np.fft.fftfreq(len(output_wiener))  
 
     output_wiener_time = np.fft.ifft(output_wiener, n=fft_num)    
-    f, S_output = welch(output_wiener_time, detrend=False, return_onesided=False, fs=48000) 
+    f, S_output = welch(output_wiener_time, detrend=False, return_onesided=False, fs=48000, nfft=fft_num) 
 
     return output_wiener_time, output_wiener, freqs, f, S_output
 
@@ -155,11 +154,6 @@ def SNR(original, output):
     SNR = 10 * np.log10(signal_energy(original) / signal_energy(noise))
     return SNR
 
-SNR_output = SNR(original, output_wiener_time)  
-SNR_input = SNR(original, n_3) 
-
-print("SNR input: ", SNR_input)
-print("SNR output: ", SNR_output)
  
 
 ################################################################################
@@ -171,14 +165,13 @@ theta_noise = 3 * math.pi / 4
 path = "Material/MicArraySimulatedSignals/sensor_"
 endpath = ".wav"
 
-
 def read_from_files(path, endpath):
     n = []
     for i in range(7):
-        data, y = lib.load(path + str(i) + endpath, sr=None)
+        data, y = lib.load(path + str(i) + endpath, sr=None, offset=start, duration=end-start)
         n.append(data)
 
-    original, samplerate = lib.load("Material/MicArraySimulatedSignals/source.wav", sr=None)
+    original, samplerate = lib.load("Material/MicArraySimulatedSignals/source.wav", sr=None, offset=start, duration=end-start)
     return samplerate, n, original
  
 samplerate, n, original = read_from_files(path, endpath)
@@ -192,9 +185,8 @@ def time_delays():
 tn = time_delays()
 my_len = len(n[0])  # length of all signals
 
-
-# DFT OF SIGNALS
-def calculate_output(n, tn):
+ 
+def calculate_beam_output(n, tn):
     def calculate_dfts(n):
         dfts = []
         for i in range(7):
@@ -228,14 +220,18 @@ def calculate_output(n, tn):
     return find_output(idfts)
 
 
-output = np.array(calculate_output(n, tn))
+beam_output = np.array(calculate_beam_output(n, tn))
 
-SNR_beam = SNR(original, output) 
+print(len(original))
+SNR_beam = SNR(original, beam_output) 
+SNR_weiner_output = SNR(original, output_wiener_time)
+SNR_input = SNR(original,n_3)
+
+print("SNR_input: ", SNR_input)  
 print("SNR_beam: ", SNR_beam)
-print("SNR_input: ", SNR_input)
-print("SNR_wiener_output: ", SNR_output) 
+print("SNR_wiener_output: ", SNR_weiner_output) 
 
-write("wiener_ouput.wav", samplerate, output_wiener_time.astype(n[3].dtype))  
+# write("wiener_ouput.wav", samplerate, output_wiener_time)  
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -249,7 +245,7 @@ plt.title("original")
 
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(output)
+plt.plot(beam_output)
 plt.title("beam_output")
 
 figure_counter += 1

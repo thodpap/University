@@ -77,56 +77,47 @@ def calculate_output(n, tn):
  
 output = np.array(calculate_output(n, tn))
 original = np.array(original)
-
-write("beam_former_ouput.wav", samplerate, output.astype(n[3].dtype))
-  
-output = np.array(output)
-original = np.array(original) 
-
-# write("beam_former_ouput.wav", samplerate, output.astype(n_3.dtype))
+ 
  
 #3)
-def SSNR(original, signal):
-    def calculate_ssnr(signal, noise, M):
-        def signal_energy(signal):
-            energy = 0.0
-            for n in range(len(signal)):
-                energy += math.pow(abs(signal[n]), 2)
+def SSNR(signal):
+    def signal_power(signal):
+        energy = 0.0
+        for n in range(len(signal)):
+            energy += math.pow(abs(signal[n]), 2)
 
-            return energy 
+        return energy/len(signal)
 
+    def calculate_ssnr(signal, noise_power, M): 
         SSNR = [] 
         for i in range(M):
-            cons = signal_energy(signal[i*L:(i*L+L)]) / signal_energy(noise[i*L:(i*L+L)]) 
-
+            cons = (signal_power(signal[i*L:i*L+L])-noise_power)/noise_power
+            if cons <= 0:
+                continue
             res = 10*np.log10(cons)
             if res >= 35:
                 res = 35
             if res <= -20:
                 continue
-
             SSNR.append(res)
         return SSNR
 
     L = 1440  
-    noise = output - original 
+    noise_power = signal_power(signal[0:L])
     M = len(signal)//L
-    SSNR = sum(calculate_ssnr(signal, noise, M)) / M 
+    SSNR = sum(calculate_ssnr(signal, noise_power, M)) / M 
 
     return SSNR
 
-SSNR_n_3 = SSNR(original, n[3])
-SSNR_output = SSNR(original, output) 
+SSNR_n_3 = SSNR(n[3])
+SSNR_output = SSNR(output) 
 print("SSNR_n_3: ", SSNR_n_3 )
-print("SSNR_output: ", SSNR_output) 
- 
+print("SSNR_output: ", SSNR_output)  
 
 
 ###################################################
 # Plots                                           #
-###################################################
-
-
+################################################### 
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -135,13 +126,14 @@ plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("source signal")
 
-f, t, Sxx = spectrogram(original, fs=48000)
+# f, t, Sxx = spectrogram(original, fs=48000)
 figure_counter += 1
 plt.figure(figure_counter)
-plt.pcolormesh(t, f, Sxx)
+# plt.pcolormesh(t, f, Sxx)
+plt.specgram(original, Fs=samplerate)
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
-plt.title("spectogram of source signal")
+plt.title("spectrogram of source signal")
 
 
 figure_counter += 1
@@ -160,10 +152,11 @@ plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("n[3] signal") 
 
-f3, t3, Sxx3 = spectrogram(n[3], fs=48000)
+# f3, t3, Sxx3 = spectrogram(n[3], fs=48000)
 figure_counter += 1
 plt.figure(figure_counter)
-plt.pcolormesh(t3, f3, Sxx3)
+# plt.pcolormesh(t3, f3, Sxx3)
+plt.specgram(n[3], Fs=samplerate)
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
 plt.title("spectogram of n[3] signal")
@@ -182,10 +175,12 @@ plt.ylabel("amplitude")
 plt.title("output signal")
 
  
-f_output, t_output, Sxx_output = spectrogram(output, fs=48000, return_onesided=False)
+# f_output, t_output, Sxx_output = spectrogram(output, fs=48000, return_onesided=False)
 figure_counter += 1 
 plt.figure(figure_counter)
-plt.pcolormesh(t_output, f_output, Sxx_output)
+# plt.pcolormesh(t_output, f_output, Sxx_output)
+plt.specgram(output, Fs=samplerate)
+plt.ylim([0,23800])
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
 plt.title("spectogram of output signal")

@@ -90,7 +90,7 @@ length = len(original)
 
 noise = []
 for i in range(seg_size):
-    noise.append(output[i])#n[3][i] - original[i])
+    noise.append(output[i]) #n[3][i] - original[i])
 
 segments = []
 for i in range(number_of_segments):
@@ -101,17 +101,13 @@ for i in range(number_of_segments):
         else:
             temp.append(output[j + i * seg_size // 2] * window[j])
     segments.append(temp)
-
-# print(len(segments) * len(segments[2]))
+ 
 # welch in beam output
 
 fft_num = seg_size
 
 f, S_noise = welch(noise, detrend=False, return_onesided=False, fs=48000, nfft=fft_num)
-
-
-# print(len(S_noise))
-
+ 
 
 def calculate_wiener_output(seg, noise_psd, fft_num):
     seg_dft = np.fft.fft(seg, n=fft_num) 
@@ -131,26 +127,8 @@ def calculate_wiener_output(seg, noise_psd, fft_num):
 
     return output_wiener_time, output_wiener, freqs, f, S_output 
 
-def wiener(seg, noise_psd, figure_counter, num):
-    # print(len(seg))
-    f, psd = welch(seg, detrend=False, return_onesided=False, fs=48000, nfft=fft_num)
-    # print(len(psd))
-    Hw_seg = []
-    for k in range(len(psd)):
-        Hw_seg.append(1 - noise_psd[k] / psd[k])
 
-    seg_filtered = []
-    dft_seg = np.fft.fft(seg, n=fft_num)
-    for i in range(len(psd)):
-        seg_filtered.append(dft_seg[i] * Hw_seg[i])
-    return np.fft.ifft(seg_filtered, n=fft_num)
-    # wiener_time = np.fft.ifft(Hw_seg)
-    # wiener_time = np.real(wiener_time)
-    # return np.convolve(wiener_time, seg)
-
-
-filtered_signal_int = []
-# print(len(segments[2]))
+filtered_signal_int = [] 
 num = 0
 for i in range(number_of_segments):  
     output_wiener_time, output_wiener, freqs, f, S_output = calculate_wiener_output(segments[i], S_noise, fft_num)
@@ -192,28 +170,12 @@ def create_lists(segments, figure_counter):
 filtered_output = create_lists(filtered_signal_int, figure_counter)
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(filtered_output)
+plt.plot(filtered_output) 
 
-# plt.show()
 
-# print(len(filtered_signal_int[2]))
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(filtered_signal_int[0])
-# filtered_signal_int = []
-# for i in range(len(filtered_signal)):
-#     temp = [int(i.real) for i in filtered_signal[i]]
-#     filtered_signal_int.append(temp)
-
-
-# print(len(filtered_signal_int) * len(filtered_signal_int[2]))
-
-
-# filtered_signal = int(filtered_signal)
-# for i in range(len(filtered_signal)):
-#     filtered_signal_int.append(filtered_signal.astype(int))
-
-
+plt.plot(filtered_signal_int[0]) 
  
 
 figure_counter += 1

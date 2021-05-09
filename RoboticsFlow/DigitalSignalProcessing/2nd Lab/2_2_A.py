@@ -124,11 +124,9 @@ plt.plot(np.arange(len(original)), original)
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("source signal")
-
-# f, t, Sxx = spectrogram(original, fs=48000)
+ 
 figure_counter += 1
-plt.figure(figure_counter)
-# plt.pcolormesh(t, f, Sxx)
+plt.figure(figure_counter) 
 plt.specgram(original, Fs=samplerate)
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
@@ -150,11 +148,9 @@ plt.plot(np.arange(len(n[3])), list(n[3]))
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("n[3] signal") 
-
-# f3, t3, Sxx3 = spectrogram(n[3], fs=48000)
+ 
 figure_counter += 1
-plt.figure(figure_counter)
-# plt.pcolormesh(t3, f3, Sxx3)
+plt.figure(figure_counter) 
 plt.specgram(n[3], Fs=samplerate)
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
@@ -173,11 +169,9 @@ plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("output signal")
 
- 
-# f_output, t_output, Sxx_output = spectrogram(output, fs=48000, return_onesided=False)
+  
 figure_counter += 1 
-plt.figure(figure_counter)
-# plt.pcolormesh(t_output, f_output, Sxx_output)
+plt.figure(figure_counter) 
 plt.specgram(output, Fs=samplerate)
 plt.ylim([0,23800])
 plt.xlabel("discrete time")

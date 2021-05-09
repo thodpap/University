@@ -28,7 +28,7 @@ def read_from_files(path, endpath):
         data, y = lib.load(path + str(i) + endpath, sr=None)
         n.append(data)
 
-    original, samplerate = lib.load("Material/MicArraySimulatedSignals/source.wav", sr=None)
+    original, samplerate = lib.load("Material/MicArrayRealSignals/source.wav", sr=None)
     return samplerate, n, original
 
 
@@ -112,6 +112,25 @@ f, S_noise = welch(noise, detrend=False, return_onesided=False, fs=48000, nfft=f
 
 # print(len(S_noise))
 
+
+def calculate_wiener_output(seg, noise_psd, fft_num):
+    seg_dft = np.fft.fft(seg, n=fft_num) 
+    f, psd = welch(seg, detrend=False, return_onesided=False, fs=48000, nfft=fft_num)
+
+    Hw = []
+    for k in range(len(psd)):
+        Hw.append(1 - noise_psd[k] / psd[k])
+
+    output_wiener = []  
+    for i in range(len(Hw)): 
+        output_wiener.append(seg_dft[i]*Hw[i])   
+    freqs = np.fft.fftfreq(len(output_wiener))  
+
+    output_wiener_time = np.fft.ifft(output_wiener, n=fft_num)    
+    f, S_output = welch(output_wiener_time, detrend=False, return_onesided=False, fs=48000, nfft=fft_num) 
+
+    return output_wiener_time, output_wiener, freqs, f, S_output 
+
 def wiener(seg, noise_psd, figure_counter, num):
     # print(len(seg))
     f, psd = welch(seg, detrend=False, return_onesided=False, fs=48000, nfft=fft_num)
@@ -133,19 +152,15 @@ def wiener(seg, noise_psd, figure_counter, num):
 filtered_signal_int = []
 # print(len(segments[2]))
 num = 0
-for i in range(number_of_segments):
-    if i == 50:
-        # figure_counter += 1
-        num = num + 1
-    else:
-        num = 0
-    filtered_signal_int.append(list(wiener(segments[i], S_noise, figure_counter, num)))
+for i in range(number_of_segments):  
+    output_wiener_time, output_wiener, freqs, f, S_output = calculate_wiener_output(segments[i], S_noise, fft_num)
+    filtered_signal_int.append(output_wiener_time)
 
 
 def fill_list(start, size, values):
     temp = []
-    last = start + len(values)
-    # print(start, last, size)
+    last = start + len(values) 
+
     for i in range(start):
         temp.append(0)
     for i in range(start, min(last, size)):
@@ -155,28 +170,22 @@ def fill_list(start, size, values):
     return temp
 
 
-# print(fill_list(3, 6, 7, [1, 2, 3, 4]))
-
-def sum_lists(segments):
-    temp = []
-    for j in range(len(segments[0])):
-        sum = 0
-        for i in range(len(segments)):
-            sum += segments[i][j]
-        temp.append(sum)
-    return temp
-
-
 def create_lists(segments, figure_counter):
+    def sum_lists(segments):
+        temp = []
+        for j in range(len(segments[0])):
+            sum = 0
+            for i in range(len(segments)):
+                sum += segments[i][j]
+            temp.append(sum)
+        return temp
+
     temp = []
     start = 0
     for i in range(len(segments)):
         temp.append(fill_list(start, length, segments[i]))
         start += seg_size // 2
-        # if i == 100 or i==101  or i==105:
-        #     plt.figure(i)
-        #     plt.plot(temp[i])
-    # print(temp[2])
+
     return sum_lists(temp)
 
 
@@ -205,64 +214,7 @@ plt.plot(filtered_signal_int[0])
 #     filtered_signal_int.append(filtered_signal.astype(int))
 
 
-# print(list(filtered_signal_int[2]))
-
-
-# figure_counter += 1
-# plt.figure(figure_counter)
-# plt.plot(filtered_signal_int[2])
-## over-lap add
-
-
-def over_lap_add(segmentss, seg_size):
-    signal = []
-    for i in range(len(segmentss)):
-        pass
-        # if i == 0:
-        #     for j in range(seg_size // 2):
-        #         signal.append(segmentss[i][j])
-        #     continue
-        # else:
-
-        # start = i*seg_size+seg_size//2
-        # while True:
-        #     for i in range(start):
-
-        # for j in range(seg_size):
-        #     if j < seg_size // 2:
-        #         signal.append(segmentss[i][j] + segmentss[i - 1][j + seg_size // 2])
-        #     else:
-        #         break
-
-        # elif i == 2:
-        #     for j in range(seg_size):
-        #         if j < seg_size // 2:
-        #             signal.append(segmentss[i][j] + segmentss[i - 1][j + seg_size // 2] + segmentss[i-2][j+2*seg_size//2])
-        #         else:
-        #             break
-        #
-        # elif i == 3:
-        #     for j in range(seg_size):
-        #         if j < seg_size // 2:
-        #             signal.append(segmentss[i][j] + segmentss[i - 1][j + seg_size // 2] + segmentss[i-2][j+2*seg_size//2] + segmentss[i-3][j+3*seg_size//2])
-        #         else:
-        #             break
-        # else:
-        #     for j in range(seg_size):
-        #         if j < seg_size // 2:
-        #             signal.append(segmentss[i][j] + segmentss[i - 1][j + seg_size // 2] + segmentss[i-2][j+2*seg_size//2] + segmentss[i-3][j+3*seg_size//2])# + segmentss[i-4][j+4*seg_size//2])
-        #         else:
-        #             break
-    return signal
-
-
-flat_filtered_signal = over_lap_add(filtered_signal_int, seg_size)
-
-# print(flat_filtered_signal)
-
-# figure_counter += 1
-# plt.figure(figure_counter)
-# plt.plot(flat_filtered_signal)
+ 
 
 figure_counter += 1
 plt.figure(figure_counter)

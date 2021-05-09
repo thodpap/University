@@ -118,14 +118,41 @@ figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(dft_n_3)
 plt.title("DFT of Microphone 3")
- 
+
+def fill_freqs(f_i, signal):
+    freqs = [] 
+    new_sig = []
+    for i, f in enumerate(f_i):
+        if 0 <= f <= 8000:
+            freqs.append(f) 
+            new_sig.append(signal[i])
+        else:
+            break
+    return freqs, new_sig
+
 figure_counter += 1
 plt.figure(figure_counter)
 plt.title('Wiener Graphs')
-plt.plot(S_original, label="source signal")
-plt.plot(Sn_3, label="microphone 3")
+plt.xlim([0,8000])
+ax = fig.add_subplot(111)
+f1, s1 = fill_freqs(f,S_output)
+f2, s2 = fill_freqs(f1,Sn_3)
+f3, s3 = fill_freqs(f2,S_noise)
+f4, s4 = fill_freqs(f3,S_original)
+plt.semilogy(f1 , s1, label="wiener filer output")
+plt.semilogy(f2 , s2, label="microphone 3")
+plt.semilogy(f3 , s3, label="noise")
+plt.semilogy(f4 , s4, label="source signal")
+plt.legend()
+ 
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.title('Wiener Graphs') 
 plt.plot(S_output, label="wiener filer output")
+plt.plot(Sn_3, label="microphone 3")
 plt.plot(S_noise, label="noise")
+plt.plot(S_original, label="source signal")
 plt.legend()
  
 

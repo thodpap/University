@@ -18,36 +18,36 @@ theta_signal = math.pi / 4
 
 path = "Material/MicArrayRealSignals/sensor_"
 endpath = ".wav" 
-
+ 
 def read_from_files(path, endpath):
     n = []
     for i in range(7):
         data, y = lib.load(path + str(i) + endpath, sr=None)
         n.append(data)
-    print(n)
+
     original, samplerate = lib.load("Material/MicArrayRealSignals/source.wav", sr=None)
     return samplerate, n, original
 
 
-samplerate, n, original = read_from_files(path, endpath) 
- 
+samplerate, n, original = read_from_files(path, endpath)
+
+
 def time_delays():
     tn = []
     for i in range(7):
-        tn.append((-(i - (N - 1) / 2) * d * math.cos(theta_signal) / c) * samplerate)
+        tn.append(((-(i - (N - 1) / 2) * d * math.cos(theta_signal)) / c) * samplerate)
     return np.array(tn)
 
 
-tn = time_delays() 
-
+tn = time_delays()
 my_len = len(n[0])  # length of all signals
-
+ 
 def calculate_output(n, tn):
     def calculate_dfts(n):
         dfts = []
         for i in range(7):
-            dfts.append(fft(n[i]))
-        return dfts
+            dfts.append(list(fft(n[i])))
+        return np.array(dfts)
 
     def calculate_idfts(dfts, dft_len):
         idfts = []
@@ -74,9 +74,11 @@ def calculate_output(n, tn):
     idfts = calculate_idfts(dfts, dft_len)
 
     return find_output(idfts)
- 
-output = np.array(calculate_output(n, tn))
-original = np.array(original)
+
+
+output = np.array(calculate_output(n, tn)) 
+
+write("3.wav", samplerate, output.astype(n[3].dtype))
 
 #3)
 def SSNR(signal):
@@ -112,7 +114,7 @@ SSNR_n_3 = SSNR(n[3])
 SSNR_output = SSNR(output) 
 print("SSNR_n_3: ", SSNR_n_3 )
 print("SSNR_output: ", SSNR_output)  
-
+ 
 
 ###################################################
 # Plots                                           #

@@ -18,9 +18,9 @@ figure_counter = 0
 
 theta_signal = math.pi / 4
 # theta_noise = 3 * math.pi / 4
-
+ 
 path = "Material/MicArrayRealSignals/sensor_"
-endpath = ".wav"
+endpath = ".wav" 
  
 def read_from_files(path, endpath):
     n = []
@@ -44,7 +44,7 @@ def time_delays():
 
 tn = time_delays()
 my_len = len(n[0])  # length of all signals
-
+ 
 def calculate_output(n, tn):
     def calculate_dfts(n):
         dfts = []
@@ -80,7 +80,8 @@ def calculate_output(n, tn):
 
 
 output = np.array(calculate_output(n, tn)) 
- 
+
+write("4.wav", samplerate, output.astype(n[3].dtype))
 
 # segments
 seg_size = 1440  # 30 ms
@@ -90,42 +91,40 @@ length = len(original)
 
 noise = output[0:seg_size]
 
-segments = []
-for i in range(number_of_segments):
-    temp = []
-    for j in range(seg_size):
-        if i == 0:
-            temp.append(output[j] * window[j])
-        else:
-            temp.append(output[j + i * seg_size // 2] * window[j])
-    segments.append(temp)
+def get_segments(signal, window, number_of_segments, seg_size):
+    segments = []
+    start = 0
+
+    while start + seg_size < len(signal):
+        temp = []
+        for i in range(seg_size):
+            temp.append(signal[start + i] * window[i])
+        start += seg_size // 2
+        segments.append(temp)
+    return segments
+
+segments = get_segments(output, window, number_of_segments, seg_size)
+
  
 # welch in beam output
 
-fft_num = 2 * seg_size
-
-f, S_noise = welch(noise, detrend=False, return_onesided=False, fs=48000, nfft=fft_num)
- 
+fft_num = 2 * seg_size 
+f, S_noise = welch(noise, detrend=False, return_onesided=False, fs=48000, nfft=fft_num) 
 
 def calculate_wiener_output(seg, noise_psd, fft_num):
-    seg_dft = np.fft.fft(seg, n=fft_num) 
-    f, psd = welch(seg, detrend=False, return_onesided=False, fs=48000, nfft=fft_num)
-
-    Hw = []
-    for k in range(len(psd)):
-        Hw.append(1 - noise_psd[k] / psd[k])
+    seg_dft = np.fft.fft(seg, n=fft_num)
+    f, psd = welch(seg, detrend=False, return_onesided=False, fs=48000, nfft=fft_num) 
 
     output_wiener = []  
-    for i in range(len(Hw)): 
-        output_wiener.append(seg_dft[i]*Hw[i])  
-
+    for i in range(len(seg_dft)): 
+        output_wiener.append(seg_dft[i]* (1 - noise_psd[i] / psd[i]))   
     freqs = np.fft.fftfreq(len(output_wiener))  
 
     output_wiener_time = np.fft.ifft(output_wiener, n=fft_num)    
     f, S_output = welch(output_wiener_time, detrend=False, return_onesided=False, fs=48000, nfft=fft_num) 
 
     return output_wiener_time, output_wiener, freqs, f, S_output 
-
+ 
 
 filtered_signal_int = [] 
 num = 0
@@ -133,40 +132,26 @@ for i in range(number_of_segments):
     output_wiener_time, output_wiener, freqs, f, S_output = calculate_wiener_output(segments[i], S_noise, fft_num)
     filtered_signal_int.append(output_wiener_time)
 
+figure_counter += 1
+plt.figure(figure_counter)
+plt.plot(filtered_signal_int[1])
 
-def fill_list(start, size, values):
-    temp = []
-    last = start + len(values) 
-
-    for i in range(start):
-        temp.append(0)
-    for i in range(start, min(last, size)):
-        temp.append(values[i - start])
-    for i in range(min(last, size), size):
-        temp.append(0)
-    return temp
-
-
-def create_lists(segments, figure_counter):
-    def sum_lists(segments):
-        temp = []
-        for j in range(len(segments[0])):
-            sum = 0
-            for i in range(len(segments)):
-                sum += segments[i][j]
-            temp.append(sum)
-        return temp
-
-    temp = []
+def get_original(segments):
+    sums = np.zeros(len(original))
     start = 0
-    for i in range(len(segments)):
-        temp.append(fill_list(start, length, segments[i]))
+    count = 0
+    while start + seg_size < len(original):
+        for i, s in enumerate(segments[count]):
+            if start + i >= len(original):
+                break
+
+            sums[start + i] += s
+
         start += seg_size // 2
+        count += 1
+    return sums 
 
-    return sum_lists(temp)
-
-
-filtered_output = create_lists(filtered_signal_int, figure_counter)
+filtered_output = get_original(filtered_signal_int)  
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -203,11 +188,12 @@ plt.ylim([0,23800])
 
 
 
+output = np.array(output)
 filtered_output = np.array(filtered_output)
-print("len filter output: ", len(filtered_output))
-# flat_filtered_signal = np.array(flat_filtered_signal)
-write("4.wav", samplerate, filtered_output.astype(int))
- 
+
+write("4.wav", samplerate, output.astype(n[3].dtype)) 
+write("5.wav", samplerate, filtered_output.astype(n[3].dtype))
+
 
 
 # 3 

@@ -21,7 +21,8 @@ theta_signal = math.pi / 4
 
 path = "Material/MicArrayRealSignals/sensor_"
 endpath = ".wav"
- 
+
+
 def read_from_files(path, endpath):
     n = []
     for i in range(7):
@@ -33,7 +34,7 @@ def read_from_files(path, endpath):
 
 
 samplerate, n, original = read_from_files(path, endpath)
-
+samplerate = 48000
 
 def time_delays():
     tn = []
@@ -44,6 +45,7 @@ def time_delays():
 
 tn = time_delays()
 my_len = len(n[0])  # length of all signals
+
 
 def calculate_output(n, tn):
     def calculate_dfts(n):
@@ -79,16 +81,13 @@ def calculate_output(n, tn):
     return find_output(idfts)
 
 
-output = np.array(calculate_output(n, tn)) 
- 
+output = np.array(calculate_output(n, tn))
 
 # segments
 seg_size = 1440  # 30 ms
 number_of_segments = 2 * len(output) // seg_size - 1
 window = np.hamming(seg_size)
 length = len(original)
-
-noise = output[0:seg_size]
 
 segments = []
 for i in range(number_of_segments):
@@ -99,44 +98,45 @@ for i in range(number_of_segments):
         else:
             temp.append(output[j + i * seg_size // 2] * window[j])
     segments.append(temp)
- 
-# welch in beam output
 
+# welch in beam output
+# noise = output[0:seg_size]
 fft_num = 2 * seg_size
+noise = segments[0]
 
 f, S_noise = welch(noise, detrend=False, return_onesided=False, fs=48000, nfft=fft_num)
- 
+
 
 def calculate_wiener_output(seg, noise_psd, fft_num):
-    seg_dft = np.fft.fft(seg, n=fft_num) 
+    seg_dft = np.fft.fft(seg, n=fft_num)
     f, psd = welch(seg, detrend=False, return_onesided=False, fs=48000, nfft=fft_num)
 
     Hw = []
     for k in range(len(psd)):
         Hw.append(1 - noise_psd[k] / psd[k])
 
-    output_wiener = []  
-    for i in range(len(Hw)): 
-        output_wiener.append(seg_dft[i]*Hw[i])  
+    output_wiener = []
+    for i in range(len(Hw)):
+        output_wiener.append(seg_dft[i] * Hw[i])
 
-    freqs = np.fft.fftfreq(len(output_wiener))  
+    freqs = np.fft.fftfreq(len(output_wiener))
 
-    output_wiener_time = np.fft.ifft(output_wiener, n=fft_num)    
-    f, S_output = welch(output_wiener_time, detrend=False, return_onesided=False, fs=48000, nfft=fft_num) 
+    output_wiener_time = np.fft.ifft(output_wiener, n=fft_num)
+    f, S_output = welch(output_wiener_time, detrend=False, return_onesided=False, fs=48000, nfft=fft_num)
 
-    return output_wiener_time, output_wiener, freqs, f, S_output 
+    return output_wiener_time, output_wiener, freqs, f, S_output
 
 
-filtered_signal_int = [] 
+filtered_signal_int = []
 num = 0
-for i in range(number_of_segments):  
+for i in range(number_of_segments):
     output_wiener_time, output_wiener, freqs, f, S_output = calculate_wiener_output(segments[i], S_noise, fft_num)
     filtered_signal_int.append(output_wiener_time)
 
 
 def fill_list(start, size, values):
     temp = []
-    last = start + len(values) 
+    last = start + len(values)
 
     for i in range(start):
         temp.append(0)
@@ -167,16 +167,17 @@ def create_lists(segments, figure_counter):
 
 
 filtered_output = create_lists(filtered_signal_int, figure_counter)
+filtered_output = np.array(filtered_output)
+filtered_output = np.real(filtered_output)
 
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(n[3]) 
+plt.plot(n[3])
 plt.title('n[3]')
 
-
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(filtered_output) 
+plt.plot(filtered_output)
 plt.title('Filtered_output')
 
 figure_counter += 1
@@ -191,42 +192,55 @@ plt.title('output')
 
 figure_counter += 1
 plt.figure(figure_counter)
-plt.specgram(filtered_output, Fs=samplerate) 
+plt.specgram(filtered_output, Fs=samplerate)
 plt.title('filtered_output')
-plt.ylim([0,23800])
+plt.ylim([0, 23800])
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.specgram(n[3], Fs=samplerate)
+plt.title('n[3]')
+plt.ylim([0, 23800])
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.specgram(original, Fs=samplerate)
 plt.title('original')
-plt.ylim([0,23800])
+plt.ylim([0, 23800])
 
-
+figure_counter += 1
+plt.figure(figure_counter)
+plt.specgram(output, Fs=samplerate)
+plt.title('output')
+plt.ylim([0, 23800])
 
 filtered_output = np.array(filtered_output)
 print("len filter output: ", len(filtered_output))
 # flat_filtered_signal = np.array(flat_filtered_signal)
-write("4.wav", samplerate, filtered_output.astype(int))
- 
+filtered_output = np.real(filtered_output)
+write("4.wav", samplerate, filtered_output)
+
+# 3
+
+L = 1440
 
 
-# 3 
+def signal_power(signal):
+    energy = 0.0
+    for n in range(len(signal)):
+        energy += math.pow(abs(signal[n]), 2)
 
-def SSNR(signal):
-    def signal_power(signal):
-        energy = 0.0
-        for n in range(len(signal)):
-            energy += math.pow(abs(signal[n]), 2)
+    return energy / len(signal)
 
-        return energy/len(signal)
 
-    def calculate_ssnr(signal, noise_power, M): 
-        SSNR = [] 
+def SSNR(signal, noise_power):
+    def calculate_ssnr(signal, noise_power, M):
+        SSNR = []
         for i in range(M):
-            cons = (signal_power(signal[i*L:i*L+L])-noise_power)/noise_power
+            cons = (signal_power(signal[i * L:i * L + L]) - noise_power) / noise_power
             if cons <= 0:
                 continue
-            res = 10*np.log10(cons)
+            res = 10 * np.log10(cons)
             if res >= 35:
                 res = 35
             if res <= -20:
@@ -234,27 +248,31 @@ def SSNR(signal):
             SSNR.append(res)
         return SSNR
 
-    L = 1440  
-    noise_power = signal_power(signal[0:L])
-    M = len(signal)//L
-    SSNR = sum(calculate_ssnr(signal, noise_power, M)) / M 
+    L = 1440
+    M = len(signal) // L
+    SSNR = sum(calculate_ssnr(signal, noise_power, M)) / M
 
     return SSNR
 
-SSNR_n_3 = SSNR(n[3])
-SSNR_filtered_output = SSNR(filtered_output) 
-SSNR_output = SSNR(output)
 
-print("SSNR_n_3: ", SSNR_n_3 )
-print("SSNR_output: ", SSNR_output)  
+noise_power_1 = signal_power(n[3][0:L])
+SSNR_n_3 = SSNR(n[3], noise_power_1)
+noise_power_2 = signal_power(segments[0])
+SSNR_filtered_output = SSNR(filtered_output, noise_power_2)
+noise_power_3 = signal_power(output[0:L])
+SSNR_output = SSNR(output, noise_power_3)
+
+print("SSNR_n_3: ", SSNR_n_3)
+print("SSNR_output: ", SSNR_output)
 print("SSNR_filtered_output: ", SSNR_filtered_output)
 
 # 4
 
-SSNRs = [] 
+SSNRs = []
 for n_i in n:
-    SSNRs.append(SSNR(n_i)) 
+    noise_power_i = signal_power(n_i[0:L])
+    SSNRs.append(SSNR(n_i, noise_power_i))
 
-print("Average SSNR's: ", sum(SSNRs)/7)
+print("Average SSNR's: ", sum(SSNRs) / 7)
 
 plt.show()

@@ -213,12 +213,11 @@ plt.figure(figure_counter)
 plt.specgram(output, Fs=samplerate)
 plt.title('output')
 plt.ylim([0, 23800])
-
-filtered_output = np.array(filtered_output)
-print("len filter output: ", len(filtered_output))
+ 
 # flat_filtered_signal = np.array(flat_filtered_signal)
 filtered_output = np.real(filtered_output)
-write("4.wav", samplerate, filtered_output)
+write("beamformer_output.wav", samplerate, np.real(output))
+write("beamformer_weiner_output.wav", samplerate, np.real(filtered_output))
 
 # 3
 

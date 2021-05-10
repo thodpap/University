@@ -105,8 +105,7 @@ print("SNR: ", SNR)
 ###################################################
 # Plots                                           #
 ###################################################
-
-
+ 
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -114,8 +113,7 @@ plt.plot(np.arange(len(original)), original)
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("source signal")
-
-# f, t, Sxx = spectrogram(original, fs=48000)
+ 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.specgram(original, Fs=samplerate)

@@ -78,7 +78,7 @@ def calculate_output(n, tn):
 
 output = np.array(calculate_output(n, tn)) 
 
-write("3.wav", samplerate, output.astype(n[3].dtype))
+# write("3.wav", samplerate, output.astype(n[3].dtype))
 
 #3)
 def SSNR(signal):
@@ -126,6 +126,7 @@ plt.plot(np.arange(len(original)), original)
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("source signal")
+plt.savefig("Figures/2_2/A/original.png")
  
 figure_counter += 1
 plt.figure(figure_counter) 
@@ -133,6 +134,7 @@ plt.specgram(original, Fs=samplerate)
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
 plt.title("spectrogram of source signal")
+plt.savefig("Figures/2_2/A/original_spec.png")
 
 
 figure_counter += 1
@@ -142,6 +144,7 @@ plt.plot(np.arange(len(fft_source)), np.real(fft_source))
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("fft of source signal") 
+plt.savefig("Figures/2_2/A/fft_source.png")
  
 
 figure_counter += 1
@@ -150,6 +153,7 @@ plt.plot(np.arange(len(n[3])), list(n[3]))
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("n[3] signal") 
+plt.savefig("Figures/2_2/A/n[3].png")
  
 figure_counter += 1
 plt.figure(figure_counter) 
@@ -157,12 +161,14 @@ plt.specgram(n[3], Fs=samplerate)
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
 plt.title("spectogram of n[3] signal")
+plt.savefig("Figures/2_2/A/n[3]_spec.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
 fft3 = fft(list(n[3]))
 plt.plot(np.arange(len(fft3)), np.real(fft3))
-plt.xlabel("discrete time")  
+plt.xlabel("discrete time") 
+plt.savefig("Figures/2_2/A/fft3.png") 
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -170,6 +176,7 @@ plt.plot(np.arange(len(output)), np.real(output))
 plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("output signal")
+plt.savefig("Figures/2_2/A/output.png")
 
   
 figure_counter += 1 
@@ -179,6 +186,7 @@ plt.ylim([0,23800])
 plt.xlabel("discrete time")
 plt.ylabel("frequencies")
 plt.title("spectogram of output signal")
+plt.savefig("Figures/2_2/A/output_spec.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -188,5 +196,6 @@ plt.xlabel("discrete time")
 plt.ylabel("amplitude")
 plt.title("fft of output signal")
 plt.ylabel("amplitude")
+plt.savefig("Figures/2_2/A/fft_output.png")
 
 plt.show()

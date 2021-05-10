@@ -126,13 +126,15 @@ def calculate_wiener_output(seg, noise_psd, fft_num):
 
     return output_wiener_time, output_wiener, freqs, f, S_output
 
+def fill_signal_int(segments, number_of_segments, S_noise, fft_num):
+    filtered_signal_int = []
+    num = 0
+    for i in range(number_of_segments):
+        output_wiener_time, output_wiener, freqs, f, S_output = calculate_wiener_output(segments[i], S_noise, fft_num)
+        filtered_signal_int.append(output_wiener_time)
+    return filtered_signal_int
 
-filtered_signal_int = []
-num = 0
-for i in range(number_of_segments):
-    output_wiener_time, output_wiener, freqs, f, S_output = calculate_wiener_output(segments[i], S_noise, fft_num)
-    filtered_signal_int.append(output_wiener_time)
-
+fill_signal_int = fill_signal_int(segments, number_of_segments, S_noise, fft_num)
 
 def fill_list(start, size, values):
     temp = []
@@ -167,57 +169,62 @@ def create_lists(segments, figure_counter):
 
 
 filtered_output = create_lists(filtered_signal_int, figure_counter)
-filtered_output = np.array(filtered_output)
-filtered_output = np.real(filtered_output)
+filtered_output = np.array(filtered_output) 
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(n[3])
 plt.title('n[3]')
+plt.savefig("Figures/2_2/B/n[3].png")
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(filtered_output)
 plt.title('Filtered_output')
+plt.savefig("Figures/2_2/B/filtered_output.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(original)
 plt.title('original')
+plt.savefig("Figures/2_2/B/original.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(output)
 plt.title('output')
+plt.savefig("Figures/2_2/B/output.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.specgram(filtered_output, Fs=samplerate)
 plt.title('filtered_output')
 plt.ylim([0, 23800])
+plt.savefig("Figures/2_2/B/filtered_output_spec.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.specgram(n[3], Fs=samplerate)
 plt.title('n[3]')
 plt.ylim([0, 23800])
+plt.savefig("Figures/2_2/B/n[3].spec.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.specgram(original, Fs=samplerate)
 plt.title('original')
 plt.ylim([0, 23800])
+plt.savefig("Figures/2_2/B/original_spec.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.specgram(output, Fs=samplerate)
 plt.title('output')
 plt.ylim([0, 23800])
- 
-# flat_filtered_signal = np.array(flat_filtered_signal)
-filtered_output = np.real(filtered_output)
-write("beamformer_output.wav", samplerate, np.real(output))
-write("beamformer_weiner_output.wav", samplerate, np.real(filtered_output))
+plt.savefig("Figures/2_2/B/output_spec.png")
+  
+write("beamformer_output.wav", samplerate, np.real(output).astype(float))
+write("beamformer_weiner_output.wav", samplerate, np.real(filtered_output).astype(float))
 
 # 3
 
@@ -267,10 +274,10 @@ print("SSNR_filtered_output: ", SSNR_filtered_output)
 
 # 4
 
-SSNRs = []
+SSNRs_input = []
 for n_i in n:
     noise_power_i = signal_power(n_i[0:L])
-    SSNRs.append(SSNR(n_i, noise_power_i))
+    SSNRs_input.append(SSNR(n_i, noise_power_i))
 
 print("Average SSNR's: ", sum(SSNRs) / 7)
 

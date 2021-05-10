@@ -56,25 +56,29 @@ figure_counter += 1
 plt.figure(figure_counter)
 plt.title("S_noise")
 plt.plot(S_noise)
+plt.savefig("Figures/2_1/B/S_noise.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.title("Power Spectral Density of n_3")
 plt.plot(Sn_3)
+plt.savefig("Figures/2_1/B/Sn_3.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.title("Original Signals' Power Spectral Density")
 plt.plot(S_original)  
+plt.savefig("Figures/2_1/B/S_original.png")
 
 figure_counter += 1
 fig = plt.figure(figure_counter)
 ax = fig.add_subplot(111)
 # plt.yscale('log')
-plt.semilogy(freqs,Hw_PSD)
+plt.semilogy(freqs,np.real(Hw_PSD))
 plt.title("Wiener Filter PSD")
 plt.xlabel("Hertz")
 plt.ylabel("Wiener Filter PSD Amplitude")
+plt.savefig("Figures/2_1/B/Hw_PSD.png")
   
 # 2) 
 def calculate_nsd():
@@ -93,6 +97,7 @@ plt.semilogy(freqs, nsd)
 plt.title("speech Distortion PSD")
 plt.xlabel("Hertz")
 plt.ylabel("speech Distortion PSD Amplitude")
+plt.savefig("Figures/2_1/B/nsd_semilogy.png")
  
 # 3) 
 
@@ -111,13 +116,17 @@ output_wiener_time, output_wiener, freqs, f, S_output = calculate_wiener_output(
 
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(freqs*samplerate, output_wiener)
+plt.plot(freqs*samplerate, np.real(output_wiener))
 plt.title("DFT of Output Wiener")
+plt.savefig("Figures/2_1/B/output_wiener.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(dft_n_3)
+plt.plot(np.real(dft_n_3))
 plt.title("DFT of Microphone 3")
+plt.savefig("Figures/2_1/B/dft_n_3.png")
+
+
 
 def fill_freqs(f_i, signal):
     freqs = [] 
@@ -133,17 +142,17 @@ def fill_freqs(f_i, signal):
 figure_counter += 1
 plt.figure(figure_counter)
 plt.title('Wiener Graphs')
-plt.xlim([0,8000])
-ax = fig.add_subplot(111)
+plt.xlim([0,8000]) 
 f1, s1 = fill_freqs(f,S_output)
 f2, s2 = fill_freqs(f1,Sn_3)
 f3, s3 = fill_freqs(f2,S_noise)
 f4, s4 = fill_freqs(f3,S_original)
-plt.semilogy(f1 , s1, label="wiener filer output")
-plt.semilogy(f2 , s2, label="microphone 3")
-plt.semilogy(f3 , s3, label="noise")
-plt.semilogy(f4 , s4, label="source signal")
+plt.semilogy(f1 , np.real(s1), label="wiener filer output")
+plt.semilogy(f2 , np.real(s2), label="microphone 3")
+plt.semilogy(f3 , np.real(s3), label="noise")
+plt.semilogy(f4 , np.real(s4), label="source signal")
 plt.legend()
+plt.savefig("Figures/2_1/B/Wiener_Graphs_semilogy.png")
  
 
 figure_counter += 1
@@ -154,6 +163,7 @@ plt.plot(Sn_3, label="microphone 3")
 plt.plot(S_noise, label="noise")
 plt.plot(S_original, label="source signal")
 plt.legend()
+plt.savefig("Figures/2_1/B/Wiener_Graphs.png")
  
 
 ## 4)
@@ -165,8 +175,9 @@ output_wiener_time = np.interp(space, np.arange(len(output_wiener_time)), output
  
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(output_wiener_time)
+plt.plot(np.real(output_wiener_time))
 plt.title("Output Wiener_Time")
+plt.savefig("Figures/2_1/B/output_wiener_time.png")
 
 
 def SNR(original, output):
@@ -260,24 +271,30 @@ print("SNR_wiener_output: ", SNR_weiner_output)
 
 # write("wiener_ouput.wav", samplerate, output_wiener_time)  
 
+
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(output_wiener_time)
+plt.plot(np.real(output_wiener_time))
 plt.title("output_wiener")
+plt.savefig("Figures/2_1/B/output_wiener_time.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(original)
 plt.title("original")
+plt.savefig("Figures/2_1/B/original.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(beam_output)
+plt.plot(np.real(beam_output))
 plt.title("beam_output")
+plt.savefig("Figures/2_1/B/beam_output.png")
 
 figure_counter += 1
 plt.figure(figure_counter)
-plt.plot(n_3)
+plt.plot(np.real(n_3))
 plt.title("input")
+plt.savefig("Figures/2_1/B/input.png")
+
 
 plt.show()

@@ -38,10 +38,11 @@ for i in range(len(N)):
     ax = fig.add_subplot(111)
     ax.set_yscale('log')
     plt.plot(radians, abs(np.array(delay_sum_beam[i])))
-    plt.title("delay_sum_beam with different number of microphones, constant frequency and distance and theta_s = pi/2")
+    plt.title("DSB with " + str(N[i]) + " microphones, constant f, d and θ = pi/2")
     # plt.title("delay_sum_beam with " + str(N[i]) + " microphones")
     plt.xlabel("rad")
     plt.ylabel("delay_sum_beam amplitude")
+    plt.savefig("Figures/1/delay_sum_beam[" + str(i) + "].png")
 
 ## PARATHROUME OTI OSO EUJANETAI TO N AUJANETAI H AKRIBEIA WS PROS TO THETA, DLD ANIXNEUOUME KALUTERA TO SHMA STH GWNIA THETA_S, STENOTEROS LOBOS
 ## MIKROTERA PLATH MAKRIA APO TO THETA_S
@@ -68,9 +69,10 @@ for i in range(len(distance)):
     ax = fig.add_subplot(111)
     ax.set_yscale('log')
     plt.plot(radians, abs(np.array(delay_sum_beam[i])))
-    plt.title("delay_sum_beam with " + str(distance[i]) + "m distance between microphones")
+    plt.title("DSB with " + str(distance[i]) + " m distance")
     plt.xlabel("rad")
     plt.ylabel("delay_sum_beam amplitude")
+    plt.savefig("Figures/1/2_delay_sum_beam[" + str(i) + "].png")
 
 
 ## GIA D = 0.16 PARABIAZETAI TO XWRIKO THEWRHMA DEIGMATOLIPSIAS GIA AUTO EXOUME 2 LOBOUS DEJIA KAI ARISTERA
@@ -100,8 +102,9 @@ for i in range(len(radians)):
     ax = fig.add_subplot(111)
     ax.set_yscale('log')
     plt.plot(freqs, abs(np.array(delay_sum_beam[i])))
-    plt.title("delay_sum_beam with m distance between microphones")
+    plt.title("DSB with m distance")
     plt.xlabel("rad")
     plt.ylabel("delay_sum_beam amplitude")
+    plt.savefig("Figures/1/3_delay_sum_beam[" + str(i) + "].png")
 
 plt.show()

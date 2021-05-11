@@ -1,0 +1,67 @@
+MVI A,10H	  ;empty to every led position instead of 2 middle ones
+STA 0B00H	  ;because we will write there the remaining time
+STA 0B01H
+STA 0B04H
+STA 0B05H
+
+START:
+MVI A,00H	;initial LED state
+CMA
+STA 3000H
+MVI A,0DH ;allow intrpt RST 6.5
+SIM
+EI
+
+LOOP1:
+JMP LOOP1 		;wait for intrpt RST 6.5
+
+INTR_ROUTINE:
+POP H			;Hardware interrupt -> Get PC before inturrept
+MVI D,3CH 		;60 seconds
+MVI H,FFH 		;LED state on (HL(=PC) is useless in this case)
+MVI E,00H		;counter for 1 sec
+EI
+
+COUNT:
+MOV A,H		
+CMA
+STA 3000H		;print LED state on
+LXI B,0064H		;delay 0.1sec
+CALL DELB
+INR E			
+MOV A,E
+CPI 0AH		;if time = 10 * 0.1s (=1sec)
+JNZ SKIP
+DCR D			;decrease seconds
+MVI E,00H		;initialize counter E
+MOV A,D
+CPI 00H		;if seconds < 0 then close LEDS
+JZ START
+
+SKIP:
+MOV A,D		
+MVI B,00H		;for tens
+
+FIXNUM:		
+CPI 0AH
+JC FINISH
+SUI 0AH
+INR B
+JMP FIXNUM		;now A has ones and B has tens (decimal)
+
+FINISH:
+	
+STA 0B02H
+MOV A,B
+STA 0B03H		
+
+PUSH H			;save H in stack
+PUSH D 		;save D in stack
+LXI D,0B00H
+CALL STDM
+CALL DCD		;display reamaining seconds
+POP D
+POP H
+JMP COUNT
+
+END

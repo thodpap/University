@@ -36,6 +36,7 @@ def read_from_files(path, endpath):
 samplerate, n, original = read_from_files(path, endpath)
 samplerate = 48000
 
+
 def time_delays():
     tn = []
     for i in range(7):
@@ -126,6 +127,7 @@ def calculate_wiener_output(seg, noise_psd, fft_num):
 
     return output_wiener_time, output_wiener, freqs, f, S_output
 
+
 def fill_signal_int(segments, number_of_segments, S_noise, fft_num):
     filtered_signal_int = []
     num = 0
@@ -134,7 +136,9 @@ def fill_signal_int(segments, number_of_segments, S_noise, fft_num):
         filtered_signal_int.append(output_wiener_time)
     return filtered_signal_int
 
+
 filtered_signal_int = fill_signal_int(segments, number_of_segments, S_noise, fft_num)
+
 
 def fill_list(start, size, values):
     temp = []
@@ -169,7 +173,7 @@ def create_lists(segments, figure_counter):
 
 
 filtered_output = create_lists(filtered_signal_int, figure_counter)
-filtered_output = np.array(filtered_output) 
+filtered_output = np.array(filtered_output)
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -222,7 +226,7 @@ plt.specgram(output, Fs=samplerate)
 plt.title('output')
 plt.ylim([0, 23800])
 # plt.savefig("Figures/2_2/B/output_spec.png")
-   
+
 write("real_mmse.wav", samplerate, np.real(filtered_output).astype(float))
 
 # 3
@@ -262,7 +266,7 @@ def SSNR(signal, noise_power):
 
 noise_power_1 = signal_power(n[3][0:L])
 SSNR_n_3 = SSNR(n[3], noise_power_1)
-noise_power_2 = signal_power(segments[0])
+noise_power_2 = signal_power(filtered_signal_int[1])
 SSNR_filtered_output = SSNR(filtered_output, noise_power_2)
 noise_power_3 = signal_power(output[0:L])
 SSNR_output = SSNR(output, noise_power_3)

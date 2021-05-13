@@ -1,0 +1,111 @@
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+import scipy.fftpack as fftpack
+import cmath
+from sklearn.metrics import mean_squared_error
+
+figure_counter = 0
+
+################  1_4_b
+
+n = np.arange(0, 32)
+n = list(n)
+print(n)
+
+signal = [(0.8 ** i) * (math.cos(0.15 * math.pi * i)) for i in n]
+
+################  1_4_b1
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.stem(n, signal)
+plt.title("y[n]")
+plt.xlabel("discrete time")
+plt.ylabel("amplitude")
+
+
+
+
+################  1_4_b2
+
+my_fft = np.fft.fft(signal)
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.stem(n, np.abs(my_fft))
+plt.xlabel("k point")
+plt.ylabel("amplitude")
+plt.title("32-points DFT of signal")
+
+
+
+
+################  1_4_b3
+
+my_dct2 = fftpack.dct(signal, 2)
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.stem(n, np.abs(my_dct2))
+plt.xlabel("k point")
+plt.ylabel("amplitude")
+plt.title("32-points DCT-2 of signal (ABSOLUTE VALUES)")
+
+
+################  1_4_b4
+
+M = np.arange(0, 31)
+M = list(M)
+
+b = []
+for i in range(32):
+    if i == 1:
+        b.append(1/2)
+    else:
+        b.append(1)
+
+ym = []
+ycm = []
+
+# MEAN SQUARE ERROR
+
+MSEym = []
+MSEycm = []
+cons = 1/32
+
+
+for i in M:
+    ym = []
+    ycm = []
+    for time in n:
+        result1 = 0
+        result2 = 0
+        for k in range(i+1):
+            if i <= 15:
+                if k < i:
+                    result1 = result1 + cons * my_fft[k] * cmath.exp(2j * math.pi * k * time / 32) + cons * my_fft[32 - i + k] * cmath.exp(
+                        2j * math.pi * (32 - i + k) * time / 32)
+                else:
+                    result1 = result1 + cons * my_fft[k] * cmath.exp(2j * math.pi * k * time / 32)
+            result2 = result2 + cons*b[k]*my_dct2[k]*math.cos(math.pi*k*(2*time+1)/64)
+
+        ym.append(result1)
+        ycm.append(result2)
+    if i <= 15:
+        ym = np.array(ym)
+        ym = np.real(ym) #eixa se ola 0j kai mou to ebgaze migadiko.. kai eixe themata
+        MSEym.append(mean_squared_error(ym, signal))
+    ycm = np.array(ycm)
+    ycm = np.real(ycm)
+    MSEycm.append(mean_squared_error(ycm, signal))
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.plot(M[0:16], MSEym, "r", label="MSEym")
+plt.plot(M, MSEycm, "b", label="MSEycm")
+plt.xlabel("M")
+plt.ylabel("amplitude")
+plt.legend()
+
+plt.show()

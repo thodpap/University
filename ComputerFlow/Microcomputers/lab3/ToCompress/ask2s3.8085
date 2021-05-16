@@ -1,0 +1,69 @@
+START:
+MVI D,32H		;random threshold K1
+MVI E,A8H		;random threshold K2
+
+INR D			;fix thresholds to compare input correctly
+INR E
+
+MVI A,10H
+STA 0B02H		;4 left-most 7-segment displays are empty
+STA 0B03H
+STA 0B04H
+STA 0B05H
+
+MVI A,0DH		;mask to allow RST 6.5
+SIM
+EI
+
+LOOP1:
+JMP LOOP1		;wait for intrpt
+
+INTR_ROUTINE:
+POP H			;store PC to HL
+CALL KIND		;read first number
+STA 0B01H		
+RLC			;4 RLC's bcs we read the 4 MSB's from the first read
+RLC
+RLC 
+RLC
+MOV B,A		;move the number in the 4 MSBs
+CALL KIND		;read 2nd number
+STA 0B00H
+ADD B			;add the number
+MOV B,A		;now B contains the correct number
+PUSH D
+LXI D,0B00H
+CALL STDM		
+CALL DCD		;display the number
+POP D
+MOV A,B
+
+CMP D
+JC LED0		;if number < K1 + 1 turn on LED 0
+CMP E
+JC LED1		;if K1 + 1 <= number < K2+1 turn on LED 1
+JMP LED2		;if number => K2+1 turn on LED 2
+
+
+		;the above labels open the proper LED 
+LED0:
+MVI A,FEH
+STA 3000H
+JMP FINISH
+
+LED1:
+MVI A,FDH
+STA 3000H
+JMP FINISH
+
+LED2:
+MVI A,FBH
+STA 3000H
+JMP FINISH
+
+FINISH:
+EI			;wait for the next intrpt
+JMP LOOP1
+
+END
+

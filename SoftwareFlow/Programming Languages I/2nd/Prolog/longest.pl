@@ -1,13 +1,4 @@
-/*
- * A predicate that reads the input from File and returns it in
- * the last three arguments: N, K and C.
- * Example:
- *
- * ?- read_input('c1.txt', N, K, C).
- * N = 10,
- * K = 3,
- * C = [1, 3, 1, 3, 1, 3, 3, 2, 2|...].
- */
+
 read_input(File, M, N, C) :-
     open(File, read, Stream),
     read_line(Stream, [M, N]),
@@ -18,15 +9,6 @@ read_line(Stream, L) :-
     atom_codes(Atom, Line),
     atomic_list_concat(Atoms, ' ', Atom),
     maplist(atom_number, Atoms, L).
-
-
-/*prefix(M, N, [Head|Tail], Sum, Pos, [P1|P2]):-
-    (Pos < M ->
-      Sum1 is Sum + Head + N,
-      Pos1 is Pos + 1,
-      P1 is Sum1,
-      prefix(M, N, Tail, Sum1, Pos1, P2)
-    ).*/
 
 sums(L, S, N) :- sumrunner(L, S, N, 0).
 sumrunner([], [], _, _).
@@ -108,3 +90,4 @@ longest(File, Ans):-
    reverse(Min, Min1),
    solver(Max, Min1, 0, Ans),
    writeln("me").
+

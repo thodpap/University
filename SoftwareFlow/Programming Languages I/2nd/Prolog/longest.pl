@@ -14,34 +14,29 @@ sums(L, S, N) :- sumrunner(L, S, N, 0).
 sumrunner([], [], _, _).
 sumrunner([A|B], [C|D], N, TOTAL) :- C is TOTAL + A + N, sumrunner(B, D, N, C).
 
-max_from_left([], _, _, _).
-max_from_left([Head|Tail], MaxArr, Pos, Max):-
+max_from_left([], Temp, _, _, MaxArr):- MaxArr = Temp.
+max_from_left([Head|Tail], Temp, Pos, Max, MaxArr):-
   (
     Head > Max ->
-      Pos1 is Pos + 1,
-      Max1 is Head,
-      H1 = (Head, Pos1),
-      MaxArr = [H1|T1],
-      max_from_left(Tail, T1, Pos1, Max1);
+      Pos1 is Pos + 1,  
+      append(Temp, [(Head,Pos1)], NewArr), 
+      max_from_left(Tail, NewArr, Pos1, Head, MaxArr);
     Head =< Max,
-    Pos1 is Pos + 1,
-    max_from_left(Tail, MaxArr, Pos1, Max)
+      Pos1 is Pos + 1,
+      max_from_left(Tail, Temp, Pos1, Max, MaxArr)
   ).
 
-
-min_from_right([], _, _, _).
-min_from_right([Head|Tail], MinArr, Pos, Min):-
-    (
-      Head < Min ->
-        Pos1 is Pos - 1,
-        Min1 is Head,
-        H1 = (Head, Pos1),
-        MinArr = [H1|T1],
-        min_from_right(Tail, T1, Pos1, Min1);
-      Head >= Min,
+min_from_right([], Temp, _, _, MinArr):- MinArr = Temp.
+min_from_right([Head|Tail], Temp, Pos, Min, MinArr):- 
+  (
+    Head < Min -> 
       Pos1 is Pos - 1,
-      min_from_right(Tail, MinArr, Pos1, Min)
-    ).
+      append(Temp, [ (Head, Pos1) ], NewTemp),
+      min_from_right(Tail, NewTemp, Pos1, Head, MinArr)
+    ; Head >= Min, 
+        Pos1 is Pos - 1,
+        min_from_right(Tail, Temp, Pos1, Min, MinArr)    
+  ). 
 
 
 len_tuple([], Pos1, Pos):-Pos1 is Pos.
@@ -72,22 +67,18 @@ solver([(Head_max,Pos_max)|Tail_max], [(Head_min, Pos_min)|Tail_min], Ans, F):-
         solver([(Head_max,Pos_max)|Tail_max], Tail_min, Ans, F)
     )
   ).
-
-
-
-
+ 
 longest(File, Ans):-
    read_input(File, M, N, C),
    sums(C,S,N),
    /*writeln(S)*/
    append([0], S, S1),
-   max_from_left(S1, Max, -1, -1),
-   reverse(S1, S2),
+   max_from_left(S1, [], -1, -1, Max),
+   reverse(S1, S2), 
    S2 = [H1|_],
    Max_ is H1 + 1,
-   M_ is M+1,
-   min_from_right(S2, Min, M_, Max_),
-   reverse(Min, Min1),
-   solver(Max, Min1, 0, Ans),
-   writeln("me").
+   M_ is M+1, 
+   min_from_right(S2, [], M_, Max_, Min), 
+   reverse(Min, Min1),  
+   solver(Max, Min1, 0, Ans).
 

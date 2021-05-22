@@ -38,7 +38,6 @@ def BFS(queue, N):
                         path = 'empty'
                     return path
 
-                # print("Standard print: ", queue, stack, path)
                 if not stack:  
                     tempQ = Q(queue,stack,path) 
                     newStates.append([tempQ[0],tempQ[1],tempQ[2]])
@@ -47,7 +46,7 @@ def BFS(queue, N):
                     newStates.append([tempS[0],tempS[1],tempS[2]])
                 else: 
                     queueQ, stackQ, pathQ = Q(queue, stack, path) 
-                    queueS, stackS, pathS = S(queue, stack[:-1], path) # GIA KAPOIO LOGO VAZI 1 STOIXEIO STO TELOS TOU STACK ELEOSS
+                    queueS, stackS, pathS = S(queue, stack[:-1], path)
                     
                     newStates.append([queueQ, stackQ, pathQ ])
                     newStates.append([queueS, stackS, pathS]) 
@@ -56,4 +55,4 @@ def BFS(queue, N):
 
     return solver(queue, N)        
  
-print(BFS(queue, N)) 
+print(BFS(queue, N))  

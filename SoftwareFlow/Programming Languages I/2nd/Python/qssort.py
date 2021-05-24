@@ -88,3 +88,7 @@ def BFS(queue, N):
     return solver(queue, N)        
  
 print(BFS(queue, N))   
+q = [102,53,51,63,167,127,403,301,47,2,293,180, 10]
+N = len(q)
+print(N)
+print(BFS(q,N))

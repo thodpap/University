@@ -10,43 +10,43 @@ read_line(Stream, L) :-
     atomic_list_concat(Atoms, ' ', Atom),
     maplist(atom_number, Atoms, L).
 
-sums(L, S, N) :- sumrunner(L, S, N, 0).
-sumrunner([], [], _, _).
-sumrunner([A|B], [C|D], N, TOTAL) :- C is TOTAL + A + N, sumrunner(B, D, N, C).
 
-max_from_left([], Temp, _, _, MaxArr):- MaxArr = Temp.
-max_from_left([Head|Tail], Temp, Pos, Max, MaxArr):-
-  (
-    Head > Max ->
-      Pos1 is Pos + 1,  
-      append(Temp, [(Head,Pos1)], NewArr), 
-      max_from_left(Tail, NewArr, Pos1, Head, MaxArr);
-    Head =< Max,
-      Pos1 is Pos + 1,
-      max_from_left(Tail, Temp, Pos1, Max, MaxArr)
-  ).
+sums(L, S, N) :- sumrunner(L, S, N, 0, 0).
+sumrunner([], [], _, _, _).
+sumrunner([A|B], [(E,Pos)|D], N, TOTAL, Pos) :- E is TOTAL + A + N, Pos1 is Pos + 1, sumrunner(B, D, N, E, Pos1).
 
-min_from_right([], Temp, _, _, MinArr):- MinArr = Temp.
-min_from_right([Head|Tail], Temp, Pos, Min, MinArr):- 
-  (
-    Head < Min -> 
-      Pos1 is Pos - 1,
-      append(Temp, [ (Head, Pos1) ], NewTemp),
-      min_from_right(Tail, NewTemp, Pos1, Head, MinArr)
-    ; Head >= Min, 
-        Pos1 is Pos - 1,
-        min_from_right(Tail, Temp, Pos1, Min, MinArr)    
-  ). 
+max_from_left([], _, _).
+max_from_left([H|B], C, Total_Max):-
+(
+  H = (A,_), 
+  A =< Total_Max->
+    max_from_left(B, C, Total_Max)
+  ; H = (A,_), 
+  C = [H | D],
+  max_from_left(B,D, A)
+).
+ 
+ 
+min_from_right([], _, _). 
+min_from_right([H|B], C, Total_Min):-
+(
+  H = (A,_),
+  A >= Total_Min -> 
+    min_from_right(B, C, Total_Min)
+  ; H = (A,_),
+  C = [H | D],
+  min_from_right(B, D, A)
+). 
 
 
 len_tuple([], Pos1, Pos):-Pos1 is Pos.
 len_tuple([_|Tail], Ans, Pos):-
   Ans1 is Pos + 1,
   len_tuple(Tail, Ans, Ans1).
+ 
 
-
-solver(_, [], Ans, F):- F is Ans.
-solver([], _, Ans, F):- F is Ans.
+solver(_, [], Ans, F):- F is Ans,!.
+solver([], _, Ans, F):- F is Ans,!.
 solver([(Head_max,Pos_max)|Tail_max], [(Head_min, Pos_min)|Tail_min], Ans, F):-
   (
     Head_min =< Head_max ->
@@ -70,15 +70,18 @@ solver([(Head_max,Pos_max)|Tail_max], [(Head_min, Pos_min)|Tail_min], Ans, F):-
  
 longest(File, Ans):-
    read_input(File, M, N, C),
-   sums(C,S,N),
-   /*writeln(S)*/
-   append([0], S, S1),
-   max_from_left(S1, [], -1, -1, Max),
-   reverse(S1, S2), 
+   sums(C,S,N), 
+   append([(0,-1)], S, S1),
+   max_from_left(S1, Max, -1), 
+   writeln(Max),
+   reverse(S1, S2),
    S2 = [H1|_],
    Max_ is H1 + 1,
-   M_ is M+1, 
-   min_from_right(S2, [], M_, Max_, Min), 
-   reverse(Min, Min1),  
-   solver(Max, Min1, 0, Ans).
+   min_from_right(S2, Min, M, Max_),
 
+   writeln(Min).
+  %  reverse(Min, Min1) 
+  %  solver(Max, Min1, 0, Ans),
+  %  writeln(Max),
+  %  writeln(Min),
+  %  writeln(Min1) 

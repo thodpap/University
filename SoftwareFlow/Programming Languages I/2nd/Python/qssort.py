@@ -44,8 +44,7 @@ def BFS(queue, N):
                 if foundIt(queue):
                     if path == '':
                         path = 'empty'
-                    return path
-                
+                    return path 
 
                 if not stack:  
                     tempQ = Q(queue,stack,path) 

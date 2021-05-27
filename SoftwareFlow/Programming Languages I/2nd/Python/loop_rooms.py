@@ -1,7 +1,6 @@
 import sys
-import numpy as np 
+import numpy as np  
 
-#print(sys.getrecursionlimit())
 sys.setrecursionlimit(6000)
 
 

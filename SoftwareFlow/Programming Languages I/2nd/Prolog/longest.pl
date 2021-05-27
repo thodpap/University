@@ -37,35 +37,48 @@ min_from_right([H|B], C, Total_Min):-
   min_from_right(B,D,A)
 ).
 
-
 len_tuple([], Pos1, Pos):-Pos1 is Pos.
 len_tuple([_|Tail], Ans, Pos):-
   Ans1 is Pos + 1,
   len_tuple(Tail, Ans, Ans1).
  
 
-solver(_, [], Ans, F):- F is Ans, !.
-solver([], _, Ans, F):- F is Ans, !.
-solver([(Head_max,Pos_max)|Tail_max], [(Head_min, Pos_min)|Tail_min], Ans, F):-
+solver(_, [], Ans, F, _, _, _, _):- F is Ans, !.
+solver([], _, Ans, F, _, _, _, _):- F is Ans, !.
+solver([A|B], [C|D], Ans, F, I, J, L1, L2):-
+(
+  A = (Max,Pmax),
+  C = (Min,Pmin),
+  Max >= Min ->
   (
-    Head_min =< Head_max ->
-      (
-        Tail_min = [(H1, _)|_],
-        len_tuple(Tail_min, G, 0),
-        (G=\=0, H1 =< Head_max) ->
-          solver([(Head_max,Pos_max)|Tail_max], Tail_min, Ans, F);
-        Diff is Pos_min - Pos_max,
-        Ans1 is max(Diff, Ans),
-        solver(Tail_max, Tail_min, Ans1, F)
-      );
-    Head_min > Head_max,
+    A = (Max,Pmax), 
+    D = [(H,_) | _ ],
+    J1 is J + 1,
+    (J1 < L2, H =< Max) ->
+      solver([A|B], D, Ans, F, I, J1, L1,L2)
+    ; 
     (
-      Pos_max < Pos_min - 1,
-      solver(Tail_max, [(Head_min, Pos_min)|Tail_min], Ans, F);
-      Pos_max >= Pos_min - 1,
-        solver([(Head_max,Pos_max)|Tail_max], Tail_min, Ans, F)
+      A = (Max,Pmax),
+      C = (Min,Pmin),
+      Diff is Pmin - Pmax,
+      Ans1 is max(Ans, Diff),
+      I1 is I + 1,
+      J1 is J + 1,
+      solver(B,D, Ans1, F, I1, J1, L1, L2)
     )
-  ).
+  )
+  ; 
+  A = (_,Pmax),
+  C = (_,Pmin),
+
+  Pmax < Pmin - 1 -> 
+    I1 is I + 1,
+    solver(B, [C|D], Ans, F, I1,J,L1,L2)
+  ;
+  J1 is J + 1,
+  solver( [A|B], D, Ans, F, I, J1, L1, L2) 
+).
+
  
 longest(File, Ans):-
    read_input(File, _, N, C),
@@ -77,4 +90,6 @@ longest(File, Ans):-
    Max_ is A + 1,
    min_from_right(S2, Min, Max_),
    reverse(Min, Min1), !,
-   solver(Max, Min1, 0, Ans). 
+   len_tuple(Max, L1, 0),
+   len_tuple(Min1, L2, 0),
+   solver(Max, Min1, 0, Ans, 0,0, L1,L2), !. 

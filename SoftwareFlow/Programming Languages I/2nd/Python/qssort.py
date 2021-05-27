@@ -41,6 +41,7 @@ def BFS(queue, N):
         while True: 
             newStates = []
             for queue, stack, path in states:  
+                print(queue, stack, path)
                 if foundIt(queue):
                     if path == '':
                         path = 'empty'
@@ -73,7 +74,7 @@ def BFS(queue, N):
                         dictionary[obj] = 1
 
                         newStates.append([queueQ, stackQ, pathQ ])
-
+        
                     queueS, stackS, pathS = S(queue, stack[:-1], path) 
                     obj = getState(queueS,stackS)
                     if not obj in dictionary:

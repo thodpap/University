@@ -16,6 +16,9 @@ fill_array([H|T], Q, F):-
     add_queue(H, Q, Q1),
     fill_array(T, Q1, F).
 
+isEmpty(T-T):- false.
+isQueueEmpty([H|T] - T):- true.
+
 quick_sort2(List,Sorted):-q_sort(List,[],Sorted).
 q_sort([],Acc,Acc).
 q_sort([H|T],Acc,Sorted):-
@@ -108,13 +111,15 @@ qssort(File, Ans):-
     set_prolog_stack(global, limit(100 000 000 000)),
     read_input(File, _, C),
     writeln(C), 
-    fill_array(C, U-U, F),
+    Empty = U-U,
+    fill_array(C, Empty, F),
     writeln(F),
     quick_sort2(C,C1), 
-    Temp = Q-Q,
+    write("U - U"), writeln(U),
+    write("F"), writeln(F),
     add_queue((F,K-K, ""), Temp, Q1), !,
-    writeln(Q1),
-    
+    writeln(Q1).
+
 
     
     

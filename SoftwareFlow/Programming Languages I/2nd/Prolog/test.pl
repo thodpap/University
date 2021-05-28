@@ -1,7 +1,7 @@
 difference_append2(_, L2, L2). 
-difference_append3(_-L2, L2).
+difference_append3(List-L2, L2).
 difference_append4(List - L2, L2, List).
-difference_append5(List - L1, L1 - _, List).
+difference_append5(List - Hole, L1 - _, List):- Hole = L1.
 difference_append6(List - L1, L1 - Hole2, List - Hole2).
 
 add_queue( Item, Queue-[Item|Y], Queue-Y ).
@@ -22,9 +22,9 @@ fun():-
     % List = [d,e,f|Hole] - Hole,
     % difference_append3(List,[a,b,c]),
     % writeln(List). 
-
+    
     % Test 4
-    % List = [a,b,c|H] - H,
+    % List = [a,b,c|H] - H, 
     % difference_append4(List,[d,e,f],Ans),
     % writeln(Ans).
 
@@ -34,14 +34,16 @@ fun():-
     % writeln(Ans).
 
     % Test 6 
-    % List = [a,b,c|H] - H, 
-    % difference_append6(List, [d,e,f|Hole2] - Hole2, Ans - []),
+    % List = [a,b,c|H] - H,  
+    % difference_append6(List, [d,e,f|Hole2] - Hole2, Ans - []), 
     % writeln(Ans).
 
     % My example, take a random list make it differences list and then append one number to end
-    List = [1,2,3|X] - X,
-    % writeln(T),
-    add_queue(4, List, L1),
-    remove_queue(L1, I, L2),
-    % difference_append6(List,[4|H] - H, L2), 
-    writeln(L2).
+    List = [1,2,3|X],
+    writeln(List),
+    add_queue(10, List - X, L3),
+    % add_queue(15, L3, L1), 
+    writeln(L4).
+    % remove_queue(L1, I, L2),
+    % % difference_append6(List,[4|H] - H, L2), 
+    % writeln(L2).

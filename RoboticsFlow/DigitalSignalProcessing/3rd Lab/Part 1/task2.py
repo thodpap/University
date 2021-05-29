@@ -5,7 +5,7 @@ import cmath
 import librosa as lib
 from numpy.fft import fft, ifft
 from scipy.io.wavfile import read, write
-from scipy.signal import spectrogram, decimate
+from scipy.signal import spectrogram
 import random
 import gc
 import sys
@@ -15,7 +15,7 @@ gc.collect()
 figure_counter = 0
 
 path = "../music.wav"
-#path = "DSP21_Lab3_material/dsp21_lab3_material/music.wav"
+path = "DSP21_Lab3_material/dsp21_lab3_material/music.wav"
 
 
 # 1.1
@@ -95,6 +95,13 @@ plt.title("filtered")
 plt.plot(filtered_signal[10][10])
 # plt.show()
 
+def decimate(signal, factor):
+    temp = []
+    for i in range(len(signal)):
+        if i % factor == 0:
+            temp.append(signal[i])
+    return temp
+
 decimated_filtered_signal = []
 for i in range(len(window_signal)):
     temp = []
@@ -161,8 +168,8 @@ for i in range(len(decimated_filtered_signal)):
     temp = []
     min_temp = []
     for k in range(M):
-        # range_ = max(decimated_filtered_signal[i][k]) - min(decimated_filtered_signal[i][k])
-        range_ = 2*max(abs(decimated_filtered_signal[i][k]))
+        range_ = max(decimated_filtered_signal[i][k]) - min(decimated_filtered_signal[i][k])
+        # range_ = 2*max(abs(decimated_filtered_signal[i][k]))
         temp.append(range_ / (math.pow(2, Bk[i][k])))
         # min_temp.append(decimated_filtered_signal.index(min(abs(decimated_filtered_signal[i][k]))))
 
@@ -315,18 +322,33 @@ plt.stem(test_quantized[10][10])
 
 
 interpolated = []
-for i in range(len(quantized_signal)):
-    temp = []
-    for k in range(len(quantized_signal[i])):
-        temp2 = []
-        for l in range(len(quantized_signal[i][k])):
-            temp2.append(quantized_signal[i][k][l])
+
+for q in quantized_signal:
+    temp2 = []
+    for k in q:
+        temp = []
+        for l in k:
+            temp.append(l)
             for m in range(M-1):
-                temp2.append(0)
+                temp.append(0)
 
-        temp.append(temp2)
+        temp2.append(temp)
 
-    interpolated.append(temp)
+    interpolated.append(temp2)
+
+
+# for i in range(len(quantized_signal)):
+#     temp = []
+#     for k in range(len(quantized_signal[i])):
+#         temp2 = []
+#         for l in range(len(quantized_signal[i][k])):
+#             temp2.append(quantized_signal[i][k][l])
+#             for m in range(M-1):
+#                 temp2.append(0)
+#
+#         temp.append(temp2)
+#
+#     interpolated.append(temp)
 
 print(len(interpolated[0]), len(interpolated[0][0]))
 
@@ -334,6 +356,7 @@ figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(interpolated[10][10])
 
+# plt.show()
 
 
 
@@ -356,31 +379,57 @@ for i in range(len(interpolated)):
 
 print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", len(interpolated), len(interpolated[0]), len(interpolated[0][0]))
 
+#
+# def fill_list(start, size, values):
+#     temp = []
+#     last = start + len(values)
+#
+#     for i in range(start):
+#         temp.append(0)
+#     for i in range(start, min(last, size)):
+#         temp.append(values[i - start])
+#     for i in range(min(last, size), size):
+#         temp.append(0)
+#     return temp
 
-def fill_list(start, size, values):
-    temp = []
-    last = start + len(values)
 
-    for i in range(start):
-        temp.append(0)
-    for i in range(start, min(last, size)):
-        temp.append(values[i - start])
-    for i in range(min(last, size), size):
-        temp.append(0)
-    return temp
+figure_counter += 1
+plt.figure(figure_counter)
+plt.plot(last_filtered_signal[10][10])
 
+# plt.show()
 
 # size = len(interpolated[0])
-
+print("GEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE: ", len(last_filtered_signal), len(last_filtered_signal[0]), last_filtered_signal[0][M-1][600])
+print("GEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE: ", len(last_filtered_signal), len(last_filtered_signal[0]), len(last_filtered_signal[1][5]))
 summer = []
-for i in range(len(last_filtered_signal)):
-    temp = []
-    for j in range(len(last_filtered_signal[i][0])):
-        sum = 0
-        for k in range(M):
-            sum += last_filtered_signal[i][k][j]
-        temp.append(sum)
+
+
+
+for l in last_filtered_signal:
+    temp = np.zeros(607)
+    for k in l:
+        sum = 0.0
+        for n, c in enumerate(k):
+            temp[n] += c
+
+    temp = list(temp)
     summer.append(temp)
+
+# for i in range(len(last_filtered_signal)):
+#     print("i: ", i)
+#     temp = []
+#     print(len(last_filtered_signal[i][0]))
+#     for j in range(len(last_filtered_signal[i][0])):
+#     # for j in range(542):
+#         sum_ = 0.0
+#         print(j)
+#         for k in range(len(last_filtered_signal[i])):
+#             sum_ += last_filtered_signal[i][k][j]
+#         temp.append(sum)
+#     summer.append(temp)
+
+
 
 figure_counter += 1
 plt.figure(figure_counter)

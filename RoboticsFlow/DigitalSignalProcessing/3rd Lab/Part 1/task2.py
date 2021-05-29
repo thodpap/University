@@ -15,7 +15,7 @@ gc.collect()
 figure_counter = 0
 
 path = "../music.wav"
-path = "DSP21_Lab3_material/dsp21_lab3_material/music.wav"
+# path = "DSP21_Lab3_material/dsp21_lab3_material/music.wav"
 
 
 # 1.1
@@ -25,7 +25,6 @@ def read_from_files(path):
 
 
 samplerate, original = read_from_files(path)
-
 
 def window_signal(original, window, length):
     signal = []
@@ -115,22 +114,14 @@ def newTg(k, T_g):
     temp = []
     for i in range(len(T_g)):
         f_i = samplerate * 2 * math.pi * i / N
-        if f_i >= f_[0] and f_i <= f_[1]:
-            # if k == 28:
-            # input("wait")
-            # print(T_g[i])
-            # print(1)
+        if f_[0] <= f_i <= f_[1]:
             temp.append(T_g[i])
     return (R / min(temp))
 
 
 Bk = [ [math.ceil(np.log2(newTg(k, T_g[i])) - 1) for k in range(1, M + 1)] for i in range(len(window_signal))]  
 
-# print(R)
-
-# minimums = []
 delta = []
-# decimated_filtered_signal = list(decimated_filtered_signal)
 
 print(len(decimated_filtered_signal), print(len(decimated_filtered_signal[0])))
 
@@ -139,11 +130,7 @@ for i in range(len(decimated_filtered_signal)):
     min_temp = []
     for k in range(M):
         range_ = max(decimated_filtered_signal[i][k]) - min(decimated_filtered_signal[i][k])
-        # range_ = 2*max(abs(decimated_filtered_signal[i][k]))
         temp.append(range_ / (math.pow(2, Bk[i][k])))
-        # min_temp.append(decimated_filtered_signal.index(min(abs(decimated_filtered_signal[i][k]))))
-
-    # minimums.append(min_temp)
     delta.append(temp)
 
 
@@ -189,20 +176,25 @@ for i in range(len(decimated_filtered_signal)):
 
 def quantization(x, Delta_s, b):
     newSig = []
+
     for i in range(len(x)):
+        bool = 0
         for k in range(2 ** (b - 1)):
             if k * Delta_s <= abs(x[i]) <= (k + 1) * Delta_s:
                 if x[i] > 0:
                     newSig.append((0.5 + k) * Delta_s)
-                    break
                 elif x[i] < 0:
                     newSig.append((-0.5 - k) * Delta_s)
-                    break
                 else:
-                    newSig.append(0)
-                    break
+                    newSig.append(0.0)
+                bool = 1
+                break
+        if bool == 0:
+            if x[i] >= 0:
+                newSig.append((2 ** (b - 1) - 0.5) * Delta_s)
+            else:
+                newSig.append(-(2 ** (b - 1) - 0.5) * Delta_s)
     return newSig
-
 
 print("Bk len is:", len(Bk), len(Bk[0]))
 print("Bk len is:", len(decimated_filtered_signal), len(decimated_filtered_signal[0]))
@@ -217,7 +209,7 @@ quantized_signal = [ [ quantization(decimated_filtered_signal[i][k], delta[i][k]
 figure_counter += 1
 plt.figure(figure_counter)
 plt.stem(quantized_signal[10][10])
-
+# plt.show()
 # print(delta[10][10])
 
 
@@ -287,27 +279,27 @@ plt.stem(test_quantized[10][10])
 
 interpolated = []
 
-for q in quantized_signal:
-    temp = []
-    for k in q:
-        temp2 = np.zeros(M * len(k))
-        for i, l in enumerate(k):
-            temp[M * i] = l
-        temp.append(list(temp2))
-    interpolated.append(temp)
-
 # for q in quantized_signal:
-#     temp2 = []
+#     temp = []
 #     for k in q:
-#         temp = []
-#         for l in k:
-#             temp.append(l)
-#             for m in range(M-1):
-#                 temp.append(0)
+#         temp2 = np.zeros(M * len(k) + 1)
+#         for i, l in enumerate(k):
+#             temp[M * i] = l
+#         temp.append(list(temp2))
+    # interpolated.append(temp)
 
-#         temp2.append(temp)
+for q in quantized_signal:
+    temp2 = []
+    for k in q:
+        temp = []
+        for l in k:
+            temp.append(l)
+            for m in range(M-1):
+                temp.append(0)
 
-#     interpolated.append(temp2)
+        temp2.append(temp)
+
+    interpolated.append(temp2)
 
 
 # for i in range(len(quantized_signal)):
@@ -375,29 +367,13 @@ summer = []
 
 
 for l in last_filtered_signal:
-    temp = np.zeros(607)
-    for k in l:
-        sum = 0.0
+    temp = np.zeros(639)
+    for k in l: 
         for n, c in enumerate(k):
             temp[n] += c
 
     temp = list(temp)
-    summer.append(temp)
-
-# for i in range(len(last_filtered_signal)):
-#     print("i: ", i)
-#     temp = []
-#     print(len(last_filtered_signal[i][0]))
-#     for j in range(len(last_filtered_signal[i][0])):
-#     # for j in range(542):
-#         sum_ = 0.0
-#         print(j)
-#         for k in range(len(last_filtered_signal[i])):
-#             sum_ += last_filtered_signal[i][k][j]
-#         temp.append(sum)
-#     summer.append(temp)
-
-
+    summer.append(temp) 
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -427,21 +403,7 @@ def overlap(my_list, length, tot_length, seg_length):
 
         start += seg_length
     return temp
-
-overlap_add = []
-# for i in range(len(summer)):
-#         overlap_add.append((i*N, len(original), summer[i]))
-
-# overlap_add = np.zeros(len(original))
-# for i in range(len(original)):
-#     if i % N == 0:
-
-
-# for j in range(len(original)):
-#     sum = 0
-#     for i in range(len(overlap_add)):
-#         sum += overlap_add[i][j]
-#     sum_overlap_add.append(sum)
+ 
 
 sum_overlap_add = overlap(summer, len(summer[0]), len(original), N)
 
@@ -454,28 +416,9 @@ figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(original)
 
-
-# # def create_lists(segments, figure_counter):
-# #     def sum_lists(segments):
-# #         temp = []
-# #         for j in range(len(segments[0])):
-# #             sum = 0
-# #             for i in range(len(segments)):
-# #                 sum += segments[i][j]
-# #             temp.append(sum)
-# #         return temp
-# #
-# #     temp = []
-# #     start = 0
-# #     for i in range(len(segments)):
-# #         temp.append(fill_list(start, length, segments[i]))
-# #         start += N // 2
-# #
-# #     return sum_lists(temp)
-#
+ 
 sum_overlap_add = np.array(sum_overlap_add)
-write("output.wav", samplerate, sum_overlap_add)
-#
+write("output.wav", samplerate, np.array(sum_overlap_add / np.max(np.abs(sum_overlap_add))* 65535, dtype = np.int16)) 
 
 
 print(len(original), sys.getsizeof(original[0]))

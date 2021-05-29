@@ -36,17 +36,19 @@ getString(Queue1, Stack, Ans):-
     string_concat(S_a2, S2, Ans).
 
 q(Start_queue, Stack, Path, Qt, Dict, Start_queue, Qt1, NewDict):-
-    remove_queue(Start_queue, P1, New_queue),
+    remove_queue(Start_queue, P1, NewQueue),
     enqueue_stack(P1, Stack, NewStack), !,
     getString(Start_queue, Stack, String),
-    writeln("String"),
+    write("String: "),
     writeln(String),
+    write("Lists: "),
+    writeln()
  
-    \+ member(String, Dict), 
-    string_concat(Path, 'Q', C1), !, 
+    % \+ member(String, Dict), 
+    % string_concat(Path, 'Q', C1), !, 
 
-    add_queue((NewQueue, NewStack, C1), Qt, Qt1), !,
-    add_queue(String, Dict, NewDict),!.
+    % add_queue((NewQueue, NewStack, C1), Qt, Qt1), !,
+    % add_queue(String, Dict, NewDict),!.
 
 
 
@@ -67,12 +69,13 @@ change_queue(Queue, Q1):-
 qssort(File, Ans):-
     set_prolog_stack(global, limit(100 000 000 000)),
     read_input(File, _, C),
+    fill_array()
     Empty = S-S,
     add_queue(5, Empty, N),
     writeln(N),
     \+ isQueueEmpty(N),
     writeln(N),
-    q(N,[],_,_,Old,_),
+    q(N, [], '', _, _, Old, _, _),
     writeln("After Q"), 
     writeln(Old),
     writeln(New).

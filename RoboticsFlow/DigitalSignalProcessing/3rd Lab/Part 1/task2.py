@@ -15,7 +15,7 @@ gc.collect()
 figure_counter = 0
 
 path = "../music.wav"
-path = "DSP21_Lab3_material/dsp21_lab3_material/music.wav"
+#path = "DSP21_Lab3_material/dsp21_lab3_material/music.wav"
 
 
 # 1.1

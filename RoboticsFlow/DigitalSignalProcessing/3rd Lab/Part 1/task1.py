@@ -11,7 +11,7 @@ import random
 figure_counter = 0
 
 path = "../music.wav"
-path = "DSP21_Lab3_material/dsp21_lab3_material/music.wav"
+#path = "DSP21_Lab3_material/dsp21_lab3_material/music.wav"
 
 
 # 1.1
@@ -120,9 +120,9 @@ S_T = calculate_S_T_k(power_spectrum, N)
 P_TM = calculate_P_TM(power_spectrum, S_T, N)
 # print((P_TM[10]))
 
-P_NM = np.load("DSP21_Lab3_material/dsp21_lab3_material/P_NM.npy")
-P_NMc = np.load("DSP21_Lab3_material/dsp21_lab3_material/P_NMc.npy")
-P_TMc = np.load("DSP21_Lab3_material/dsp21_lab3_material/P_TMc.npy")
+P_NM = np.load("../P_NM.npy")
+P_NMc = np.load("../P_NMc.npy")
+P_TMc = np.load("../P_TMc.npy")
 
 
 # print(list(P_TMc))

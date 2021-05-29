@@ -46,27 +46,19 @@ window_signal = window_signal(original, window, N)
 
 def hx(k, M):
     L = 2 * M
-    temp = []
-    for n in range(L):
-        temp.append(np.sin((n + 1 / 2) * math.pi / L) * math.sqrt(2 / M) * np.cos(
-            (2 * n + M + 1) * (2 * k + 1) * math.pi / (4 * M)))
-    return temp
+    return [np.sin((n + 1 / 2) * math.pi / L) * math.sqrt(2 / M) * np.cos(
+            (2 * n + M + 1) * (2 * k + 1) * math.pi / (4 * M)) for n in range(L)]
+    
 
 
-def gk(hx, k, M):
-    temp = []
+def gk(hx, k, M): 
     L = 2 * M
-    for n in range(L):
-        temp.append(hx[k][L - 1 - n])
-    return temp
+    return [ hx[k][L - 1 - n] for n in range(L)] 
 
 
 M = 32
-hk_ = []
-gk_ = []
-for k in range(M):
-    hk_.append(hx(k, M))
-    gk_.append(gk(hk_, k, M))
+hk_ = [ hx(k, M) for k in range(M)]
+gk_ = [ gk(hk_, k, M) for k in range(M)] 
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -76,14 +68,8 @@ figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(gk_[10])
 
-filtered_signal = []
-
-for i in range(len(window_signal)):
-    temp = []
-    for k in range(M):
-        temp.append(np.convolve(hk_[k], window_signal[i]))
-    filtered_signal.append(temp)
-
+filtered_signal = [ [ np.convolve(hk_[k], window_signal[i]) for k in range(M)] for i in range(len(window_signal))]
+  
 figure_counter += 1
 plt.figure(figure_counter)
 plt.title("windowed")
@@ -102,12 +88,7 @@ def decimate(signal, factor):
             temp.append(signal[i])
     return temp
 
-decimated_filtered_signal = []
-for i in range(len(window_signal)):
-    temp = []
-    for k in range(M):
-        temp.append(decimate(filtered_signal[i][k], M))
-    decimated_filtered_signal.append(temp)
+decimated_filtered_signal = [ [ decimate(filtered_signal[i][k], M) for k in range(M)]  for i in range(len(window_signal))] 
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -143,18 +124,7 @@ def newTg(k, T_g):
     return (R / min(temp))
 
 
-Bk = []
-for i in range(len(window_signal)):
-    temp = []
-    for k in range(1, M + 1):
-        temp.append(math.ceil(np.log2(newTg(k, T_g[i])) - 1))
-    Bk.append(temp)
-
-# print(Bk[10][10])
-# print(Bk[15][10])
-# print(Bk[50][10])
-# print(Bk[40][10])
-# print(Bk[1][10])
+Bk = [ [math.ceil(np.log2(newTg(k, T_g[i])) - 1) for k in range(1, M + 1)] for i in range(len(window_signal))]  
 
 # print(R)
 
@@ -234,21 +204,15 @@ def quantization(x, Delta_s, b):
     return newSig
 
 
-quantized_signal = []
 print("Bk len is:", len(Bk), len(Bk[0]))
 print("Bk len is:", len(decimated_filtered_signal), len(decimated_filtered_signal[0]))
 print("Bk len is:", len(delta), len(delta[0]))
 
-for i in range(len(decimated_filtered_signal)):
-    temp = []
-    # print(len(decimated_filtered_signal[i]), i)
 
-    for k in range(len(decimated_filtered_signal[i])):
-        # delta = (max(decimated_filtered_signal[i][k]) - min(decimated_filtered_signal[i][k]))/(2**Bk[i][k])
-        # delta = (2*max(abs(decimated_filtered_signal[i][k])))/(2**Bk[i][k])
-        temp.append(quantization(decimated_filtered_signal[i][k], delta[i][k], Bk[i][k]))
+quantized_signal = [ [ quantization(decimated_filtered_signal[i][k], delta[i][k], Bk[i][k]) 
+                        for k in range(len(decimated_filtered_signal[i]))] 
 
-    quantized_signal.append(temp)
+                        for i in range(len(decimated_filtered_signal))] 
 
 figure_counter += 1
 plt.figure(figure_counter)
@@ -324,17 +288,26 @@ plt.stem(test_quantized[10][10])
 interpolated = []
 
 for q in quantized_signal:
-    temp2 = []
+    temp = []
     for k in q:
-        temp = []
-        for l in k:
-            temp.append(l)
-            for m in range(M-1):
-                temp.append(0)
+        temp2 = np.zeros(M * len(k))
+        for i, l in enumerate(k):
+            temp[M * i] = l
+        temp.append(list(temp2))
+    interpolated.append(temp)
 
-        temp2.append(temp)
+# for q in quantized_signal:
+#     temp2 = []
+#     for k in q:
+#         temp = []
+#         for l in k:
+#             temp.append(l)
+#             for m in range(M-1):
+#                 temp.append(0)
 
-    interpolated.append(temp2)
+#         temp2.append(temp)
+
+#     interpolated.append(temp2)
 
 
 # for i in range(len(quantized_signal)):
@@ -360,13 +333,8 @@ plt.plot(interpolated[10][10])
 
 
 
-last_filtered_signal = []
-for i in range(len(interpolated)):
-    temp = []
-    for k in range(len(interpolated[i])):
-        temp.append(np.convolve(interpolated[i][k], gk_[k]))
-
-    last_filtered_signal.append(temp)
+last_filtered_signal = [ [ np.convolve(interpolated[i][k], gk_[k]) for k in range(len(interpolated[i]))] 
+                             for i in range(len(interpolated))] 
 
 # segment_again = []
 # for i in range(len(window_signal)):

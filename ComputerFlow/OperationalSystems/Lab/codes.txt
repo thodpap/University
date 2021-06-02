@@ -1,4 +1,3 @@
-oslaba33 29cfad5298
-
-orion.cslab.ece.ntua.gr
+ssh oslaba33@orion.cslab.ece.ntua.gr
+29cfad5298
 student-pc

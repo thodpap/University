@@ -26,24 +26,30 @@ fun():-
     % Test 4
     % List = [a,b,c|H] - H, 
     % difference_append4(List,[d,e,f],Ans),
+    % writeln(List),
     % writeln(Ans).
 
     % Test 5
     % List = [a,b,c|H] - H, 
     % difference_append5(List, [d,e,f|H2] - H2, Ans),
+    % writeln(List),
     % writeln(Ans).
 
     % Test 6 
-    % List = [a,b,c|H] - H,  
-    % difference_append6(List, [d,e,f|Hole2] - Hole2, Ans - []), 
-    % writeln(Ans).
+    List = [a,b,c|H] - H,  
+    difference_append6(List, [d,e,f|Hole2] - Hole2, Ans),
+    writeln(List), 
+    writeln(Ans).
 
     % My example, take a random list make it differences list and then append one number to end
-    List = [1,2,3|X],
-    writeln(List),
-    add_queue(10, List - X, L3),
+    % List = [1,2,3|X] - X,
+    % writeln(List),
+    % difference_append6(List, [5 | Z]- Z, Ans),
+    % writeln(List),
+    % writeln(Ans).
+    % add_queue(10, List - X, L3),
     % add_queue(15, L3, L1), 
-    writeln(L4).
+    % writeln(L4).
     % remove_queue(L1, I, L2),
     % % difference_append6(List,[4|H] - H, L2), 
     % writeln(L2).

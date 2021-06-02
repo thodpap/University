@@ -25,15 +25,11 @@ samplerate, original = read_from_files(path)
 def window_signal(original, window, length):
     signal = []
     start = 0
-    while start + length < len(original):
-        temp = []
-        for n in range(length):
-            temp.append(original[start + n] * window[n])
-        signal.append(temp)
+    while start + length < len(original): 
+        signal.append([original[start + n] * window[n] for n in range(length)] )
         start += length
     return signal
-
-
+ 
 
 def power_spectrum(window_signal, length):
     def calculate_P(signal):
@@ -102,20 +98,7 @@ power_spectrum = power_spectrum(window_signal, N)
 # plt.figure(figure_counter)
 # plt.stem(power_spectrum[10])
 
-S_T = calculate_S_T_k(power_spectrum, N)
-
-# for i in S_T:
-#     temp = []
-#     for k in i:
-#         if isinstance(k, list):
-#             for j in k:
-#                 temp.append(j)
-#         else:
-#             temp.append(k)
-#     S_T_new.append(temp)
-
-# print(len(S_T_new))
-
+S_T = calculate_S_T_k(power_spectrum, N) 
 # print(S_T[10])
 P_TM = calculate_P_TM(power_spectrum, S_T, N)
 # print((P_TM[10]))
@@ -127,36 +110,14 @@ P_TMc = np.load("../P_TMc.npy")
 
 # print(list(P_TMc))
 P_TMc = np.transpose(P_TMc)
-P_NMc = np.transpose(P_NMc)
-# P_TMc = P_TMc[::-1]
-
-print("aaaaaaaaaaaaaaa ", len(P_TMc[10]), len(P_NMc[10]))
+P_NMc = np.transpose(P_NMc) 
 
 # print(list(P_TMc[50]))
 # print(P_TM[50])
 figure_counter += 1
 plt.figure(figure_counter)
 plt.stem((P_TMc[10]))
-plt.stem(P_TM[10])
-
-# def is_equal(list1, list2, k):
-#     bool = True
-#     # print(len(list1))
-#     # print(len(list2))
-#     for i in range(len(list1)):
-#         if list1[i] != list2[i]:
-#             bool = False
-#     return bool
-#
-# bool = False
-# for i in range(len(P_TM)):
-#     for j in range(len(P_TM)):
-#         if is_equal(P_TM[i], P_TMc[j], i):
-#                 bool = True
-#                 print(i, j)
-#
-#
-# print(bool)
+plt.stem(P_TM[10]) 
 
 
 figure_counter += 1
@@ -208,7 +169,6 @@ T_NM_ = []
 counter = 0
 
 for k in range(len(P_TM)):
-
     temp_t = []
     double_temp_t = []
     for i in range(256):
@@ -222,14 +182,7 @@ for k in range(len(P_TM)):
                     continue #----------------------------------------------------
                 if k == 10:
                     counter += 1
-                temp_t.append(T_TM(P_TMc[k], i, j))
-            # print(temp_t)
-            # input("press any key to continue")
-            # temp_t.append(temp_t)
-            # temp_t = np.array(temp_t)
-            # temp_t = np.transpose(temp_t)
-            # temp_t = list(temp_t)
-            # print(temp_t)
+                temp_t.append(T_TM(P_TMc[k], i, j)) 
             double_temp_t.append(temp_t)
     T_TM_.append(double_temp_t)
 
@@ -243,32 +196,14 @@ for k in range(len(P_TM)):
                 if b(i) < b(j) - 3 or b(i) > b(j) + 8:
                     temp_n.append(0)
                     continue #-------------------------------------------------------
-                temp_n.append(T_NM(P_NMc[k], i, j))
-            # temp_n = np.array(temp_n)
-            # temp_n = np.transpose(temp_n)
-            # temp_n = list(temp_n)
+                temp_n.append(T_NM(P_NMc[k], i, j)) 
             double_temp_n.append(temp_n)
     T_NM_.append(double_temp_n)
     print(k)
-
-# print(T_TM_)
-# print(T_NM_)
+ 
 
 print(counter)
-print(len(T_TM_))
-
-# figure_counter += 1
-# plt.figure(figure_counter)
-# plt.plot(T_TM_[10])
-#
-# figure_counter += 1
-# plt.figure(figure_counter)
-# plt.plot(T_NM_[10])
-# T_TM_ = np.array(T_TM_)
-# print(T_TM_.size)
-
-# T_NM_ = np.array(T_NM_)
-# print(T_NM_.size)
+print(len(T_TM_)) 
 
 def T_g(i, T_TM, T_NM, P_TMc, P_NMc):
     sum1, sum2 = 0, 0
@@ -282,19 +217,21 @@ def T_g(i, T_TM, T_NM, P_TMc, P_NMc):
 
     return 10 * np.log10(10 ** (0.1 * T_q(i)) + sum1 + sum2)
 
-T_g_ = []
-for k in range(len(P_TMc)-1):
-    temp = []
-    for i in range(1, len(P_TMc[k])):
-        # try:
-        temp.append(T_g(i, T_TM_[k], T_NM_[k], P_TMc[k], P_NMc[k]))
-        # except:
-        #     print("List index out of range, i = ", k)
-    T_g_.append(temp)
+T_g_ = [[T_g(i, T_TM_[k], T_NM_[k], P_TMc[k], P_NMc[k]) for i in range(1, len(P_TMc[k]))] for k in range(len(P_TMc)-1)]
 
 np.save("T_g_i.npy", T_g_)
+ 
 
 print(T_g_[10])
+freqs = np.arange(0, 100000, 1)
+T_q = [3.64 * math.pow(f/1000, -0.87) - 6.5 * np.exp(-0.6 * math.pow(f / 1000 - 3.3), 2) + 1/1000 * math.pow(f/1000,4) for f in freqs] 
+figure_counter += 1
+plt.title('Tq')
+plt.xlabel('Hz')
+plt.ylabel('db SPL')
+plt.plot(freqs, T_q)
+
+
 figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(T_g_[10])
@@ -315,5 +252,6 @@ figure_counter += 1
 plt.figure(figure_counter)
 plt.plot(original)
 plt.title('Original audio')
+plt.savefig("original.png")
 
 plt.show()

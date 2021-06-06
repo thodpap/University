@@ -199,11 +199,11 @@ for k in range(len(P_TM)):
                 temp_n.append(T_NM(P_NMc[k], i, j)) 
             double_temp_n.append(temp_n)
     T_NM_.append(double_temp_n)
-    print(k)
+    # print(k)
  
 
-print(counter)
-print(len(T_TM_)) 
+# print(counter)
+# print(len(T_TM_)) 
 
 def T_g(i, T_TM, T_NM, P_TMc, P_NMc):
     sum1, sum2 = 0, 0
@@ -222,7 +222,7 @@ T_g_ = [[T_g(i, T_TM_[k], T_NM_[k], P_TMc[k], P_NMc[k]) for i in range(1, len(P_
 np.save("T_g_i.npy", T_g_)
  
 
-print(T_g_[10])
+# print(T_g_[10])
 freqs = np.arange(0, 100000, 1)
 T_q = [3.64 * math.pow(f/1000, -0.87) - 6.5 * np.exp(-0.6 * math.pow(f / 1000 - 3.3), 2) + 1/1000 * math.pow(f/1000,4) for f in freqs] 
 figure_counter += 1

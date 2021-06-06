@@ -55,7 +55,7 @@ move((Q,S,C_q, C_s), 'S', (Q1,S1,C_q, C_s1)):-
     C_s1 is C_s + 1,
     s_fun( (Q,S), (Q1,S1) ).
 
-check_lengths((_,_, C_q, C_s), L):- C_q =< L/2, C_s =< L/2.
+check_lengths((_,_, C_q, C_s), L):- 0 is mod(L,2), C_q =< L/2, C_s =< L/2.
 
 solver((Final, [], C, C), (Final, []), [], _).
 solver(Conf, Final, [Move | Moves], Length_String):-

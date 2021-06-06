@@ -13,7 +13,7 @@ figure_counter = 0
 path = "../music.wav"
 
 
-path = "DSP21_Lab3_material/dsp21_lab3_material/music.wav"
+# path = "DSP21_Lab3_material/dsp21_lab3_material/music.wav"
 
 
 # 1.1
@@ -120,11 +120,11 @@ P_TM = calculate_P_TM(power_spectrum, S_T, N)
 # print((P_TM[10]))
 
 
-path = "DSP21_Lab3_material/dsp21_lab3_material/"
+#path = "DSP21_Lab3_material/dsp21_lab3_material/"
 
-P_NM = np.load(path + "P_NM.npy")
-P_NMc = np.load(path + "P_NMc.npy")
-P_TMc = np.load(path + "P_TMc.npy")
+P_NM = np.load("../P_NM.npy")
+P_NMc = np.load("../P_NMc.npy")
+P_TMc = np.load("../P_TMc.npy")
 
 # print(list(P_TMc))
 P_TMc = np.transpose(P_TMc)

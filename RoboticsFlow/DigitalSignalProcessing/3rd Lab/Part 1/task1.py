@@ -11,7 +11,9 @@ import random
 figure_counter = 0
 
 path = "../music.wav"
-#path = "DSP21_Lab3_material/dsp21_lab3_material/music.wav"
+
+
+path = "DSP21_Lab3_material/dsp21_lab3_material/music.wav"
 
 
 # 1.1
@@ -22,20 +24,21 @@ def read_from_files(path):
 
 samplerate, original = read_from_files(path)
 
+
 def window_signal(original, window, length):
     signal = []
     start = 0
-    while start + length < len(original): 
-        signal.append([original[start + n] * window[n] for n in range(length)] )
+    while start + length < len(original):
+        signal.append([original[start + n] * window[n] for n in range(length)])
         start += length
     return signal
- 
+
 
 def power_spectrum(window_signal, length):
     def calculate_P(signal):
         return 10 * np.log10(abs(fft(signal, n=len(signal))) ** 2) + 90.302
 
-    return [calculate_P(sig)[0:(length // 2)+1] for sig in window_signal]
+    return [calculate_P(sig)[0:(length // 2) + 1] for sig in window_signal]
 
 
 def calculate_S_T_k(power_spectrum, length):
@@ -62,7 +65,8 @@ def calculate_S_T_k(power_spectrum, length):
             res = []
             bool = True
             for i in range(len(d_k)):
-                if not(P[k] > P[k + 1] and P[k] > P[k - 1] and P[k] > (P[k + d_k[i]] + 7) and P[k] > (P[k - d_k[i]] + 7)):
+                if not (P[k] > P[k + 1] and P[k] > P[k - 1] and P[k] > (P[k + d_k[i]] + 7) and P[k] > (
+                        P[k - d_k[i]] + 7)):
                     bool = False
             return bool
         else:
@@ -77,7 +81,8 @@ def calculate_P_TM(power_spectrum, S_T, length):
         temp = []
         for k in range(length // 2 - 6):
             if S_T[i][k] != 0:
-                temp.append(10 * np.log10(math.pow(10, (0.1 * p[k - 1])) + math.pow(10, (0.1 * p[k])) + math.pow(10, (0.1 * p[k + 1]))))
+                temp.append(10 * np.log10(
+                    math.pow(10, (0.1 * p[k - 1])) + math.pow(10, (0.1 * p[k])) + math.pow(10, (0.1 * p[k + 1]))))
             else:
                 temp.append(0)
         P_TM.append(temp)
@@ -94,39 +99,81 @@ window_signal = window_signal(original, window, N)
 power_spectrum = power_spectrum(window_signal, N)
 
 # print(power_spectrum[10])
-# figure_counter += 1
-# plt.figure(figure_counter)
-# plt.stem(power_spectrum[10])
+figure_counter += 1
+plt.figure(figure_counter)
+plt.title("10th segment power spectrum")
+plt.plot(power_spectrum[10])
 
-S_T = calculate_S_T_k(power_spectrum, N) 
+figure_counter += 1
+plt.figure(figure_counter)
+plt.title("30th segment power spectrum")
+plt.plot(power_spectrum[30])
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.title("500th segment power spectrum")
+plt.plot(power_spectrum[500])
+
+S_T = calculate_S_T_k(power_spectrum, N)
 # print(S_T[10])
 P_TM = calculate_P_TM(power_spectrum, S_T, N)
 # print((P_TM[10]))
 
-P_NM = np.load("../P_NM.npy")
-P_NMc = np.load("../P_NMc.npy")
-P_TMc = np.load("../P_TMc.npy")
 
+path = "DSP21_Lab3_material/dsp21_lab3_material/"
+
+P_NM = np.load(path + "P_NM.npy")
+P_NMc = np.load(path + "P_NMc.npy")
+P_TMc = np.load(path + "P_TMc.npy")
 
 # print(list(P_TMc))
 P_TMc = np.transpose(P_TMc)
-P_NMc = np.transpose(P_NMc) 
+P_NMc = np.transpose(P_NMc)
 
 # print(list(P_TMc[50]))
 # print(P_TM[50])
 figure_counter += 1
 plt.figure(figure_counter)
+plt.title("10th segment P_TMc")
 plt.stem((P_TMc[10]))
-plt.stem(P_TM[10]) 
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.title("10th segment P_TM")
+plt.stem((P_TM[10]), label="original")
 
 
 figure_counter += 1
 plt.figure(figure_counter)
+plt.title("10th segment P_TM and power spectrum")
 plt.stem((P_TM[10]), label="original")
+plt.plot(power_spectrum[10])
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.title("30th segment P_TM and power spectrum")
+plt.stem((P_TM[30]), label="original")
+plt.plot(power_spectrum[30])
+
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.title("10th segment P_NM and power spectrum")
+plt.stem((P_NMc[10]), label="original")
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.title("30th segment P_NM")
+plt.stem((P_NMc[30]))
+
+figure_counter += 1
+plt.figure(figure_counter)
+plt.title("500th segment P_NM")
+plt.stem((P_NMc[500]), label="original")
 
 
 def b(i):
-    cons = i*samplerate / N
+    cons = i * samplerate / N
     return 13 * np.arctan(0.00076 * cons) + 3.5 * np.arctan((cons / 7500) ** 2)
 
 
@@ -137,6 +184,7 @@ def D_b(i, j):
 def SF(P_xM, i, j):
     def D_b(i, j):
         return b(i) - b(j)
+
     D_b = D_b(i, j)
 
     if -3 <= D_b < -1:
@@ -151,16 +199,18 @@ def SF(P_xM, i, j):
     return "Error"
 
 
-
 def T_TM(P_TM, i, j):
     return P_TM[j] - 0.275 * b(j) + SF(P_TM, i, j) - 6.025
+
 
 def T_NM(P_NM, i, j):
     return P_NM[j] - 0.175 * b(j) + SF(P_NM, i, j) - 2.025
 
+
 def T_q(i):
-    cons = i * samplerate/N
-    return 3.64*((cons/1000)**(-0.8)) - 6.5 * np.exp(-0.6*(((cons/1000) - 3.3)**2)) + (10**(-3)) * (cons/1000)**4
+    cons = i * samplerate / N
+    return 3.64 * ((cons / 1000) ** (-0.8)) - 6.5 * np.exp(-0.6 * (((cons / 1000) - 3.3) ** 2)) + (10 ** (-3)) * (
+                cons / 1000) ** 4
 
 
 T_TM_ = []
@@ -172,38 +222,38 @@ for k in range(len(P_TM)):
     temp_t = []
     double_temp_t = []
     for i in range(256):
-            temp_t = []
-            for j in range(256):
-                if P_TMc[k][j] == 0: #-------------------------------------------------------
-                    temp_t.append(0)
-                    continue
-                if b(i) < b(j) - 3 or b(i) > b(j) + 8:
-                    temp_t.append(0)
-                    continue #----------------------------------------------------
-                if k == 10:
-                    counter += 1
-                temp_t.append(T_TM(P_TMc[k], i, j)) 
-            double_temp_t.append(temp_t)
+        temp_t = []
+        for j in range(256):
+            if P_TMc[k][j] == 0:  # -------------------------------------------------------
+                temp_t.append(0)
+                continue
+            if b(i) < b(j) - 3 or b(i) > b(j) + 8:
+                temp_t.append(0)
+                continue  # ----------------------------------------------------
+            if k == 10:
+                counter += 1
+            temp_t.append(T_TM(P_TMc[k], i, j))
+        double_temp_t.append(temp_t)
     T_TM_.append(double_temp_t)
 
     double_temp_n = []
     for i in range(256):
-            temp_n = []
-            for j in range(256):
-                if P_NMc[k][j] == 0: #----------------------------------------------------
-                    temp_n.append(0)
-                    continue
-                if b(i) < b(j) - 3 or b(i) > b(j) + 8:
-                    temp_n.append(0)
-                    continue #-------------------------------------------------------
-                temp_n.append(T_NM(P_NMc[k], i, j)) 
-            double_temp_n.append(temp_n)
+        temp_n = []
+        for j in range(256):
+            if P_NMc[k][j] == 0:  # ----------------------------------------------------
+                temp_n.append(0)
+                continue
+            if b(i) < b(j) - 3 or b(i) > b(j) + 8:
+                temp_n.append(0)
+                continue  # -------------------------------------------------------
+            temp_n.append(T_NM(P_NMc[k], i, j))
+        double_temp_n.append(temp_n)
     T_NM_.append(double_temp_n)
     print(k)
- 
 
 print(counter)
-print(len(T_TM_)) 
+print(len(T_TM_))
+
 
 def T_g(i, T_TM, T_NM, P_TMc, P_NMc):
     sum1, sum2 = 0, 0
@@ -217,35 +267,47 @@ def T_g(i, T_TM, T_NM, P_TMc, P_NMc):
 
     return 10 * np.log10(10 ** (0.1 * T_q(i)) + sum1 + sum2)
 
-T_g_ = [[T_g(i, T_TM_[k], T_NM_[k], P_TMc[k], P_NMc[k]) for i in range(1, len(P_TMc[k]))] for k in range(len(P_TMc)-1)]
+
+T_g_ = [[T_g(i, T_TM_[k], T_NM_[k], P_TMc[k], P_NMc[k]) for i in range(1, len(P_TMc[k]))] for k in
+        range(len(P_TMc) - 1)]
 
 np.save("T_g_i.npy", T_g_)
- 
 
 print(T_g_[10])
-freqs = np.arange(0, 100000, 1)
-T_q = [3.64 * math.pow(f/1000, -0.87) - 6.5 * np.exp(-0.6 * math.pow(f / 1000 - 3.3), 2) + 1/1000 * math.pow(f/1000,4) for f in freqs] 
+# freqs = np.arange(1, 100000, 1)
+freqs = np.linspace(10**(1.7), 10**(4.25), 5000)
+T_q = [
+    3.64 * math.pow(f / 1000, -0.8) - 6.5 * np.exp(-0.6 * math.pow(f / 1000 - 3.3, 2)) + 1 / 1000 * math.pow(f / 1000,
+                                                                                                              4) for f
+    in freqs]
+
+
 figure_counter += 1
+plt.figure(figure_counter)
+plt.xscale('log')
 plt.title('Tq')
 plt.xlabel('Hz')
 plt.ylabel('db SPL')
 plt.plot(freqs, T_q)
 
-
 figure_counter += 1
 plt.figure(figure_counter)
+plt.title("10th segment Tg")
 plt.plot(T_g_[10])
 
 figure_counter += 1
 plt.figure(figure_counter)
+plt.title("10th segment of windowed signal")
 plt.plot(window_signal[10])
 
 figure_counter += 1
 plt.figure(figure_counter)
+plt.title("30th segment of Tg")
 plt.plot(T_g_[30])
 
 figure_counter += 1
 plt.figure(figure_counter)
+plt.title("30th segment of windowed signal")
 plt.plot(window_signal[30])
 
 figure_counter += 1

@@ -11,7 +11,7 @@
 ser r24 
 out DDRB, r24 ;B is output port
 clr r24
-out DDRA, r24 ;A is input port
+out DDRA, r24 ; A is input port
 
 
 reset:

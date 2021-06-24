@@ -25,18 +25,18 @@ int main(void)
     while(1)
     {
         A = PINA & 0x01;
-		temp = PINA >> 1;
-		B = temp & 0x01;
-		temp = temp >> 1;
-		C = temp & 0x01;
-		temp = temp >> 1;
-		D = temp & 0x01;
+	temp = PINA >> 1;
+	B = temp & 0x01;
+	temp = temp >> 1;
+	C = temp & 0x01;
+	temp = temp >> 1;
+	D = temp & 0x01;
 		
-		F0 = !(A & B & (!C & 0x01) | C & D);
-		F1 = (A | B) & (C | D);
+	F0 = !(A & B & (!C & 0x01) | C & D);
+	F1 = (A | B) & (C | D);
 		
-		F1 = F1 << 1;
-		PORTB = F1 | F0;
+	F1 = F1 << 1;
+	PORTB = F1 | F0;
 		
     }
 }

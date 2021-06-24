@@ -1,0 +1,7 @@
+sudo apt-get install gcc-avr avr-libc uisp avrdude
+
+To compile:
+avr-gcc -w -Os -DF_CPU=2000000UL -mmcu=atmega8 -c -o main.o main.c
+avr-gcc -w -mmcu=atmega8 main.o -o main
+avr-objcopy -O ihex -R .eeprom main main.hex
+

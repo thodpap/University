@@ -66,3 +66,62 @@ int main() {
         PORTC = F;
     }
 } */
+
+#include <avr/io.h>
+#include <mega16.h> 
+
+char A1,A0;
+char K1,K0;
+char W;
+char input;
+char output; 
+
+void init() {
+    while (1) {
+        input = PIND; // read input
+        input = PIND; // read input
+        A1 = input & 0x01; // Get A1 digit
+        K1 = input & 0x02 >> 1; // Get K1 digit
+        A0 = input & 0x04 >> 2; // Get A0 digit
+        K0 = input & 0x08 >> 3; // Get K1 digit
+        W  = input & 0x16 >> 4; // Get W digit
+        if (A1 == 1) {
+            output = 0x01; // steile sto isogio
+        } else {
+            output = 0x00;
+            break;
+        }
+    }
+}
+int main() {
+    DDRD = 0x00; // set D as input
+    DDRB = 0xFF; // set B as output 
+    
+    init();
+
+    while (1) {
+        input = PIND; // read input
+        A1 = input & 0x01; // Get A1 digit
+        K1 = input & 0x02 >> 1; // Get K1 digit
+        A0 = input & 0x04 >> 2; // Get A0 digit
+        K0 = input & 0x08 >> 3; // Get K1 digit
+        W  = input & 0x16 >> 4; // Get W digit
+        if ( (A1 == 1 && A0 == 1) | (A1 == 0 && A0 == 0) ) { 
+            output = 0x03; // 11 as output indicates error
+        }
+        else if (A1 == 1) {
+            if (W == 1 || K0 == 1) {
+                output = 0x01;
+            } else {
+                output = 0x00;
+            }
+        } else if (A0 == 1) {
+            if (W == 1 || K0 == 1) {
+                output = 0x02;
+            } else {
+                output = 0x00;
+            }
+        }    
+        PORTB = output; 
+    }
+}

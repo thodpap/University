@@ -2,17 +2,6 @@ import java.io.*;
 import java.util.*;
 
 
-/* 
-Lets suggest an interval where we start at s and stop at l.
-Firstly we have to move all seperated 1s to 
-We try to examine what is the total moves to get to l or l-1.
-lets say arr[s] = a.
-
-if a % 2 == 0 -> we can move it with (l-s)*a moves to l
-
-if a % 2 == 1 ->
-
-*/
 class Position {
 	Position(int pos, int value) {
 		this.pos = pos;
@@ -22,108 +11,53 @@ class Position {
 	int value;
 }
 class Solution {
-	Solution(int c, int p) {
+	Solution(int p, int c) {
 		pos = p;
 		count = c;
 	}
 	int pos;
 	int count; 
-}
-public class Round { 
-	private static void printArray(int []arr) {
-		for (int i = 0; i < arr.length; ++i) {
-			System.out.print(arr[i] + " ");
-		}
-		System.out.print("\n");
-	}
-	private static void printPosArray(Position []arr) {
-		for (int i = 0; i < arr.length; ++i) {
-			System.out.print("(" + arr[i].pos + ", " + arr[i].value + ") ");
-		}
-		System.out.print("\n");
-	}
-	private static void printList(List<Position> array) {
-		for (int i = 0; i < array.size(); ++i) {
-			System.out.print("(" + array.get(i).pos + ", " + array.get(i).value + ") ");
-		}
-		System.out.print("\n");
-	}
-
-	private static Solution solver(List<Position> array, int N, int K, int start) {
-//        printList(array);
-        Position[] arr = new Position[array.size()];
-        List<Integer> onesPositions = new ArrayList<>();
-        // Build the temp array
-        for (int i = 0; i < array.size(); ++i) {
-            Position element = array.get(i);
-            if (i < start) {
-                arr[array.size() - 1 - i] = new Position(element.pos + N, element.value);
-            } else {
-                arr[i - start] = new Position(element.pos, element.value);
-            }
-        }
-//        printPosArray(arr);
-        int j = 0; // counts ones
-        int count = 0;
-        int size = arr.length;
-        for (int i = 0; i < size - 1; ++i) {
-            if (arr[i].value == 1) {
-                onesPositions.add(arr[size - 1].pos - arr[i].pos);
-            } else {
-                count += arr[i].value * (arr[size - 1].pos - arr[i].pos);
-                arr[size - 1].value += arr[i].value;
-            }
-        }
-
-        // move ones if possible
-        int independentMoves = 0;
-        for (int i = 1; i < onesPositions.size(); ++i) {
-            int prev = onesPositions.get(i - 1);
-            int curr = onesPositions.get(i);
-
-            if (prev == 0) continue;
-            if (curr >= prev) {
-                onesPositions.set(i - 1, 0);
-                onesPositions.set(i, curr - prev);
-                independentMoves += 2 * prev;
-            } else {
-                onesPositions.set(i - 1, 0);
-                onesPositions.set(i, prev - curr);
-                independentMoves += 2 * curr;
-            }
-        }
-        // count += independentMoves;
-        int movesNeeded = 0;
-        if (onesPositions.size() > 1)
-            movesNeeded = onesPositions.get(onesPositions.size() - 1);
-        else if (onesPositions.size() == 1) {
-            movesNeeded = onesPositions.get(0);
-        }
-
-        int lastElement = arr[size - 1].pos;
-
-        if (movesNeeded <= count) {
-            count += movesNeeded + independentMoves;
-        } else {
-            // Move the remaining 1 closer based on the count
-            if (K == 2) {
-                count = Integer.MAX_VALUE;
-            } else {
-            	movesNeeded -= count; 
-                
-                // Let p be the side movement: movesNeed + p <= (N - 1) * p -> p >= moves / (N-2)
-                int p = (movesNeeded - 1) / (K - 2);
-                int mod = (movesNeeded - 1) % (K - 2);
-
-                if (mod != 0) ++p;
-
-                // count += temp + p + (N - 1)*p + independentMoves;
-                count += movesNeeded + p * K + independentMoves;
-                lastElement += p;
-            }
-        }
-        return new Solution(count, lastElement % N);
+    void print() {
+        System.out.println(count + " " + pos);
     }
+}
+public class Round {
+    private static Solution solver(
+        int N,
+        int K,
+        int countOnes, 
+        int countTwos, 
+        int countElse ,
+        int neg, 
+        int independentMoves, 
+        int moves, 
+        int sumElse,
+        int lastElement) 
+    { 
+        int negTotal = lastElement * countOnes - neg;
+        int independentMovesTotal =  2 * lastElement * countTwos - independentMoves;
+        int movesTotal = lastElement * sumElse - moves;
+
+        System.out.println("Counts: " + countOnes + " " + countTwos + " " + countElse);
+        System.out.println("Values : " + neg + " " + independentMoves + " "  + moves + " " + sumElse + " " + lastElement);
+        System.out.println("New Values: " + negTotal + " " + independentMovesTotal + " " + movesTotal);
+
+        if (movesTotal >= negTotal) {
+            movesTotal += negTotal + independentMovesTotal;
+            System.out.println(movesTotal + " " + lastElement);
+            return new Solution(lastElement % N, movesTotal);
+        } 
+        movesTotal += independentMovesTotal;
+        int div = negTotal / K;
+        int mod = negTotal % K;
+        if (mod > 1) ++div;
+        movesTotal += K * div + negTotal;
+        lastElement += div;
+
+        System.out.println("Last: " + div + " " + mod + " " + movesTotal );
+        System.out.println(movesTotal + " " + lastElement);
+        return new Solution(lastElement % N, movesTotal);
+    }  
 	public static void main(String[] args) throws IOException {  
         FileInputStream fs = new FileInputStream(args[0]);
         BufferedReader reader = new BufferedReader(new InputStreamReader(fs));
@@ -144,25 +78,63 @@ public class Round {
         for (int i = 0; i < arr.length; ++i) {
         	if (arr[i] != 0) shortList.add(new Position(i, arr[i]));
         }  
+        /* 
+            Let assume we have to stop at C (not mod N) - linear map 
+        */
+        int countOnes = 0;
+        int countTwos = 0;
+        int countElse = 0;
 
-        Solution s = new Solution(-1,-1);
+        int sumElse = 0;
+        int neg = 0;
+        int independentMoves = 0;
+        int moves = 0;
+
+
+        // Calculate first window
         for (int i = 0; i < shortList.size(); ++i) {
-        	Solution tempSol = solver(shortList, N, K, i);	 
+            Position element = shortList.get(i);
+            if (element.value == 1) { 
+                ++countOnes;
+                neg += element.pos; 
+            } else if (element.value == 2) {
+                ++countTwos;
+                independentMoves += 2 * element.pos;
+            } else {
+                ++countElse;
+                moves += element.pos * element.value;
+                sumElse += element.value;
+            }
+        }
 
-        	if (s.count == -1 || s.count >= tempSol.count) { 
+        Solution s = solver(N,K, countOnes, countTwos, countElse, neg, independentMoves, moves, sumElse, 
+            shortList.get(shortList.size() - 1).pos); 
+        for (int i = 0; i < shortList.size() - 1; ++i) { 
+            Position element = shortList.get(i);
+            if (element.value == 1) { 
+                neg += N;
+            } else if (element.value == 2) { 
+                independentMoves += 2 * element.pos;
+            } else { 
+                moves += N * element.value;
+            }
+
+            Solution tempSol = solver(N,K, countOnes, countTwos, countElse, neg, independentMoves, moves, sumElse, element.pos + N);
+            // tempSol.print();
+        		
+        	if (s.count >= tempSol.count) { 
         		if (tempSol.count == s.count) {
         			if (s.pos >= tempSol.pos) {
         				s.pos = tempSol.pos; 
         			}	
         		}
-				else {
-					s.count = tempSol.count;
-					s.pos = tempSol.pos;
-				}        		
-        		
-        	}  
+                else {
+                    s.count = tempSol.count;
+                    s.pos = tempSol.pos;
+                }         
+        	}  	
         }
         
-        System.out.println(s.count + " " + s.pos);
+        s.print();
     }
 }

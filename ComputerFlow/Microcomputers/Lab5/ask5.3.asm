@@ -15,22 +15,22 @@ MAIN PROC FAR
     MOV AX,DATA_SEG
     MOV DS,AX
     
-    CALL HEX_KEYB
-    CMP AL,'T'
+    CALL HEX_KEYB       ;Read first digit
+    CMP AL,'T'          ;If char == T QUIT
     JE QUIT
-    MOV BH,AL
-    CALL HEX_KEYB
+    MOV BH,AL           ;Store in BH 
+    CALL HEX_KEYB       ;Read the second digit and again check for T
     CMP AL,'T'
     JE QUIT
     MOV BL,AL
-    AND BL,0FH
+    AND BL,0FH          ;The number 4 shifts left and store in BL 
     SAL BL,4
     CALL HEX_KEYB
     CMP AL,'T'
     JE QUIT
-    ADD BL,AL
+    ADD BL,AL           ;Add the third digit in BL
     
-    PUSH BX
+    PUSH BX             ;BX has the number
     AND BH,0FH
     CMP BH,9
     JG FIX1
@@ -41,7 +41,7 @@ FIX1:
     ADD BH,37H
     
 PRINTF:
-    PRINT BH
+    PRINT BH            ;Print in HEX form all the digits
     
     POP BX
     
@@ -79,15 +79,15 @@ PRINTF2:
     POP BX
     PRINT ' '
     PRINT '='
-    CALL PRINT_DEC
+    CALL PRINT_DEC      ;Print in DEC
     
     PRINT ' '
     PRINT '='
-    CALL PRINT_OCT
-    
+    CALL PRINT_OCT      ;Print in OCT
+                        
     PRINT ' '
     PRINT '='
-    CALL PRINT_BIN
+    CALL PRINT_BIN      ;Print in bits
     PRNT_STR NEW_LINE
     JMP MAIN
     
@@ -102,23 +102,23 @@ PRINT_DEC PROC NEAR
     PUSH BX
     PUSH DX
     
-    MOV CX,1
+    MOV CX,1            ;Counter for digits
     
-    MOV AX,BX
+    MOV AX,BX           ;AX contains the number
     MOV BX,10
     
 DIV1:
-    MOV DX,0
-    DIV BX
-    PUSH DX
-    CMP AX,0
+    MOV DX,0            
+    DIV BX              ;Divide with 10
+    PUSH DX             ;Store ones,tens,hunds...
+    CMP AX,0            ;Until the num is >10
     JE PRNT_10
     INC CX
     JMP DIV1
     
 PRNT_10:
     POP DX
-    ADD DL,30H
+    ADD DL,30H          ;Print the digits in decimal using the stack 
     PRINT DL
     LOOP PRNT_10
     
@@ -132,7 +132,7 @@ PRNT_10:
 PRINT_DEC   ENDP
 
 
-PRINT_OCT PROC NEAR
+PRINT_OCT PROC NEAR       ;Same as DEC but divisions with 8
     
     PUSH AX
     PUSH CX
@@ -169,7 +169,7 @@ PRNT_8:
 PRINT_OCT   ENDP
 
 
-PRINT_BIN PROC NEAR
+PRINT_BIN PROC NEAR        ;Same as DEC but divisions with 2
     
      PUSH AX
      PUSH CX
@@ -219,7 +219,7 @@ IGNORE:
     JMP INPUT_OK
  
 CHECK_LETTER:
-    CMP AL,'T'        ; if input = 'Q', then return to quit
+    CMP AL,'T'        ; if input = 'Q', then quit
     JE INPUT_OK
     CMP AL,'A'        ; if input < 'A' then ignore it
     JL IGNORE         

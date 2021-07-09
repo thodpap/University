@@ -21,52 +21,47 @@ class Solution {
         System.out.println(count + " " + pos);
     }
 }
-public class Round {
-    private static Solution solver(
-        int N,
-        int K,
-        int countOnes, 
-        int countTwos, 
-        int countElse ,
-        int neg, 
-        int independentMoves, 
-        int moves, 
-        int sumElse,
-        int lastElement) 
-    { 
-        int negTotal = lastElement * countOnes - neg;
-        int independentMovesTotal =  2 * lastElement * countTwos - independentMoves;
-        int movesTotal = lastElement * sumElse - moves;
+public class Round {  
+    public static int N;
+    public static int K; 
 
-        System.out.println("Counts: " + countOnes + " " + countTwos + " " + countElse);
-        System.out.println("Values : " + neg + " " + independentMoves + " "  + moves + " " + sumElse + " " + lastElement);
-        System.out.println("New Values: " + negTotal + " " + independentMovesTotal + " " + movesTotal);
+    public static Solution solver(int lastOne, int countOnes, int countTwos, int countElse, int neg, int ind, int moves, int C) {  
+        int lastOneTotal = C - lastOne;
+        int negTotal = C * countOnes - neg;
+        
+        int independentMovesTotal = C * countTwos - ind;
+        int movesTotal = C * countElse - moves;
 
-        if (movesTotal >= negTotal) {
-            movesTotal += negTotal + independentMovesTotal;
-            System.out.println(movesTotal + " " + lastElement);
-            return new Solution(lastElement % N, movesTotal);
+        int rest = negTotal - lastOneTotal;
+        if (countOnes >= 2) { 
+            if (rest + 1 >= lastOneTotal) { 
+                independentMovesTotal += negTotal;
+                negTotal = 0;                
+            } else {
+                negTotal = lastOneTotal - rest;
+                independentMovesTotal += lastOneTotal;
+            }
         } 
-        movesTotal += independentMovesTotal;
-        int div = negTotal / K;
-        int mod = negTotal % K;
-        if (mod > 1) ++div;
-        movesTotal += K * div + negTotal;
-        lastElement += div;
-
-        System.out.println("Last: " + div + " " + mod + " " + movesTotal );
-        System.out.println(movesTotal + " " + lastElement);
-        return new Solution(lastElement % N, movesTotal);
-    }  
+ 
+        if (movesTotal == 0 && negTotal == 0) {
+            return new Solution(C % N, independentMovesTotal);
+        }
+        if (movesTotal + independentMovesTotal >= negTotal && movesTotal > 0) {
+            movesTotal += independentMovesTotal + negTotal; 
+            return new Solution(C % N, movesTotal);
+        }
+        return new Solution(0, Integer.MAX_VALUE);
+    }
 	public static void main(String[] args) throws IOException {  
         FileInputStream fs = new FileInputStream(args[0]);
         BufferedReader reader = new BufferedReader(new InputStreamReader(fs));
 
         String[] first = reader.readLine().split(" ");
         String[] line = reader.readLine().split(" ");
+        reader.close();
 
-        int N = Integer.parseInt(first[0]);
-        int K = Integer.parseInt(first[1]); 
+        N = Integer.parseInt(first[0]);
+        K = Integer.parseInt(first[1]); 
         
         int[] arr = new int[N]; 
 
@@ -78,50 +73,59 @@ public class Round {
         for (int i = 0; i < arr.length; ++i) {
         	if (arr[i] != 0) shortList.add(new Position(i, arr[i]));
         }  
-        /* 
-            Let assume we have to stop at C (not mod N) - linear map 
-        */
+        
+        List<Integer> ones = new ArrayList<>();
+        for (int i = 0; i < shortList.size(); ++i) {
+            Position p = shortList.get(i);
+            if (p.value == 1) ones.add(p.pos);
+        }
+
         int countOnes = 0;
         int countTwos = 0;
         int countElse = 0;
 
-        int sumElse = 0;
-        int neg = 0;
+        int negMoves = 0;
         int independentMoves = 0;
         int moves = 0;
+         
+        int j = 0;
+        int lastOne = ones.get(0);
 
-
-        // Calculate first window
+        // Proto perasma
         for (int i = 0; i < shortList.size(); ++i) {
             Position element = shortList.get(i);
             if (element.value == 1) { 
-                ++countOnes;
-                neg += element.pos; 
-            } else if (element.value == 2) {
-                ++countTwos;
-                independentMoves += 2 * element.pos;
+                countOnes += element.value; 
+                negMoves += element.pos;
+            }  else if (element.value == 2){ 
+                countTwos += element.value;
+                independentMoves += element.pos * element.value; 
+            }
+            else { 
+                countElse += element.value;
+                moves += element.pos * element.value; 
+            }
+        } 
+        Solution s = solver(lastOne, countOnes, countTwos, countElse, negMoves, independentMoves, moves, N - 1); 
+        for (int i = N; i < 2 * N; ++i) {
+            // System.out.println(j + " " + lastOne + " " + countOnes + " " + countTwos + " " + countElse + " " + negMoves + " " +  independentMoves + " " + moves);
+            if (arr[i - N] == 0) { }
+            else if (arr[i - N] == 1) { 
+                ++j;
+                if (j >= ones.size()) {
+                    lastOne = ones.get(j - ones.size()) + N;
+                }
+                else 
+                    lastOne = ones.get(j);   
+                negMoves += N;
+            } else if (arr[i - N] == 2) {
+                independentMoves += 2 * N; 
             } else {
-                ++countElse;
-                moves += element.pos * element.value;
-                sumElse += element.value;
+                moves += N * arr[i-N];
             }
-        }
-
-        Solution s = solver(N,K, countOnes, countTwos, countElse, neg, independentMoves, moves, sumElse, 
-            shortList.get(shortList.size() - 1).pos); 
-        for (int i = 0; i < shortList.size() - 1; ++i) { 
-            Position element = shortList.get(i);
-            if (element.value == 1) { 
-                neg += N;
-            } else if (element.value == 2) { 
-                independentMoves += 2 * element.pos;
-            } else { 
-                moves += N * element.value;
-            }
-
-            Solution tempSol = solver(N,K, countOnes, countTwos, countElse, neg, independentMoves, moves, sumElse, element.pos + N);
-            // tempSol.print();
-        		
+            
+            Solution tempSol = solver(lastOne, countOnes, countTwos, countElse, negMoves, independentMoves, moves, i);  
+            System.out.print("Temp sol: "); tempSol.print();
         	if (s.count >= tempSol.count) { 
         		if (tempSol.count == s.count) {
         			if (s.pos >= tempSol.pos) {
@@ -132,9 +136,9 @@ public class Round {
                     s.count = tempSol.count;
                     s.pos = tempSol.pos;
                 }         
-        	}  	
+            } 
         }
-        
-        s.print();
+
+        s.print();         
     }
 }

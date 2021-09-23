@@ -1,0 +1,84 @@
+;; μΥ-Σ with 8bit ports: 
+; input -> 20HEX
+; output -> 30HEX
+; y = x2*x3*x4*x5 + x6*x7 if input comes as x7x6x5x4x3x2__ 
+; and output should be as xxxxxxxy
+
+START:
+    IN 20H ; input at 20Hex
+    MOV B,A ; move input to B
+    ; The output is 1 if x2x3x4x5 == 1 -> x2 = x3 = x4 = x5 = 1 
+    ; or (both and) x6 = x7 = 1
+    ; first case: xx1111xx
+    ANI 3CH; A = input & 00111100 (3CH HEX)
+    CPI 3CH
+    JZ ONE ; if A = 00111100 then show one
+    ; Second case: 11xxxxxx
+    MOV A,B ; 11000000
+    ANI C0H 
+    CPI C0H 
+    JZ ONE
+    JMP ZERO
+
+ONE: 
+    MVI A, 00H
+    OUT 30H
+    JMP START
+
+ZERO:
+    MVI A, 01H
+    OUT 30H
+    JMP START
+
+;;;; 110011101 : B
+;;;; 010000101 : output
+;;; Output is D and is 0000000
+;; C : 1100 0000
+;; D : 0111 1111
+
+; 1101 1101 : B
+
+; A = 1100 0000
+; A = 0100 1101
+; B = 0100 1101
+
+; C = 0110 0000
+; D = 1011 1111
+
+START:
+    MOV C, C0H ;; 11000000
+    MOV D, 7FH ;; 01111111 -> 10111111
+
+CHECK:
+    MOV A, C 
+    CPI 81H ; 10000001
+    JZ STOP 
+
+    AND B,C ; B & C to get the first 2 digits
+    CMP C ; if we had 2 ones
+    JZ TWO_ONES ; jump to two_ones
+    
+    MOV A, C  ; copy C to A 
+    RRC         ; rotate right  
+    MOV C, A    ; move the rotated C back -> from 11000000 -> 01100000
+
+    MOV A, D
+    RRC 
+    MOV D, AX
+    JMP CHECK 
+
+TWO_ONES:
+    AND B, D ; get rid of the first one
+    MOV B, A ; update B
+
+    MOV A, C  ; copy C to A 
+    RRC         ; rotate right  
+    MOV C, A    ; move the rotated C back -> from 11000000 -> 01100000
+
+    MOV A, D
+    RRC 
+    MOV D, AX
+    JMP CHECK 
+
+STOP:
+    ;; ending 

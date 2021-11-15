@@ -1,2 +1,2 @@
 # University
-Here we will have all our assignments 
+6ο εξάμηνο ECE NTUA

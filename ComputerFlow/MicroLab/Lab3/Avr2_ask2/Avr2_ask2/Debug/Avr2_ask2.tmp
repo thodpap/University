@@ -1,0 +1,45 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.2.8</VERSION>
+ <DEVICE>"ATmega16"</DEVICE>
+ <WORKING_DIR>D:\Avr2_ask2\Avr2_ask2\Debug</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc</DIR>
+  <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m16def.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>D:\Avr2_ask2\Avr2_ask2\Debug\Avr2_ask2.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>Avr2_ask2.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>Avr2_ask2.map</FILE>
+  <FILE>Avr2_ask2.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <_tmp_><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>5</LINE></_tmp_>
+  <init><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>31</LINE></init>
+  <first_digit><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>48</LINE></first_digit>
+  <scan_keypad_rising_edge_sim><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>196</LINE></scan_keypad_rising_edge_sim>
+  <wrong_first><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>63</LINE></wrong_first>
+  <second_digit><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>66</LINE></second_digit>
+  <wrong_passwd><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>115</LINE></wrong_passwd>
+  <right_password><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>83</LINE></right_password>
+  <lcd_init_sim><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>348</LINE></lcd_init_sim>
+  <lcd_data_sim><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>324</LINE></lcd_data_sim>
+  <wait_msec><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>414</LINE></wait_msec>
+  <L1><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>136</LINE></L1>
+  <scan_row_sim><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>157</LINE></scan_row_sim>
+  <wait_usec><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>426</LINE></wait_usec>
+  <scan_keypad_sim><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>172</LINE></scan_keypad_sim>
+  <keypad_to_ascii_sim><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>228</LINE></keypad_to_ascii_sim>
+  <return_ascii><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>287</LINE></return_ascii>
+  <write_2_nibbles_sim><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>292</LINE></write_2_nibbles_sim>
+  <lcd_command_sim><FILE>D:\Avr2_ask2\Avr2_ask2\main.asm</FILE><LINE>336</LINE></lcd_command_sim>
+ </LABELS>
+</ASSEMBLER_INFO>

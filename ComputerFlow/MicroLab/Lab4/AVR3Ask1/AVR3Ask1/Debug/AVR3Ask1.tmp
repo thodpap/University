@@ -1,0 +1,62 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.2.8</VERSION>
+ <DEVICE>"ATmega16"</DEVICE>
+ <WORKING_DIR>D:\AVR3Ask1\AVR3Ask1\Debug</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc</DIR>
+  <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\avrasm\inc\m16def.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>D:\AVR3Ask1\AVR3Ask1\Debug\AVR3Ask1.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>AVR3Ask1.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>AVR3Ask1.map</FILE>
+  <FILE>AVR3Ask1.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <_tmp_><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>9</LINE></_tmp_>
+  <start><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>319</LINE></start>
+  <TIMER1_INTERRUPT><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>544</LINE></TIMER1_INTERRUPT>
+  <ADC_INTERRUPT><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>399</LINE></ADC_INTERRUPT>
+  <lcd_init_sim><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>756</LINE></lcd_init_sim>
+  <PROGRAM><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>349</LINE></PROGRAM>
+  <LOOP><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>357</LINE></LOOP>
+  <scan_keypad_rising_edge_sim><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>604</LINE></scan_keypad_rising_edge_sim>
+  <keypad_to_ascii_sim><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>636</LINE></keypad_to_ascii_sim>
+  <ABORT><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>392</LINE></ABORT>
+  <LOOP1><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>374</LINE></LOOP1>
+  <lcd_data_sim><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>732</LINE></lcd_data_sim>
+  <wait_msec><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>821</LINE></wait_msec>
+  <seven_leds_on_off><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>445</LINE></seven_leds_on_off>
+  <six_leds_on_off><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>430</LINE></six_leds_on_off>
+  <five_leds_on_off><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>433</LINE></five_leds_on_off>
+  <four_leds_on_off><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>436</LINE></four_leds_on_off>
+  <three_leds_on><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>439</LINE></three_leds_on>
+  <two_leds_on><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>442</LINE></two_leds_on>
+  <one_led_on><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>421</LINE></one_led_on>
+  <END_ADC><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>534</LINE></END_ADC>
+  <six_leds_on_off1><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>463</LINE></six_leds_on_off1>
+  <five_leds_on_off1><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>481</LINE></five_leds_on_off1>
+  <four_leds_on_off1><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>498</LINE></four_leds_on_off1>
+  <three_leds_on1><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>516</LINE></three_leds_on1>
+  <two_leds_on1><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>526</LINE></two_leds_on1>
+  <write_on_seven><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>456</LINE></write_on_seven>
+  <write_on_six><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>474</LINE></write_on_six>
+  <write_on_five><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>492</LINE></write_on_five>
+  <write_on_four><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>509</LINE></write_on_four>
+  <scan_row_sim><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>565</LINE></scan_row_sim>
+  <wait_usec><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>833</LINE></wait_usec>
+  <scan_keypad_sim><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>580</LINE></scan_keypad_sim>
+  <return_ascii><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>695</LINE></return_ascii>
+  <write_2_nibbles_sim><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>700</LINE></write_2_nibbles_sim>
+  <lcd_command_sim><FILE>D:\AVR3Ask1\AVR3Ask1\main.asm</FILE><LINE>744</LINE></lcd_command_sim>
+ </LABELS>
+</ASSEMBLER_INFO>

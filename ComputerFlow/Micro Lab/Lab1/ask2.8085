@@ -1,0 +1,61 @@
+IN 10H
+
+START: ;initializations
+	MVI A,10H ;space to print
+	LXI D,0B00H ; read dcd from here 
+	STA 0B03H ;space
+	STA 0B04H ;space
+	STA 0B05H ;space
+	MVI A,00H
+	STA 0B02H ;initialize to 0
+ 
+	CALL KIND ;read 1st value
+	RLC
+	RLC
+	RLC
+	RLC ;16*x
+	MOV C,A
+
+	CALL KIND ;read 2nd value
+	ADD C ;16*x+y
+	MOV C,A
+	CPI C8H ;compare with 200
+	JC STATE_LESS_200 ;if smaller
+	;; We are in 2xx
+	MVI A,02H ; else print 2 in 3rd digit
+	STA 0B02H 
+	MOV A,C
+	SUI C8H ;sub 200 to find decs -> 2xx - 200
+	JMP DECA
+
+STATE_LESS_200:
+	CPI 64H ;compare with 100
+	JC DECA ;if less than 100
+	;; 3rd digit should be 1
+	MVI A,01H 
+	STA 0B02H 
+
+	MOV A,C
+	SUI 64H ;subract 10
+
+DECA: ;hex to bcd
+	MVI B,FFH ;; 255 (MAX value)
+
+DECS:
+	INR B
+	SUI 0AH 
+	JNC DECS
+	ADI 0AH 
+	STA 0B00H
+	MOV A,B
+	STA 0B01H
+
+
+	CALL STDM
+	CALL DCD ;print 3 digit decimal number 
+	JMP START
+END
+
+
+
+

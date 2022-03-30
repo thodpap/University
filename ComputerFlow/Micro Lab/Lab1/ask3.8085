@@ -1,0 +1,74 @@
+;; We have a counter that we are gonna 
+;; rotate left and right accordingly
+;; It's important to notice that when lsb gets off 
+;; in 1000 0000 since there is a double switch, it should
+;; continue with 0000 0001
+;; same thing applies to 0000 0001 when you lsb gets off
+
+LXI B,1000H ;1000 miliseconds delay
+
+START:
+	MVI D,01H ; initialize B with 1
+	MVI L,00H ; L is the previus position of lsb
+
+LEFT_CHECK:
+	IN 20H
+	MOV H,A
+	ANI 80H
+	JZ LEFT_CHECK ;; If msb is not on stay where you are
+	
+	MOV A,H ; Move back H
+	ANI 01H ; Keep only lsb
+	CMP L
+	JZ LEFT
+	MOV L,A
+	CPI 00H
+	JZ RIGHT_CHECK
+	
+	JMP LEFT	
+
+LEFT:
+	;; Rotate left, print 
+	;; from 1000 0000 -> 0000 0001 we jump back to right
+	CALL DELB
+	MOV A,D
+	CMA
+	OUT 30H
+	CMA
+	RLC
+	MOV D,A
+	CPI 01H
+	JNZ LEFT_CHECK
+	RRC
+	JMP RIGHT_CHECK
+
+RIGHT_CHECK:
+	IN 20H
+	MOV H,A
+	ANI 80H
+	JZ RIGHT_CHECK ;; If msb is not on stay where you are
+	
+	MOV A,H ; Move back H
+	ANI 01H ; Keep only lsb
+	CMP L
+	JZ RIGHT
+	MOV L,A
+	CPI 00H
+	JZ LEFT_CHECK
+	
+	JMP RIGHT
+
+RIGHT:
+	CALL DELB
+	MOV A,D
+	RRC
+	CMA
+	OUT 30H
+	CMA
+	MOV D,A
+	CPI 01H
+	JNZ RIGHT_CHECK
+	RLC
+	JMP LEFT
+END
+	

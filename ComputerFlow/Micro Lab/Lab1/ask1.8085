@@ -1,0 +1,66 @@
+
+
+; x is C
+; My counter is on D
+
+LXI B,1000H ;1000 miliseconds delay
+
+START:
+	MVI D,00H
+
+GET_X:  
+	LDA 2000H ; Read input
+	MOV H,A ; Store H
+	ANI 80H
+	
+	JZ GET_X ; If msb is not on read again
+	;; Split C into X
+
+	MOV A,H
+	ANI 0FH ; 0000 1111 To get lsb's
+	MOV H,A
+
+	CPI 00H ; If input was 0 then jump to start
+	JZ START
+
+	INR H
+	JMP INCREASE 
+	
+INCREASE:
+;; check for msb
+	LDA 2000H
+	ANI 80H
+	JZ INCREASE
+
+	MOV A,D ; Get counter
+	CMA 
+	OUT 30H	
+	CALL DELB 
+
+	INR D	; increase counter
+	MOV A,D	
+	CMP H ; compare counter and x+1
+	JNZ INCREASE ; If not x+1 continue
+	DCR D ; get it to x
+ 
+	JMP DECREASE ; else decrease
+
+DECREASE:
+;; check for msb
+	LDA 2000H
+	ANI 80H
+	JZ DECREASE
+	
+	DCR D
+	MOV A,D
+	CMA
+	OUT 30H
+	CALL DELB
+
+	MOV A,D
+	CPI 00H
+	JNZ DECREASE
+	INR D
+	JMP GET_X
+	
+END
